@@ -1,8 +1,11 @@
+"""custom function"""
+
 class AligmentDifferenceFinder:
     def __init__(self):
         self.unmatches = []
         pass
 
+#append position unmatches self-alignment
     def analyze(self, alignment):
         self.unmatches = []
 

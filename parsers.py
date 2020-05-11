@@ -1,5 +1,5 @@
 import re
-
+"""parser oggetti output clustal"""
 
 from clustal import ClustalAlignment, ClustalSequence
 import utils
