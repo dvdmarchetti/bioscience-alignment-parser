@@ -1,5 +1,5 @@
 import utils
-
+"""struttura ritornata dal parser"""
 
 class ClustalAlignment:
     def __init__(self, reference, sequences=[], length=0):
