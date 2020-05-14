@@ -45,24 +45,24 @@ with open('data.json', 'w') as f:
     # print(alignment[start:end+1])
     # print(alignemnt.reference[])
         print()
+        #ids = [reference_id, alignment.peek_others(start, end)[1]['sequence']]
+        #print(type(alignment.peek_others(start, end)[1]))
+        #print(alignment.peek_others(start, end))
+        #print(len(alignment.peek_others(start, end)))
+        ids = [reference_id]
+        for i in range(len(alignment.peek_others(start, end))): #i = classical counter
+            if(not alignment.peek_others(start, end)[i]['value'] == alignment.peek_reference(start, end)):
+                ids.append(alignment.peek_others(start, end)[i]['sequence'])
+
         data = {'from': start,
             'to': end,
-            'sequences': None   #miss sequences
+            'sequences': ids, #None
             }
-        """[
-    {
-        "from": 3,
-        "to": 27,
-        "sequences": [
-            "MT276597.1",
-            "MT276597.2",
-        ]
-    }
-]"""
-        json.dump(data, f)
-        f.write('\n')   #\n after every entry (add extra empty line)
-### END FOR
 
+        json.dump(data, f)
+        if group != utils.group_ranges(groups)[-1]: #do not add extra \n at the end
+            f.write('\n')   #\n after every entry (add extra empty line)
+### END FOR
 f.close()
 ### In questo modo hai un Array nel quale ogni elemento è a sua volta un Array che corrisponde agli indici di inizio e fine della zona che non matcha con la reference
 """possibile futuro lavoro: stampare mismatch solo ref e sequenza con mismatch
