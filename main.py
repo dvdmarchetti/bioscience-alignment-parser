@@ -22,7 +22,7 @@ aligned_sequences = 3 #numero frequenze allineate (costante globale)
 sequences=['MT276598.1', 'MT320891.2'] #
 
 parser = ClustalParser(nseq=aligned_sequences)  #parser.py #(quante sequenze+file) --> sequenze lette
-alignment = parser.parse('analysis/iran-ref.txt', reference = reference_id, list = []) #the other is all.txt
+alignment = parser.parse('analysis/israel-ref.txt', reference = reference_id, list = []) #the other is all.txt
 #alignment = parser.parse('analysis/iran-ref.txt', reference='NC_045512.2')  #alignment == Ref [12]
 
 print('Read {} bases'.format(len(alignment)))
