@@ -1,0 +1,15 @@
+>MT320891.2 Submitted (10-APR-2020) Human Genetic Research Center, Kawsar; Biotech Company, Majlesi St, Valiasr Ave, Tehran 1595645513, Iran; isolation_source="throat swab"
+>MT327745.1 Submitted (13-APR-2020) Department of Microbiology, Erciyes University, Yeni Dogan District, Turhan Baytop Street No:1, Kayseri 38280, Turkey; /isolate="SARS-CoV-2/human/TUR/ERAGEM-001/2020"
+>MT281530.2 Submitted (04-APR-2020) Human Genetic Research Center, Kawsar Biotech Company, Majlesi St, Valiasr Ave, Tehran 1595645513, Iran; isolation_source="throat swab"
+>MT276598.1 Submitted (02-APR-2020) Biochemistry and Molecular Biology, Israel Institute for Biological Research, Reuven 24, Ness Ziona 74100; isolate="SARS-CoV-2/human/ISR/ISR_IT0320/2020"
+>MT276597.1 Submitted (02-APR-2020) Biochemistry and Molecular Biology, Israel Institute for Biological Research, Reuven 24, Ness Ziona 74100, isolate="SARS-CoV-2/human/ISR/ISR_JP0320/2020"
+>MT240479.1 Submitted (25-MAR-2020) Department of Healthcare Biotechnology, National University of Sciences and Technology (NUST), Islamabad, Islamabad 46000, Pakistan; /isolation_source="Throat Swab"	
+>MT262993.1 Submitted (30-MAR-2020) University Institute of Biochemistry and Biotechnology, Pir Mehr Ali Shah Arid Agriculture University Rawalpindi, Shamsabad, Murree Road, Rawalpindi, Punjab 46300, Pakistan; isolation_source="oropharyngeal swab"
+>NC_045512.2 Submitted (17-JAN-2020) National Center for Biotechnology Information, NIH, Bethesda, MD 20894, USA
+	 source      organism="Severe acute respiratory syndrome coronavirus
+                     /mol_type="genomic RNA"
+                     /isolate="Wuhan-Hu-1"
+                     /host="Homo sapiens"
+                     /db_xref="taxon:2697049"
+                     /country="China"
+                     /collection_date="Dec-2019"

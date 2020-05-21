@@ -2,11 +2,13 @@
 # conta le basi distinte
 # python ad-hoc (secondo anno)
 # formato: inizio, lunghezza (compatta mismatch consecutivi), tipo di match tra ref e sequenza allineata, dove per sequenza singola
-#usa jseid (come si scrive?), specifica tessuto da cui è prelevato il virus + età paziente;
+#usa GISAID (come si scrive?), specifica tessuto da cui è prelevato il virus + età paziente;
 #almeno 16 sequenze; specifica e confronta i tools; analizza albero in output (con date)
 #NCBI gene start..end ha cds da tradurre; vedere se esistono mismatch tra frequenze nei punti in cui esistono geni
 #annotare dove e in che gene(se in gene) esistono mutazioni
 #sostituire simbolo != ACGT con parte nella ref [vedi IUPAC code]
+#Tools: Muscle, Clustal; identificare origine:
+#NCBI
 import re
 
 import utils
@@ -18,11 +20,11 @@ import json #for JSON
 reference_id = open("input/reference.fasta", "r").readline().split(' ')[0][1:] # NC_045512.2
 #analysis = open("analysis/iran-ref.txt", "r")
 
-aligned_sequences = 3 #numero frequenze allineate (costante globale)
+aligned_sequences = 14 #numero frequenze allineate (costante globale)
 sequences=['MT276598.1', 'MT320891.2'] #
 
 parser = ClustalParser(nseq=aligned_sequences)  #parser.py #(quante sequenze+file) --> sequenze lette
-alignment = parser.parse('analysis/israel-ref.txt', reference = reference_id, list = []) #the other is all.txt
+alignment = parser.parse('analysis/Global.txt', reference = reference_id, list = []) #the other is all.txt
 #alignment = parser.parse('analysis/iran-ref.txt', reference='NC_045512.2')  #alignment == Ref [12]
 
 print('Read {} bases'.format(len(alignment)))
