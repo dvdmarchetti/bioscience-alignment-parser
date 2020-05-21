@@ -1,9 +1,41 @@
-import re
+import json
+import os
 
 import utils
 from parsers import ClustalParser, MuscleParser
 from matcher import AligmentDifferenceFinder
-import json
+
+
+def save(alignment, analyzer, path=None):
+    if not analyzer.unmatches:
+        raise AssertionError('You must run an analysis to save it results.')
+
+    if not path:
+        path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+    unmatching_groups = {}
+    for sequence, groups in analyzer.unmatches.items():
+        for start, end in groups:
+            key = hash((start, end))
+            if key in unmatching_groups:
+                unmatching_groups[key]['sequences'].append(sequence)
+            else:
+                unmatching_groups[key] = {
+                    'from': start,
+                    'to': end,
+                    'sequences': [sequence]
+                }
+
+    sequences = tuple(analyzer.unmatches.keys())
+    payload = {
+        'reference': reference_id,
+        'analyzed_sequences': sequences,
+        'unmatches': unmatching_groups
+    }
+
+    filename = '{}_{}.json'.format(alignment.reference, '-'.join(sequences))
+    with open(os.path.join(path, filename), 'w') as output:
+        output.write(json.dumps(payload, indent=True))
 
 
 reference_id = open("input/reference.fasta", "r").readline().split(' ')[0][1:] # NC_045512.2
@@ -14,22 +46,27 @@ muscle_alignment = muscle_parser.parse('analysis/muscle-I20200512-170208-0225-69
 
 print('Read {} bases'.format(len(muscle_alignment)))
 
-diff_finder = AligmentDifferenceFinder()
-groups = diff_finder.analyze(muscle_alignment)
+print(muscle_alignment.sequences)
+
+analyzer = AligmentDifferenceFinder()
+groups = analyzer.analyze(muscle_alignment)
+save(muscle_alignment, analyzer, path='output')
 
 # Clustal Parser
 parser = ClustalParser(nseq=3)  #parser.py #(quante sequenze+file) --> sequenze lette
-alignment = parser.parse('analysis/israel-ref.txt', reference=reference_id) #the other is all.txt
+alignment = parser.parse('analysis/iran-ref.txt', reference=reference_id) #the other is all.txt
 # #alignment = parser.parse('analysis/iran-ref.txt', reference=reference_id)  #alignment == Ref [12]
 
 print('Read {} bases'.format(len(alignment)))
 
 # return Array con tutti i singoli indici con mismatch nelle stringhe.
-diff_finder = AligmentDifferenceFinder() # matcher.py
-groups = diff_finder.analyze(alignment) # vettori indici mismatch almeno 2 sequenze
-# print(groups)
+analyzer = AligmentDifferenceFinder() # matcher.py
+groups = analyzer.analyze(alignment) # vettori indici mismatch almeno 2 sequenze
+save(alignment, analyzer, path='output')
+exit()
 
-print('Diff ranges: {}'.format(utils.group_ranges(groups)))
+
+print('Diff ranges: {}'.format(groups))
 #print(utils.group_ranges(groups)) ###utils.group_ranges(groups) = gruppi mismatch contigui
 #ritornare i range dei singoli gruppi di numeri contigui
 with open('data.json', 'w') as f:

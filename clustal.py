@@ -1,7 +1,7 @@
 import utils
 """struttura ritornata dal parser"""
 
-class ClustalAlignment:
+class Alignment:
     def __init__(self, reference, sequences=[], length=0):
         self.reference = reference
         self.sequences = sequences
@@ -30,7 +30,7 @@ class ClustalAlignment:
         return self.sequences[key][column:end]
 
 
-class ClustalSequence:
+class AlignmentSequence:
     def __init__(self, id, sequence='', bases=None):
         self.id = id
         self.sequence = sequence

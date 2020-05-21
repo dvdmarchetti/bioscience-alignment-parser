@@ -1,23 +1,20 @@
-"""custom function"""
+import utils
+
 
 class AligmentDifferenceFinder:
-    def __init__(self):
-        self.unmatches = []
-        pass
-
-#append position unmatches self-alignment
     def analyze(self, alignment):
-        self.unmatches = []
+        self.unmatches = {}
 
-        for i in range(alignment.length):
-            column = alignment[i]
+        for sequence in alignment.sequences:
+            if sequence != alignment.reference:
+                self.unmatches[sequence] = []
 
-            j = 0
-            while j < len(column) and column[j] == column[(j+1) % len(column)]:
-                j += 1
+                for i in range(alignment.length):
+                    column = alignment.peek_column(sequence, i)
 
-            if j != len(column):
-                self.unmatches.append(i)
+                    if column != 'N' and column != alignment.peek_reference(i):
+                        self.unmatches[sequence].append(i)
 
-        # return utils.group_ranges(self.unmatches)
+                self.unmatches[sequence] = utils.group_ranges(self.unmatches[sequence])
+
         return self.unmatches

@@ -1,7 +1,7 @@
 import re
 """parser oggetti output clustal"""
 
-from clustal import ClustalAlignment, ClustalSequence
+from clustal import Alignment, AlignmentSequence
 import utils
 
 
@@ -25,7 +25,7 @@ class ClustalParser:
                 print('else')
                 exit()  ###TODO
 
-            return ClustalAlignment(
+            return Alignment(
                 reference=reference,
                 sequences=sequences,
                 length=max(int(s.bases) for s in sequences.values())
@@ -43,7 +43,7 @@ class ClustalParser:
         for block in utils.chunk(self._skipHeader(lines), self.nseq + 2):
             for line in block[0:self.nseq]:
                 key, rawSequence, bases = self._parseLine(line)
-                sequence = sequences.get(key, ClustalSequence(key)).extend(rawSequence, bases)
+                sequence = sequences.get(key, AlignmentSequence(key)).extend(rawSequence, bases)
 
                 if not key in sequences:
                     sequences[key] = sequence
@@ -74,12 +74,12 @@ class MuscleParser:
 
     def parse(self, filename, reference=None):
         """
-        Read the file in input assuming is a valid clustal omega file
+        Read the file in input assuming is a valid muscle file
         """
         with open(filename, 'r') as stream:
             sequences = self.parseLines(stream.readlines())
 
-            return ClustalAlignment(
+            return Alignment(
                 reference=reference,
                 sequences=sequences,
                 length=max(len(s) for s in sequences.values())
@@ -93,14 +93,16 @@ class MuscleParser:
         - a separator line among blocks (skipped)
         """
         sequences = {}
+        current_bases = 0
 
         for block in utils.chunk(self._skipHeader(lines), self.nseq + 2):
             for line in block[0:self.nseq]:
                 key, rawSequence = self._parseLine(line)
-                sequence = sequences.get(key, ClustalSequence(key)).extend(rawSequence, len(rawSequence))
+                sequence = sequences.get(key, AlignmentSequence(key)).extend(rawSequence, current_bases + len(rawSequence))
 
                 if not key in sequences:
                     sequences[key] = sequence
+            current_bases += len(rawSequence)
 
         return sequences
 
