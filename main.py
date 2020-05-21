@@ -5,31 +5,34 @@
 import re
 
 import utils
-from parsers import ClustalParser
+from parsers import ClustalParser, MuscleParser
 from matcher import AligmentDifferenceFinder
 
 
 reference_id = open("input/reference.fasta", "r").readline().split(' ')[0][1:] # NC_045512.2
-#analysis = open("analysis/iran-ref.txt", "r")
 
-aligned_sequences = 3 #numero frequenze allineate (costante globale)
+# aligned_sequences = 8 #numero frequenze allineate (costante globale)
 
-parser = ClustalParser(nseq=aligned_sequences)  #parser.py #(quante sequenze+file) --> sequenze lette
-alignment = parser.parse('analysis/iran-ref.txt', reference = reference_id)
-#alignment = parser.parse('analysis/iran-ref.txt', reference='NC_045512.2')  #alignment == Ref [12]
+muscle_parser = MuscleParser(nseq=8)  #parser.py #(quante sequenze+file) --> sequenze lette
+muscle_alignment = muscle_parser.parse('analysis/muscle-I20200512-170208-0225-69454386-p1m.clw', reference=reference_id)
+
+parser = ClustalParser(nseq=3)  #parser.py #(quante sequenze+file) --> sequenze lette
+alignment = parser.parse('analysis/iran-ref.txt', reference=reference_id)
+# alignment = parser.parse('analysis/iran-ref.txt', reference='NC_045512.2')  #alignment == Ref [12]
 
 print('Read {} bases'.format(len(alignment)))
 
-#return Array con tutti i singoli indici con mismatch nelle stringhe.
-diff_finder = AligmentDifferenceFinder()    #matcher.py
-groups = diff_finder.analyze(alignment)     #vettori indici mismatch almeno 2 sequenze
-#print(groups)
+# return Array con tutti i singoli indici con mismatch nelle stringhe.
+diff_finder = AligmentDifferenceFinder() # matcher.py
+groups = diff_finder.analyze(alignment) # vettori indici mismatch almeno 2 sequenze
+# print(groups)
 
 print('Diff ranges: {}'.format(utils.group_ranges(groups)))
-#print(utils.group_ranges(groups)) ###utils.group_ranges(groups) = gruppi mismatch contigui
-#ritornare i range dei singoli gruppi di numeri contigui
+# print(utils.group_ranges(groups)) # utils.group_ranges(groups) = gruppi mismatch contigui
+
+# ritornare i range dei singoli gruppi di numeri contigui
 for group in utils.group_ranges(groups):
-    start, end = group  #inizio e fine mismatch
+    start, end = group # inizio e fine mismatch
 
     print('> Range: {}-{}'.format(start, end))
     print('Reference: {}'.format(alignment.peek_reference(start, end)))
@@ -37,43 +40,8 @@ for group in utils.group_ranges(groups):
     # print(alignment[start:end+1])
     # print(alignemnt.reference[])
     print()
-### In questo modo hai un Array nel quale ogni elemento è a sua volta un Array che corrisponde agli indici di inizio e fine della zona che non matcha con la reference
-"""possibile futuro lavoro: stampare mismatch solo ref e sequenza con mismatch"""
 
-# blocks = []
-# for line in chunk(lines, aligned_sequences + 1):
-#     blocks.append(ClustalAlignmentBlock.fromRaw(lines))
+# In questo modo hai un Array nel quale ogni elemento è a sua volta un Array che corrisponde
+# agli indici di inizio e fine della zona che non matcha con la reference
 
-# print(blocks[0])
-# print(blocks[0].count_differences())
-
-# lines = pd.DataFrame(map(clean, lines))
-
-####IDEA: Dzionario chiave = ID line, valore = contatore della differenza con refSeqId
-#(tieni al momento anche refSeqId per sicurezza)
-# sequences = dict()
-
-# #print(line[0].split(' ')[0])   DEVO RIMUOVER
-# #print(line[0].split(' ')[1])   elementi =
-# #print(line[2].split(' ')[0])   ['']
-# #print(line[2].split(' ')[1])
-# cont = 0
-# for l in line:
-#     if (l.split(' ')[0] != ''):
-#         #key = l.split(' ')[0]
-#         key, seq = itemgetter(0, 1)(l.split(' '))
-#         if key not in sequences.keys():
-#             sequences[key] = 0
-# ###take seq and compare with sequences[refSeqId], sequences[key] = sequences[key] ++ fpr each mismatch
-#         refSeq = findSequence(l, refSeqId, cont)
-#         print(seq)
-#         for i in range(seq):
-#             if seq[i] != refSeq[i]:     #give unknown problems
-#                 sequences[key] = sequences[key] +1
-
-#     cont = cont + 1 # why no ++ operand in python :(
-#     #print(l.split(' '))
-#     #print(l.split(' ')[1])#error, remove spaces doesn't work
-# ###TODO contare mismetch rispetto refSeqId
-
-# print(sequences)
+# possibile futuro lavoro: stampare mismatch solo ref e sequenza con mismatch

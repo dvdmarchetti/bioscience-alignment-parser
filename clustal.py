@@ -36,7 +36,7 @@ class ClustalSequence:
         self.sequence = sequence
         self.bases = bases
 
-    def extend(self, rawSequence, bases):
+    def extend(self, rawSequence, bases=None):
         self.sequence += rawSequence
         self.bases = bases
 
@@ -44,6 +44,9 @@ class ClustalSequence:
 
     def at(self, index):
         return self.sequence[index]
+
+    def __len__(self):
+        return self.bases if (self.bases != None) else len(self.sequence)
 
     def __repr__(self):
         return str(self)
