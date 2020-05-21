@@ -1,9 +1,52 @@
-{"from": 0, "to": 26, "sequences": ["NC_045512.2", "MT276598.1", "MT276597.1"]}
-{"from": 244, "to": 245, "sequences": ["NC_045512.2", "MT276598.1"]}
+{"from": 0, "to": 58, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-1027/2020|EPI_ISL_437317|2020-03-27", "MT276598.1", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24", "MT240479.1", "hCoV-19/Pakistan/Gilgit1/2020|EPI_ISL_417444|2020-03-04", "MT327745.1", "MT276597.1", "hCov-19/Iran/", "MT320891.2", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14", "MT281530.2", "hCoV-19/Iran/HGRC-2-2162/2020|EPI_ISL_437512|2020-03-26"]}
+{"from": 231, "to": 232, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24"]}
+{"from": 244, "to": 245, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-1027/2020|EPI_ISL_437317|2020-03-27", "MT276598.1", "MT240479.1", "hCoV-19/Pakistan/Gilgit1/2020|EPI_ISL_417444|2020-03-04", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14"]}
 {"from": 316, "to": 317, "sequences": ["NC_045512.2", "MT276598.1"]}
-{"from": 3040, "to": 3041, "sequences": ["NC_045512.2", "MT276598.1"]}
-{"from": 11086, "to": 11087, "sequences": ["NC_045512.2", "MT276597.1"]}
-{"from": 14411, "to": 14412, "sequences": ["NC_045512.2", "MT276598.1"]}
-{"from": 23406, "to": 23407, "sequences": ["NC_045512.2", "MT276598.1"]}
-{"from": 28884, "to": 28887, "sequences": ["NC_045512.2", "MT276598.1"]}
-{"from": 29870, "to": 29903, "sequences": ["NC_045512.2", "MT276598.1", "MT276597.1"]}
+{"from": 887, "to": 888, "sequences": ["NC_045512.2", "MT240479.1", "hCoV-19/Pakistan/Gilgit1/2020|EPI_ISL_417444|2020-03-04"]}
+{"from": 1018, "to": 1193, "sequences": ["NC_045512.2", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14", "MT281530.2"]}
+{"from": 1351, "to": 1352, "sequences": ["NC_045512.2", "MT240479.1", "hCoV-19/Pakistan/Gilgit1/2020|EPI_ISL_417444|2020-03-04"]}
+{"from": 1400, "to": 1401, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24", "MT240479.1", "hCoV-19/Pakistan/Gilgit1/2020|EPI_ISL_417444|2020-03-04", "MT327745.1", "hCov-19/Iran/", "MT320891.2", "MT281530.2", "hCoV-19/Iran/HGRC-2-2162/2020|EPI_ISL_437512|2020-03-26"]}
+{"from": 3040, "to": 3041, "sequences": ["NC_045512.2", "MT276598.1", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14"]}
+{"from": 3906, "to": 3907, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24"]}
+{"from": 6255, "to": 6332, "sequences": ["NC_045512.2", "MT281530.2"]}
+{"from": 6520, "to": 6576, "sequences": ["NC_045512.2", "MT281530.2"]}
+{"from": 7298, "to": 7299, "sequences": ["NC_045512.2", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14"]}
+{"from": 7915, "to": 8280, "sequences": ["NC_045512.2", "MT281530.2"]}
+{"from": 8710, "to": 8711, "sequences": ["NC_045512.2", "hCoV-19/Iran/HGRC-2-2162/2020|EPI_ISL_437512|2020-03-26"]}
+{"from": 8785, "to": 8786, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-1027/2020|EPI_ISL_437317|2020-03-27"]}
+{"from": 9162, "to": 9163, "sequences": ["NC_045512.2", "MT240479.1", "hCoV-19/Pakistan/Gilgit1/2020|EPI_ISL_417444|2020-03-04"]}
+{"from": 9517, "to": 9518, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24"]}
+{"from": 9724, "to": 9739, "sequences": ["NC_045512.2", "MT262993.1"]}
+{"from": 11086, "to": 11087, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24", "MT240479.1", "hCoV-19/Pakistan/Gilgit1/2020|EPI_ISL_417444|2020-03-04", "MT327745.1", "MT276597.1", "hCov-19/Iran/", "MT320891.2", "MT281530.2"]}
+{"from": 11746, "to": 11747, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24"]}
+{"from": 13379, "to": 13380, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24"]}
+{"from": 13479, "to": 13480, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-1027/2020|EPI_ISL_437317|2020-03-27", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24"]}
+{"from": 14411, "to": 14412, "sequences": ["NC_045512.2", "MT276598.1", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14"]}
+{"from": 18380, "to": 18381, "sequences": ["NC_045512.2", "hCov-19/Iran/", "MT320891.2", "MT281530.2"]}
+{"from": 19487, "to": 19488, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24"]}
+{"from": 19519, "to": 19540, "sequences": ["NC_045512.2", "MT262993.1"]}
+{"from": 19987, "to": 19988, "sequences": ["NC_045512.2", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14"]}
+{"from": 20010, "to": 20011, "sequences": ["NC_045512.2", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14"]}
+{"from": 20890, "to": 20891, "sequences": ["NC_045512.2", "hCoV-19/Iran/HGRC-2-2162/2020|EPI_ISL_437512|2020-03-26"]}
+{"from": 21630, "to": 21631, "sequences": ["NC_045512.2", "hCoV-19/Iran/HGRC-2-2162/2020|EPI_ISL_437512|2020-03-26"]}
+{"from": 22350, "to": 22351, "sequences": ["NC_045512.2", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14"]}
+{"from": 22353, "to": 22511, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-1027/2020|EPI_ISL_437317|2020-03-27", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14"]}
+{"from": 22515, "to": 22516, "sequences": ["NC_045512.2", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14"]}
+{"from": 22517, "to": 22518, "sequences": ["NC_045512.2", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14"]}
+{"from": 22738, "to": 22739, "sequences": ["NC_045512.2", "hCoV-19/Iran/HGRC-2-2162/2020|EPI_ISL_437512|2020-03-26"]}
+{"from": 23406, "to": 23407, "sequences": ["NC_045512.2", "MT276598.1", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14"]}
+{"from": 23879, "to": 23880, "sequences": ["NC_045512.2", "MT327745.1"]}
+{"from": 25317, "to": 25318, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-1027/2020|EPI_ISL_437317|2020-03-27"]}
+{"from": 25566, "to": 25567, "sequences": ["NC_045512.2", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14"]}
+{"from": 26552, "to": 26553, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24"]}
+{"from": 26723, "to": 26724, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24"]}
+{"from": 27810, "to": 28458, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-1027/2020|EPI_ISL_437317|2020-03-27", "MT281530.2"]}
+{"from": 28691, "to": 28692, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24", "MT327745.1", "hCoV-19/Iran/HGRC-2-2162/2020|EPI_ISL_437512|2020-03-26"]}
+{"from": 28833, "to": 28834, "sequences": ["NC_045512.2", "hCoV-19/Iran/HGRC-2-2162/2020|EPI_ISL_437512|2020-03-26"]}
+{"from": 28838, "to": 28839, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24"]}
+{"from": 28881, "to": 28882, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-1027/2020|EPI_ISL_437317|2020-03-27"]}
+{"from": 28884, "to": 28887, "sequences": ["NC_045512.2", "MT276598.1", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14"]}
+{"from": 29377, "to": 29378, "sequences": ["NC_045512.2", "hCov-19/Iran/", "MT320891.2", "MT281530.2"]}
+{"from": 29566, "to": 29567, "sequences": ["NC_045512.2", "MT327745.1"]}
+{"from": 29745, "to": 29746, "sequences": ["NC_045512.2", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24", "MT327745.1", "hCov-19/Iran/", "MT320891.2", "MT281530.2", "hCoV-19/Iran/HGRC-2-2162/2020|EPI_ISL_437512|2020-03-26"]}
+{"from": 29836, "to": 29903, "sequences": ["NC_045512.2", "MT262993.1", "MT276598.1", "hCoV-19/Turkey/HSGM-10232/2020|EPI_ISL_437334|2020-03-24", "MT240479.1", "hCoV-19/Pakistan/Gilgit1/2020|EPI_ISL_417444|2020-03-04", "MT327745.1", "MT276597.1", "hCov-19/Iran/", "MT320891.2", "hCoV-19/Israel/130710062/2020|EPI_ISL_447469|2020-04-14", "MT281530.2", "hCoV-19/Iran/HGRC-2-2162/2020|EPI_ISL_437512|2020-03-26"]}
