@@ -12,12 +12,18 @@ class ClustalParser:
         """
         self.nseq = nseq
 
-    def parse(self, filename, reference=None):
+    def parse(self, filename, reference=None, list=[]):
         """
         Read the file in input assuming is a valid clustal omega file
+        list = filter
         """
         with open(filename, 'r') as stream:
-            sequences = self.parseLines(stream.readlines())
+            """Modifica: solo sequenze volute"""
+            if list == [] or list == None:  #if nothing in the list parse everytihng
+                sequences = self.parseLines(stream.readlines())
+            else:
+                print('else')
+                exit()  ###TODO
 
             return ClustalAlignment(
                 reference=reference,
