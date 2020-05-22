@@ -1,73 +1,40 @@
-import hashlib
-import json
-import os
-
-
 import utils
 from parsers import ClustalParser, MuscleParser
 from matcher import AligmentDifferenceFinder
 
+def run(inputFile, reference_id, nseq = 3):
+    parser = ClustalParser(nseq) #parser.py #(quante sequenze+file) --> sequenze lette
+    alignment = parser.parse(inputFile, reference=reference_id)
 
-def save(alignment, analyzer, path=None):
-    if not analyzer.unmatches:
-        raise AssertionError('You must run an analysis to save it results.')
+    print('Read {} bases'.format(len(alignment)))
+    analyzer = AligmentDifferenceFinder()
+    groups = analyzer.analyze(alignment)
+    utils.save(alignment, analyzer, path='output', reference_id = reference_id)
 
-    if not path:
-        path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+def main():
+    #get id of reference sequence
+    reference_id = open("input/reference.fasta", "r").readline().split(' ')[0][1:] # NC_045512.2
 
-    unmatching_groups = {}
-    for sequence, groups in analyzer.unmatches.items():
-        for start, end in groups:
-            key = hash((start, end))
-            if key in unmatching_groups:
-                unmatching_groups[key]['sequences'].append(sequence)
-            else:
-                unmatching_groups[key] = {
-                    'from': start,
-                    'to': end,
-                    'sequences': [sequence]
-                }
+    # Muscle Parser
+    muscle_parser = MuscleParser(nseq=8)  #parser.py #(quante sequenze+file) --> sequenze lette
+    muscle_alignment = muscle_parser.parse('analysis/muscle-I20200512-170208-0225-69454386-p1m.clw', reference=reference_id)
 
-    sequences = tuple(analyzer.unmatches.keys())
-    payload = {
-        'reference': reference_id,
-        'analyzed_sequences': sequences,
-        'unmatches': unmatching_groups
-    }
+    print('Read {} bases'.format(len(muscle_alignment)))
+    analyzer = AligmentDifferenceFinder() # matcher.py
+    groups = analyzer.analyze(muscle_alignment) # vettori indici mismatch rispetto al reference per sequenza
+    utils.save(muscle_alignment, analyzer, path='output', reference_id=reference_id)
 
-    seq_hash = hashlib.sha1(bytes('-'.join(sequences), encoding='utf8'))
-    filename = '{}_{}.json'.format(alignment.reference, seq_hash.hexdigest())
-    with open(os.path.join(path, filename), 'w') as output:
-        output.write(json.dumps(payload, indent=True))
+    # Clustal Parser iran
+    run('analysis/iran-ref.txt', reference_id, 3)
 
+    # Clustal Parser israel
+    run('analysis/israel-ref.txt', reference_id, 3)
 
-reference_id = open("input/reference.fasta", "r").readline().split(' ')[0][1:] # NC_045512.2
+    #Clustal Parser ncbi
+    run('analysis/all.txt', reference_id, 3)
 
-# Muscle Parser
-muscle_parser = MuscleParser(nseq=8)  #parser.py #(quante sequenze+file) --> sequenze lette
-muscle_alignment = muscle_parser.parse('analysis/muscle-I20200512-170208-0225-69454386-p1m.clw', reference=reference_id)
+    # Clustal Global Parser
+    run('analysis/global.txt', reference_id, 14)
 
-print('Read {} bases'.format(len(muscle_alignment)))
-analyzer = AligmentDifferenceFinder() # matcher.py
-groups = analyzer.analyze(muscle_alignment) # vettori indici mismatch rispetto al reference per sequenza
-save(muscle_alignment, analyzer, path='output')
-
-
-# Clustal Parser
-parser = ClustalParser(nseq=3) #parser.py #(quante sequenze+file) --> sequenze lette
-alignment = parser.parse('analysis/iran-ref.txt', reference=reference_id)
-# alignment = parser.parse('analysis/israel-ref.txt', reference=reference_id)
-
-print('Read {} bases'.format(len(muscle_alignment)))
-analyzer = AligmentDifferenceFinder()
-groups = analyzer.analyze(alignment)
-save(alignment, analyzer, path='output')
-
-# Clustal Global Parser
-parser = ClustalParser(nseq=14)
-alignment = parser.parse('analysis/global.txt', reference=reference_id)
-
-print('Read {} bases'.format(len(alignment)))
-analyzer = AligmentDifferenceFinder()
-groups = analyzer.analyze(alignment)
-save(alignment, analyzer, path='output')
+if __name__ == "__main__":
+    main()
