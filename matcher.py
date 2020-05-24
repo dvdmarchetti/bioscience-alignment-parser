@@ -11,7 +11,7 @@ class AligmentDifferenceFinder:
 
                 for i in range(alignment.length):
                     column = alignment.peek_column(sequence, i)
-
+                    #considerate 'N' as a match here?
                     if column != 'N' and column != alignment.peek_reference(i):
                         self.unmatches[sequence].append(i)
 
