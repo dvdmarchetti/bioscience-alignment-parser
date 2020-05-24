@@ -77,3 +77,37 @@ def save(alignment, analyzer, path=None, reference_id='NC_045512.2'):
         output.write(json.dumps(payload, indent=True))
 
     return filename
+
+def jsonComp(file1, file2):
+    """return differences file json output"""
+    with open(file1) as f1:
+        data1 = json.load(f1)
+
+    with open(file2) as f2:
+        data2 = json.load(f2)
+
+    different_items = {}#{k: data1[k] for k in data1 if k in data2 and data1[k] != data2[k]}
+
+    value = []
+    for key in data1.keys():
+        if (data1.get(key, None) != data2.get(key, None)):
+            value.append(key)
+
+    if 'reference' in value:
+        return "insert wrong reference alignment WTF?"
+
+    """if i get error for used different sequences in the alignment"""
+    if 'analyzed_sequences' in value:
+        list  = data1.get('analyzed_sequences', None) + data2.get('analyzed_sequences', None) #sum for then compare
+        extras = [value for value in list if (value in data1.get('analyzed_sequences', None)) ^ (value in data2.get('analyzed_sequences', None))]
+        return "different sequences used: {}".format(extras)
+
+#real differences in alignments
+    #if 'unmatches' in value: #TODO
+        """for v in value:
+            print("data1")
+            print(type(data1.get(v, None)))
+            print("data2")
+            print(type(data2.get(v, None)))"""
+
+    return different_items

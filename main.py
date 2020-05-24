@@ -8,7 +8,7 @@ def runClustal(inputFile, reference_id, nseq = 3):
     clw-->txt file and return the output name"""
     parser = ClustalParser(nseq) #parser.py #(quante sequenze+file) --> sequenze lette
     alignment = parser.parse(inputFile, reference=reference_id)
-    print('Read {} bases'.format(len(alignment)))
+    #print('Read {} bases'.format(len(alignment)))
     analyzer = AligmentDifferenceFinder()
     groups = analyzer.analyze(alignment)
     return utils.save(alignment, analyzer, path='output', reference_id = reference_id)
@@ -18,7 +18,7 @@ def runMuscle(inputFile, reference_id, nseq = 3):
     clw file and return the output name"""
     muscle_parser = MuscleParser(nseq)  #parser.py #(quante sequenze+file) --> sequenze lette
     muscle_alignment = muscle_parser.parse(inputFile, reference=reference_id)
-    print('Read {} bases'.format(len(muscle_alignment)))
+    #print('Read {} bases'.format(len(muscle_alignment)))
     analyzer = AligmentDifferenceFinder() # matcher.py
     groups = analyzer.analyze(muscle_alignment) # vettori indici mismatch rispetto al reference per sequenza
     return utils.save(muscle_alignment, analyzer, path='output', reference_id=reference_id)
@@ -40,30 +40,54 @@ def main():
             import sh
             sh.rm(f)
 
+    #ClustalJ = file jason from clustal alignment; MuscleJ = file jason from muscle alignment
     # Clustal Parser iran
-    print(runClustal('analysis/iran-ref.txt', reference_id, 3))
+    ClustalJ = runClustal('analysis/iran-ref.txt', reference_id, 3)
 
     # Muscle Parser iran
-    print(runMuscle('analysis/muscle-I20200523-084930-0610-44096621-p1m.clw', reference_id, 3))
+    MuscleJ = runMuscle('analysis/muscle-I20200523-084930-0610-44096621-p1m.clw', reference_id, 3)
+
+    #compare them
+    data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
+    print("Iran " + str(data))
 
     # Clustal Parser israel
-    print(runClustal('analysis/israel-ref.txt', reference_id, 3))
+    ClustalJ = runClustal('analysis/israel-ref.txt', reference_id, 3)
 
     # Muscle Parser israel
-    print(runMuscle('analysis/muscle-I20200523-085708-0753-28920419-p1m.clw', reference_id, 4))
+    MuscleJ = runMuscle('analysis/muscle-I20200523-085708-0753-28920419-p1m.clw', reference_id, 4)
+
+    data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
+    print("Israel " + str(data))
+
+    # Clustal Parser GISAID
+    ClustalJ = runClustal('analysis/GISAID-all.txt', reference_id, 7)
+
+    # Muscle Parser GISAID
+    MuscleJ = runMuscle('analysis/muscle-I20200523-090216-0023-41230765-p1m.clw', reference_id, 7)
+
+    data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
+    #print("GISAID " + str(data))
 
     #Clustal Parser ncbi
-    runClustal('analysis/all.txt', reference_id, 3)
+    ClustalJ = runClustal('analysis/all.txt', reference_id, 3)
 
     # Muscle Parser ncbi
-    runMuscle('analysis/muscle-I20200512-170208-0225-69454386-p1m.clw', reference_id, 8)
+    MuscleJ = runMuscle('analysis/muscle-I20200512-170208-0225-69454386-p1m.clw', reference_id, 8)
+
+    #compare them
+    data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
+    print("ncbi " + str(data))
 
     # Clustal Global Parser
-    runClustal('analysis/global.txt', reference_id, 14)
+    ClustalJ = runClustal('analysis/global.txt', reference_id, 14)
 
     # Muscle Global Parser
-    runMuscle('analysis/muscle-I20200523-090837-0910-95910164-p1m.clw', reference_id, 15)
+    MuscleJ = runMuscle('analysis/muscle-I20200523-090837-0910-95910164-p1m.clw', reference_id, 15)
 
+    #compare them
+    data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
+    print("global " + str(data))
 
 if __name__ == "__main__":
     main()
