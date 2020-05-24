@@ -1,6 +1,8 @@
 import utils
 from parsers import ClustalParser, MuscleParser
 from matcher import AligmentDifferenceFinder
+import os, glob #to remove file in folder
+import sh
 
 def runClustal(inputFile, reference_id, nseq = 3):
     """function that contain algorithm to compute mismatches Clustal
@@ -27,17 +29,25 @@ def main():
     #get id of reference sequence
     reference_id = open("input/reference.fasta", "r").readline().split(' ')[0][1:] # NC_045512.2
 
+    """clean folder output to make spaces for new output files"""
+    files = glob.glob('output')
+    for f in files:
+        #if Windows
+        os.remove(f)
+        #if linux
+        sh.rm(f)
+
     # Clustal Parser iran
     print(runClustal('analysis/iran-ref.txt', reference_id, 3))
-""""BUG: same name output with same sequences and 2 pairs of sequences with different alignments"""
+
     # Muscle Parser iran
     print(runMuscle('analysis/muscle-I20200523-084930-0610-44096621-p1m.clw', reference_id, 3))
 
     # Clustal Parser israel
-    runClustal('analysis/israel-ref.txt', reference_id, 3)
+    print(runClustal('analysis/israel-ref.txt', reference_id, 3))
 
     # Muscle Parser israel
-    runMuscle('analysis/muscle-I20200523-085708-0753-28920419-p1m.clw', reference_id, 4)
+    print(runMuscle('analysis/muscle-I20200523-085708-0753-28920419-p1m.clw', reference_id, 4))
 
     #Clustal Parser ncbi
     runClustal('analysis/all.txt', reference_id, 3)

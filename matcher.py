@@ -8,10 +8,10 @@ class AligmentDifferenceFinder:
         for sequence in alignment.sequences:
             if sequence != alignment.reference:
                 self.unmatches[sequence] = []
-
+                #iterate alignment
                 for i in range(alignment.length):
                     column = alignment.peek_column(sequence, i)
-                    #considerate 'N' as a match here?
+                    #considerate 'N' as a not mismatch
                     if column != 'N' and column != alignment.peek_reference(i):
                         self.unmatches[sequence].append(i)
 

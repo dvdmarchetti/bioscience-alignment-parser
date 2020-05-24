@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+from datetime import datetime
 
 def chunk(iterable, size):
     """Yield successive n-sized chunks from iterable."""
@@ -41,7 +42,7 @@ def removeLn(file):
 
 def save(alignment, analyzer, path=None, reference_id='NC_045512.2'):
     """
-    save results of all mismatches in a file.json named: reference_hashSequences.json
+    save results of all mismatches in a file.json named: reference_hash(Sequences+timestamp).json
     and return the name"""
     if not analyzer.unmatches:
         raise AssertionError('You must run an analysis to save it results.')
@@ -49,6 +50,7 @@ def save(alignment, analyzer, path=None, reference_id='NC_045512.2'):
     if not path:
         path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
+    now = datetime.now()
     unmatching_groups = {}
     for sequence, groups in analyzer.unmatches.items():
         for start, end in groups:
@@ -68,8 +70,8 @@ def save(alignment, analyzer, path=None, reference_id='NC_045512.2'):
         'analyzed_sequences': sequences,
         'unmatches': unmatching_groups
     }
-
-    seq_hash = hashlib.sha1(bytes('-'.join(sequences), encoding='utf8'))
+#datetime.timestamp(now).toString() in order to permit 2 outputs of same sequences in multiple tools
+    seq_hash = hashlib.sha1(bytes(str(datetime.timestamp(now)).join(sequences), encoding='utf8'))
     filename = '{}_{}.json'.format(alignment.reference, seq_hash.hexdigest())
     with open(os.path.join(path, filename), 'w') as output:
         output.write(json.dumps(payload, indent=True))
