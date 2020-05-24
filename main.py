@@ -2,7 +2,6 @@ import utils
 from parsers import ClustalParser, MuscleParser
 from matcher import AligmentDifferenceFinder
 import os, glob #to remove file in folder
-import sh
 
 def runClustal(inputFile, reference_id, nseq = 3):
     """function that contain algorithm to compute mismatches Clustal
@@ -30,12 +29,16 @@ def main():
     reference_id = open("input/reference.fasta", "r").readline().split(' ')[0][1:] # NC_045512.2
 
     """clean folder output to make spaces for new output files"""
-    files = glob.glob('output')
-    for f in files:
-        #if Windows
-        os.remove(f)
-        #if linux
-        sh.rm(f)
+    dirname = os.path.dirname(__file__)
+    path_to_dir = os.path.join(dirname, 'output')  # path to directory you wish to remove
+    files_in_dir = os.listdir(path_to_dir)     # get list of files in the directory
+
+    for file in files_in_dir:# loop to delete each file in folder
+        if os.name == 'nt': #if Windows
+            os.remove(f'{path_to_dir}/{file}')     # delete file
+        else: #if linux
+            import sh
+            sh.rm(f)
 
     # Clustal Parser iran
     print(runClustal('analysis/iran-ref.txt', reference_id, 3))
