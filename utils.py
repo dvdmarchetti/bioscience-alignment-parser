@@ -40,6 +40,9 @@ def removeLn(file):
     w.close()
 
 def save(alignment, analyzer, path=None, reference_id='NC_045512.2'):
+    """
+    save results of all mismatches in a file.json named: reference_hashSequences.json
+    and return the name"""
     if not analyzer.unmatches:
         raise AssertionError('You must run an analysis to save it results.')
 
@@ -70,3 +73,5 @@ def save(alignment, analyzer, path=None, reference_id='NC_045512.2'):
     filename = '{}_{}.json'.format(alignment.reference, seq_hash.hexdigest())
     with open(os.path.join(path, filename), 'w') as output:
         output.write(json.dumps(payload, indent=True))
+
+    return filename
