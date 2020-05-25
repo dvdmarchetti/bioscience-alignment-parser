@@ -93,21 +93,37 @@ def jsonComp(file1, file2):
         if (data1.get(key, None) != data2.get(key, None)):
             value.append(key)
 
-    if 'reference' in value:
+#salta sta parte e parti dagli allineamenti
+    """if 'reference' in value:
         return "insert wrong reference alignment WTF?"
 
-    """if i get error for used different sequences in the alignment"""
+    #if i get error for used different sequences in the alignment
     if 'analyzed_sequences' in value:
         list  = data1.get('analyzed_sequences', None) + data2.get('analyzed_sequences', None) #sum for then compare
         extras = [value for value in list if (value in data1.get('analyzed_sequences', None)) ^ (value in data2.get('analyzed_sequences', None))]
-        return "different sequences used: {}".format(extras)
+        return "different sequences used: {}".format(extras) """
 
 #real differences in alignments
-    #if 'unmatches' in value: #TODO
-        """for v in value:
-            print("data1")
-            print(type(data1.get(v, None)))
-            print("data2")
-            print(type(data2.get(v, None)))"""
+    unmatches = []
+    if 'unmatches' in value: #TODO
+        for x in data1.get('unmatches').keys():
+            #print(data1.get('unmatches').get(x))
+            unmatches.append(data1.get('unmatches').get(x))
+
+        print(len(unmatches))
+        cont = 0;
+        for y in data2.get('unmatches').keys():
+            #print(data2.get('unmatches').get(y))
+            if ((data2.get('unmatches').get(y).get('from') != unmatches[cont].get('from')) or
+             (data2.get('unmatches').get(y).get('to') != unmatches[cont].get('to'))):
+                print(cont)
+                different_items[y] = [unmatches[cont], data2.get('unmatches').get(y)]
+                #print(type(unmatches[cont]))
+            cont = cont + 1
+        #for v in value:
+            #print(type(v))
+            #print(type(data1.get(v, None)))
+            #print("data2")
+            #print(type(data2.get(v, None)))
 
     return different_items

@@ -52,14 +52,14 @@ def main():
     print("Iran " + str(data))
 
     # Clustal Parser israel
-    ClustalJ = runClustal('analysis/israel-ref.txt', reference_id, 3)
+    ClustalJ = runClustal('analysis/israel-ref.txt', reference_id, 4)
 
     # Muscle Parser israel
     MuscleJ = runMuscle('analysis/muscle-I20200523-085708-0753-28920419-p1m.clw', reference_id, 4)
 
     data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
     print("Israel " + str(data))
-
+    """ """
     # Clustal Parser GISAID
     ClustalJ = runClustal('analysis/GISAID-all.txt', reference_id, 7)
 
@@ -88,6 +88,7 @@ def main():
     #compare them
     data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
     print("global " + str(data))
+
 
 if __name__ == "__main__":
     main()
