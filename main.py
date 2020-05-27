@@ -1,7 +1,7 @@
 import utils
 from parsers import ClustalParser, MuscleParser
 from matcher import AligmentDifferenceFinder
-import os, glob #to remove file in folder
+import os#to remove file in folder
 
 def runClustal(inputFile, reference_id, nseq = 3):
     """function that contain algorithm to compute mismatches Clustal
@@ -69,7 +69,7 @@ def main():
     data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
     #print("GISAID " + str(data))
 
-    #Clustal Parser ncbi
+    """#Clustal Parser ncbi
     ClustalJ = runClustal('analysis/all.txt', reference_id, 3)
 
     # Muscle Parser ncbi
@@ -87,7 +87,7 @@ def main():
 
     #compare them
     data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    print("global " + str(data))
+    print("global " + str(data))"""
 
 
 if __name__ == "__main__":

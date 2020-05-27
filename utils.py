@@ -104,13 +104,34 @@ def jsonComp(file1, file2):
         return "different sequences used: {}".format(extras) """
 
 #real differences in alignments
-    unmatches = []
+    lFrom,lTo = [], []
     if 'unmatches' in value: #TODO
         for x in data1.get('unmatches').keys():
             #print(data1.get('unmatches').get(x))
-            unmatches.append(data1.get('unmatches').get(x))
+            lFrom.append(data1.get('unmatches').get(x).get('from'))
+            lTo.append(data1.get('unmatches').get(x).get('to'))
 
-        print(len(unmatches))
+        print(lFrom)
+        for y in data2.get('unmatches').keys():
+            #if not data2.get('unmatches').get(y).get('from') in lFrom:
+                #different_items[y] = [data2.get('unmatches').get(y)]
+            if data2.get('unmatches').get(y).get('from') in lFrom:
+                pos = lFrom.index(data2.get('unmatches').get(y).get('from'))
+                #print(pos)
+                if data2.get('unmatches').get(y).get('to') != lTo[pos]:
+                    """TO FIX"""
+                    different_items[y] = [data1.get('unmatches').get(x), data2.get('unmatches').get(y)]
+                else:
+                    #remove matching_groups
+                    del lFrom[pos]
+                    del lTo[pos]
+            else:
+                different_items[y] = [data2.get('unmatches').get(y)]
+
+        #insert remaining
+
+
+        """print(len(unmatches))
         cont = 0;
         for y in data2.get('unmatches').keys():
             #print(data2.get('unmatches').get(y))
@@ -125,5 +146,6 @@ def jsonComp(file1, file2):
             #print(type(data1.get(v, None)))
             #print("data2")
             #print(type(data2.get(v, None)))
+            """
 
     return different_items
