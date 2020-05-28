@@ -11,7 +11,7 @@ def runClustal(inputFile, reference_id, nseq = 3):
     #print('Read {} bases'.format(len(alignment)))
     analyzer = AligmentDifferenceFinder()
     groups = analyzer.analyze(alignment)
-    return utils.save(alignment, analyzer, path='output', reference_id = reference_id)
+    return utils.save(alignment, analyzer, reference_id=reference_id, tool='Muscle', path='output')
 
 def runMuscle(inputFile, reference_id, nseq = 3):
     """function that contain algorithm to compute mismatches Muscle
@@ -21,7 +21,7 @@ def runMuscle(inputFile, reference_id, nseq = 3):
     #print('Read {} bases'.format(len(muscle_alignment)))
     analyzer = AligmentDifferenceFinder() # matcher.py
     groups = analyzer.analyze(muscle_alignment) # vettori indici mismatch rispetto al reference per sequenza
-    return utils.save(muscle_alignment, analyzer, path='output', reference_id=reference_id)
+    return utils.save(muscle_alignment, analyzer, reference_id='NC_045512.2', tool='Clustal', path='output')
 
 
 def main():
@@ -40,16 +40,16 @@ def main():
             import sh
             sh.rm(f)
 
-    #ClustalJ = file jason from clustal alignment; MuscleJ = file jason from muscle alignment
-    # Clustal Parser iran
-    ClustalJ = runClustal('analysis/iran-ref.txt', reference_id, 3)
+    # #ClustalJ = file jason from clustal alignment; MuscleJ = file jason from muscle alignment
+    # # Clustal Parser iran
+    # ClustalJ = runClustal('analysis/iran-ref.txt', reference_id, 3)
 
-    # Muscle Parser iran
-    MuscleJ = runMuscle('analysis/muscle-I20200523-084930-0610-44096621-p1m.clw', reference_id, 3)
+    # # Muscle Parser iran
+    # MuscleJ = runMuscle('analysis/muscle-I20200523-084930-0610-44096621-p1m.clw', reference_id, 3)
 
     #compare them
-    data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    print("Iran " + str(data))
+    # data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
+    # print("Iran " + str(data))
 
     # Clustal Parser israel
     ClustalJ = runClustal('analysis/israel-ref.txt', reference_id, 4)
@@ -57,17 +57,18 @@ def main():
     # Muscle Parser israel
     MuscleJ = runMuscle('analysis/muscle-I20200523-085708-0753-28920419-p1m.clw', reference_id, 4)
 
-    data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    print("Israel " + str(data))
-    """ """
-    # Clustal Parser GISAID
-    ClustalJ = runClustal('analysis/GISAID-all.txt', reference_id, 7)
+    left_diff, right_diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
+    print (left_diff)
+    print (right_diff)
+    # print("Israel " + str(data))
+    # # Clustal Parser GISAID
+    # ClustalJ = runClustal('analysis/GISAID-all.txt', reference_id, 7)
 
-    # Muscle Parser GISAID
-    MuscleJ = runMuscle('analysis/muscle-I20200523-090216-0023-41230765-p1m.clw', reference_id, 7)
+    # # Muscle Parser GISAID
+    # MuscleJ = runMuscle('analysis/muscle-I20200523-090216-0023-41230765-p1m.clw', reference_id, 7)
 
-    data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    #print("GISAID " + str(data))
+    # data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
+    # #print("GISAID " + str(data))
 
     """#Clustal Parser ncbi
     ClustalJ = runClustal('analysis/all.txt', reference_id, 3)

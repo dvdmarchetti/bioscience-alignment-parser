@@ -40,7 +40,7 @@ def removeLn(file):
     w.writelines([item for item in lines[:-1]])
     w.close()
 
-def save(alignment, analyzer, path=None, reference_id='NC_045512.2'):
+def save(alignment, analyzer, reference_id=None, tool=None, path=None):
     """
     save results of all mismatches in a file.json named: reference_hash(Sequences+timestamp).json
     and return the name"""
@@ -67,12 +67,15 @@ def save(alignment, analyzer, path=None, reference_id='NC_045512.2'):
     sequences = tuple(analyzer.unmatches.keys())
     payload = {
         'reference': reference_id,
+        'tool': tool,
         'analyzed_sequences': sequences,
         'unmatches': unmatching_groups
     }
-#datetime.timestamp(now).toString() in order to permit 2 outputs of same sequences in multiple tools
-    seq_hash = hashlib.sha1(bytes(str(datetime.timestamp(now)).join(sequences), encoding='utf8'))
-    filename = '{}_{}.json'.format(alignment.reference, seq_hash.hexdigest())
+
+    #datetime.timestamp(now).toString() in order to permit 2 outputs of same sequences in multiple tools
+    # seq_hash = hashlib.sha1(bytes(str(datetime.timestamp(now)).join(sequences), encoding='utf8'))
+    # filename = '{}_{}.json'.format(alignment.reference, seq_hash.hexdigest())
+    filename = '{}_{}.json'.format(alignment.reference, str(datetime.timestamp(now)))
     with open(os.path.join(path, filename), 'w') as output:
         output.write(json.dumps(payload, indent=True))
 
@@ -81,71 +84,84 @@ def save(alignment, analyzer, path=None, reference_id='NC_045512.2'):
 def jsonComp(file1, file2):
     """return differences file json output"""
     with open(file1) as f1:
-        data1 = json.load(f1)
+        left = json.load(f1)
 
     with open(file2) as f2:
-        data2 = json.load(f2)
+        right = json.load(f2)
 
-    different_items = {}#{k: data1[k] for k in data1 if k in data2 and data1[k] != data2[k]}
+    # different_items = []#{k: left[k] for k in left if k in right and left[k] != right[k]}
+    diff_left = []
+    diff_right = []
 
     value = []
-    for key in data1.keys():
-        if (data1.get(key, None) != data2.get(key, None)):
+    for key in left.keys():
+        if (left.get(key, None) != right.get(key, None)):
             value.append(key)
 
-#salta sta parte e parti dagli allineamenti
+    #salta sta parte e parti dagli allineamenti
     """if 'reference' in value:
         return "insert wrong reference alignment WTF?"
 
     #if i get error for used different sequences in the alignment
     if 'analyzed_sequences' in value:
-        list  = data1.get('analyzed_sequences', None) + data2.get('analyzed_sequences', None) #sum for then compare
-        extras = [value for value in list if (value in data1.get('analyzed_sequences', None)) ^ (value in data2.get('analyzed_sequences', None))]
+        list  = left.get('analyzed_sequences', None) + right.get('analyzed_sequences', None) #sum for then compare
+        extras = [value for value in list if (value in left.get('analyzed_sequences', None)) ^ (value in right.get('analyzed_sequences', None))]
         return "different sequences used: {}".format(extras) """
 
-#real differences in alignments
-    lFrom,lTo = [], []
-    if 'unmatches' in value: #TODO
-        for x in data1.get('unmatches').keys():
-            #print(data1.get('unmatches').get(x))
-            lFrom.append(data1.get('unmatches').get(x).get('from'))
-            lTo.append(data1.get('unmatches').get(x).get('to'))
+    if left.get('unmatches') is None or right.get('unmatches') is None:
+        print('Invalid output file provided')
+        return [[], []]
 
-        print(lFrom)
-        for y in data2.get('unmatches').keys():
-            #if not data2.get('unmatches').get(y).get('from') in lFrom:
-                #different_items[y] = [data2.get('unmatches').get(y)]
-            if data2.get('unmatches').get(y).get('from') in lFrom:
-                pos = lFrom.index(data2.get('unmatches').get(y).get('from'))
-                #print(pos)
-                if data2.get('unmatches').get(y).get('to') != lTo[pos]:
-                    """TO FIX"""
-                    different_items[y] = [data1.get('unmatches').get(x), data2.get('unmatches').get(y)]
-                else:
-                    #remove matching_groups
-                    del lFrom[pos]
-                    del lTo[pos]
-            else:
-                different_items[y] = [data2.get('unmatches').get(y)]
+    leftKeys = set(left.get('unmatches').keys())
+    rightKeys = set(right.get('unmatches').keys())
 
-        #insert remaining
+    # Symmetric diff: take elements that are either in xkeys or ykeys, but not in both
+    for key in leftKeys ^ rightKeys:
+        if left.get('unmatches').get(key) is not None:
+            diff_left.append(left.get('unmatches').get(key))
+        if right.get('unmatches').get(key) is not None:
+            diff_right.append(right.get('unmatches').get(key))
+
+    return [diff_left, diff_right]
+
+    # xranges = []
+    # for x, xvalue in xunmatches.items():
+    #     xranges.append((xvalue.get('from'), xvalue.get('to')))
+
+    # yranges = []
+    # for y, yvalue in yunmatches.items():
+    #     rng = (yvalue.get('from'), yvalue.get('to'))
+
+    #     if rng in xranges:
+    #         # X and Y have the same ranges -> remove from X
+    #         xranges.remove(rng)
+    #     else:
+    #         yranges.append((yvalue.get('from'), yvalue.get('to')))
+
+    # for (xFrom, xTo) in xranges:
+    #     for (yFrom, yTo) in yranges:
+    #         if (xFrom == yFrom and xTo != yTo) or (xFrom != yFrom and xTo == yTo):
+    #             different_items.append([
+    #                 xunmatches.get(str(hash((xFrom, xTo)))),
+    #                 yunmatches.get(str(hash((yFrom, yTo))))
+    #             ])
 
 
-        """print(len(unmatches))
-        cont = 0;
-        for y in data2.get('unmatches').keys():
-            #print(data2.get('unmatches').get(y))
-            if ((data2.get('unmatches').get(y).get('from') != unmatches[cont].get('from')) or
-             (data2.get('unmatches').get(y).get('to') != unmatches[cont].get('to'))):
-                print(cont)
-                different_items[y] = [unmatches[cont], data2.get('unmatches').get(y)]
-                #print(type(unmatches[cont]))
-            cont = cont + 1
-        #for v in value:
-            #print(type(v))
-            #print(type(data1.get(v, None)))
-            #print("data2")
-            #print(type(data2.get(v, None)))
-            """
+    """print(len(unmatches))
+    cont = 0;
+    for y in right.get('unmatches').keys():
+        #print(right.get('unmatches').get(y))
+        if ((right.get('unmatches').get(y).get('from') != unmatches[cont].get('from')) or
+            (right.get('unmatches').get(y).get('to') != unmatches[cont].get('to'))):
+            print(cont)
+            different_items[y] = [unmatches[cont], right.get('unmatches').get(y)]
+            #print(type(unmatches[cont]))
+        cont = cont + 1
+    #for v in value:
+        #print(type(v))
+        #print(type(left.get(v, None)))
+        #print("right")
+        #print(type(right.get(v, None)))
+        """
 
-    return different_items
+    # return different_items
