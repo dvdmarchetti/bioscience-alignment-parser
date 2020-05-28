@@ -29,7 +29,7 @@ def group_ranges(values):
     return [[u[0], u[-1] + 1] if len(u) > 1 else [u[0], u[0] + 1] for u in units]
 
 def removeLn(file):
-    import os, sys
+    import sys
     """
     remove last line file
     """

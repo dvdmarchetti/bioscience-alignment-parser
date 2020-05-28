@@ -42,14 +42,14 @@ def main():
 
     # #ClustalJ = file jason from clustal alignment; MuscleJ = file jason from muscle alignment
     # # Clustal Parser iran
-    # ClustalJ = runClustal('analysis/iran-ref.txt', reference_id, 3)
+    ClustalJ = runClustal('analysis/iran-ref.txt', reference_id, 3)
 
     # # Muscle Parser iran
-    # MuscleJ = runMuscle('analysis/muscle-I20200523-084930-0610-44096621-p1m.clw', reference_id, 3)
+    MuscleJ = runMuscle('analysis/muscle-I20200523-084930-0610-44096621-p1m.clw', reference_id, 3)
 
     #compare them
-    # data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    # print("Iran " + str(data))
+    left_diff, right_diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
+    print("Iran " + str(left_diff) + str(right_diff))
 
     # Clustal Parser israel
     ClustalJ = runClustal('analysis/israel-ref.txt', reference_id, 4)
@@ -58,8 +58,7 @@ def main():
     MuscleJ = runMuscle('analysis/muscle-I20200523-085708-0753-28920419-p1m.clw', reference_id, 4)
 
     left_diff, right_diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    print (left_diff)
-    print (right_diff)
+    print("Israel " + str(left_diff) + str(right_diff))
     # print("Israel " + str(data))
     # # Clustal Parser GISAID
     # ClustalJ = runClustal('analysis/GISAID-all.txt', reference_id, 7)
