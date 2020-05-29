@@ -43,19 +43,9 @@ Sfruttando gli strumenti messi a disposizione dall'European Bioinformatics Insti
 
 \newpage
 \section{Descrizione}
-L'analisi filogenetica serve a ricostruire la storia delle mutazioni, ossia come specie antiche si sono evolute in quelle moderne.\newline
-I geni sono composti da sequenze di Acido Desossiribonucleico (DNA) (o RNA in caso di alcuni virus), composto da uno zucchero(dessossiribosio) che unisce un gruppo fosfato ad una base azotata per comporre nucleotidi (i nucleotidi sono unità ripetitive costitutive degli acidi nucleici) che compongono il genoma.\newline
-Un GENE non è nient' altro che una particolare sequenza di DNA, che codifica l' informazione in un linguaggio a quattro lettere, nel quale ogni lettera è rappresentata da una base.\newline
-Il genotipo di un individuo è dato dal suo corredo genetico.
-Il fenotipo, invece, è l'insieme dei caratteri che l'individuo manifesta:dipende dal suo genotipo, dalle interazioni fra geni e anche da fattori
-esterni.
+Il SARS-CoV-2 (acronimo dall'inglese Severe Acute Respiratory Syndrome - CoronaVirus - 2), è un ceppo virale della specie SARS-related coronavirus/SARS-CoV, facente parte del genere Betacoronavirus (ceppo di virus a RNA).
 
-Il DNA viene utilizzato:
-\begin{enumerate}
-  \item trascrivendolo in RNA
-  \item rendere l' RNA stabile aggiungendo ai limiti 7-metilguanosina (7mGTP)
-  \item trascritto il risultato precedente in amminoacidi che creeranno proteine.
-\end{enumerate}
+Il virus è stato sequenziato genomicamente dopo un test di acido nucleico effettuato su un campione prelevato da un paziente colpito da una polmonite, di cui non si conosceva la causa, ad inizio Dicembre 2019 a Wuhan (città continentale a est della Cina).
 
 \newpage
 \section{Sequenze Analizzate}
@@ -98,7 +88,7 @@ In aggiunta alla sequenza di riferimento di Wuhan, sono state selezionate alcune
 \section{Strumenti utilizzati}
 L'analisi è stata effettuata utilizzando \lstinline{Clustal Omega} e \lstinline{MUSCLE}, due strumenti per l'allineamento di sequenze multiple (MSA) accessibili attraverso un'interfaccia web\footnote{\url{https://www.ebi.ac.uk/Tools/msa/clustalo/}} \footnote{\url{https://www.ebi.ac.uk/Tools/msa/muscle/}}.
 
-\newpage
+% \newpage
 \section{Analisi preliminare}
 Una prima analisi delle sequenze è stata effettuata con l'ausilio di Jalview\footnote{\url{https://www.jalview.org/}}, un software open source che offre la possibilità di generare una visualizzazione grafica degli gli allineamenti effettuati dai tool.
 
@@ -108,23 +98,23 @@ Tramite questa si riescono a mettere in evidenza aspetti interessanti: come osse
   \makebox[\textwidth][c]{\includegraphics[width=1.3\linewidth]{jalview-clustal-start.png}}
   \caption{Differenze all'inizio dell'allineamento}
   \label{fig:jalview-start}
+\end{figure}
 
+\begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=1.3\linewidth]{jalview-clustal-end.png}}
   \caption{Differenze alla fine dell'allineamento}
   \label{fig:jalview-end}
 \end{figure}
 
-Inoltre, un paio di sequenze presentano basi mancanti o possibili problemi nel sequenziamento (\cref{fig:jalview-inner}).
+Inoltre, due delle sequenze selezionate presentano basi mancanti o possibili problemi nel sequenziamento (\cref{fig:jalview-inner}).
 Quest'ultimi verranno successivamente interpretate facendo riferimento allo IUPAC Code\footnote{\url{https://www.bioinformatics.org/sms/iupac.html}} e, specificatamente, verranno considerate come match rispetto al reference.
 
 \begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=1.5\linewidth]{jalview-clustal-inner.png}}
-  \caption{Differenze all'interno dell'allineamento}
+  \caption{Differenze all'interno delle sequenze}
   \label{fig:jalview-inner}
 \end{figure}
 
-
-%BREVE DESCRIZIONE TOOLS?%
 \section{Codice}
 Il codice è in python ed esegue:
 \begin{enumerate}
@@ -149,7 +139,7 @@ Il codice è in python ed esegue:
 \begin{itemize}
   \item \lstinline{runClustal(inputFile, reference_id, nseq=3)}: funzione che esegue il parsing del file di allineamento clustal (inputFile), esegue il parsing degli allineamenti e li salva nel file di output. \newline nseq serve al parser in quanto la classe \lstinline{ClustalParser} richiede il numero di sequenze da elaborare nelle sue funzioni.
 
-  \item \lstinline{runMuscle(inputFile, reference_id, nseq=3)}: funzione che esegue il parsing del file di allineamento muscle (inputFile), esegue il parsing degli allineamenti e li salva nel file di output. \newline
+  \item \lstinline{runMuscle(inputFile, reference_id, nseq=3)}: funzione che esegue il parsing del file di allineamento muscle (inputFile), esegue il parsing degli allineamenti e li salva nel file di output.
 
   \item \lstinline{parse(self, filename, reference=None, list=[]}:  legge il file in ingresso e restituisce il file in input suddiviso in: reference, sequenze, lunghezza sequenze. svolge la sua funzione sfruttando il metodo: \lstinline{parseLines(self, lines)}
 

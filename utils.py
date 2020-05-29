@@ -1,7 +1,7 @@
 import hashlib
 import json
 import os
-from datetime import datetime
+import time
 
 def chunk(iterable, size):
     """Yield successive n-sized chunks from iterable."""
@@ -28,17 +28,6 @@ def group_ranges(values):
 
     return [[u[0], u[-1] + 1] if len(u) > 1 else [u[0], u[0] + 1] for u in units]
 
-def removeLn(file):
-    import sys
-    """
-    remove last line file
-    """
-    readFile = open(file)
-    lines = readFile.readlines()
-    readFile.close()
-    w = open(file,'w')
-    w.writelines([item for item in lines[:-1]])
-    w.close()
 
 def save(alignment, analyzer, reference_id=None, tool=None, path=None):
     """
@@ -50,46 +39,56 @@ def save(alignment, analyzer, reference_id=None, tool=None, path=None):
     if not path:
         path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-    now = datetime.now()
     unmatching_groups = {}
     for sequence, groups in analyzer.unmatches.items():
         for start, end in groups:
             key = hash((start, end))
             if key in unmatching_groups:
-                unmatching_groups[key]['sequences'].append(sequence)
+                unmatching_groups[key]['sequences'].append({
+                    sequence: alignment.sequences[sequence][start:end]
+                })
             else:
                 unmatching_groups[key] = {
                     'from': start,
                     'to': end,
-                    'sequences': [sequence]
+                    'reference': alignment.sequences[alignment.reference][start:end],
+                    'sequences': [{
+                        sequence: alignment.sequences[sequence][start:end]
+                    }]
                 }
 
+    now = time.localtime()
     sequences = tuple(analyzer.unmatches.keys())
     payload = {
-        'reference': reference_id,
         'tool': tool,
+        'timestamp': time.strftime('%Y/%m/%d %H:%M:%S UTC%z', now),
+        'reference': reference_id,
         'analyzed_sequences': sequences,
         'unmatches': unmatching_groups
     }
 
     #datetime.timestamp(now).toString() in order to permit 2 outputs of same sequences in multiple tools
-    # seq_hash = hashlib.sha1(bytes(str(datetime.timestamp(now)).join(sequences), encoding='utf8'))
+    # seq_hash = hashlib.sha1(bytes(timestamp.join(sequences), encoding='utf8'))
     # filename = '{}_{}.json'.format(alignment.reference, seq_hash.hexdigest())
-    filename = '{}_{}.json'.format(alignment.reference, str(datetime.timestamp(now)))
+    filename = '{}-{}_{}.json'.format(tool, alignment.reference, time.strftime('%Y-%m-%d_%H-%M', now))
     with open(os.path.join(path, filename), 'w') as output:
-        output.write(json.dumps(payload, indent=True))
+        output.write(json.dumps(payload))
 
     return filename
 
-def jsonComp(file1, file2):
+
+def compare_outputs(clustal=None, muscle=None):
     """return differences file json output"""
-    with open(file1) as f1:
+    if not clustal or not muscle:
+        print('You must provide valid alignment output for both clustal and muscle')
+        return
+
+    with open(clustal) as f1:
         left = json.load(f1)
 
-    with open(file2) as f2:
+    with open(muscle) as f2:
         right = json.load(f2)
 
-    # different_items = []#{k: left[k] for k in left if k in right and left[k] != right[k]}
     diff_left = []
     diff_right = []
 
@@ -112,22 +111,24 @@ def jsonComp(file1, file2):
         if right.get('unmatches').get(key) is not None:
             diff_right.append(right.get('unmatches').get(key))
 
+    # diff = []
+    # cont = 0
+    # while cont < len(diff_left) and cont < len(diff_right):
+    #     if cont > len(diff_left):
+    #         diff.append([None, diff_right[cont]])
+    #     else:
+    #         if cont > len(diff_right):
+    #             diff.append([diff_left[cont], None])
+    #         else:
+    #             diff.append([diff_left[cont], diff_right[cont]])
+    #     cont = cont + 1
 
-    diff = []
-    cont = 0
-    while cont < len(diff_left) and cont < len(diff_right):
-        if cont > len(diff_left):
-            diff.append([None, diff_right[cont]])
-        else:
-            if cont > len(diff_right):
-                diff.append([diff_left[cont], None])
-            else:
-                diff.append([diff_left[cont], diff_right[cont]])
-        cont = cont + 1
+    # return [diff]
 
-    return [diff]
+    return diff_left, diff_right
 
-def saveCompareFile(filename = "differences.txt", country = "", diff = [], path='output'):
+
+def saveCompareFile(filename="differences.txt", country="", diff=[], path='output'):
     if not path:
         path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 

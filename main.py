@@ -4,31 +4,29 @@ from matcher import AligmentDifferenceFinder
 import os #to remove file in folder
 
 def runClustal(inputFile, reference_id, nseq = 3):
-    """function that contain algorithm to compute mismatches Clustal
-    clw-->txt file and return the output name"""
+    """Call functions to parse a ClustalW alignment and produce a custom output structure"""
     parser = ClustalParser(nseq) #parser.py #(quante sequenze+file) --> sequenze lette
     alignment = parser.parse(inputFile, reference=reference_id)
     analyzer = AligmentDifferenceFinder()
     groups = analyzer.analyze(alignment)
+
     return utils.save(alignment, analyzer, reference_id=reference_id, tool='Muscle', path='output')
 
+
 def runMuscle(inputFile, reference_id, nseq = 3):
-    """function that contain algorithm to compute mismatches Muscle
-    clw file and return the output name"""
+    """Call functions to parse a MUSCLE alignment and produce a custom output structure"""
     muscle_parser = MuscleParser(nseq)  #parser.py #(quante sequenze+file) --> sequenze lette
     muscle_alignment = muscle_parser.parse(inputFile, reference=reference_id)
     analyzer = AligmentDifferenceFinder() # matcher.py
     groups = analyzer.analyze(muscle_alignment) # vettori indici mismatch rispetto al reference per sequenza
+
     return utils.save(muscle_alignment, analyzer, reference_id=reference_id, tool='Clustal', path='output')
 
 
-def main():
-    #get id of reference sequence
-    reference_id = open("input/reference.fasta", "r").readline().split(' ')[0][1:] # NC_045512.2
-
+def cleanUpOutputDir(folder=None):
     """clean folder output to make spaces for new output files"""
     dirname = os.path.dirname(__file__)
-    path_to_dir = os.path.join(dirname, 'output')  # path to directory you wish to remove
+    path_to_dir = os.path.join(dirname, folder)  # path to directory you wish to remove
     files_in_dir = os.listdir(path_to_dir)     # get list of files in the directory
 
     for file in files_in_dir:# loop to delete each file in folder
@@ -43,53 +41,47 @@ def main():
     file.write("Differences Clustal-Muscle alignment" + '\n\n')
     file.close()
 
-    #ClustalJ = file jason from clustal alignment; MuscleJ = file jason from muscle alignment
-    # Clustal Parser iran
-    ClustalJ = runClustal('analysis/iran-ref.txt', reference_id, 3)
 
-    # # Muscle Parser iran
-    MuscleJ = runMuscle('analysis/muscle-I20200523-084930-0610-44096621-p1m.clw', reference_id, 3)
+def main():
+    reference_id = open("input/reference.fasta", "r").readline().split(' ')[0][1:] # NC_045512.2
 
-    #compare them
-    diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    utils.saveCompareFile("differences.txt", "Iran ", diff)
+    cleanUpOutputDir(folder='output')
 
-    # Clustal Parser israel
-    ClustalJ = runClustal('analysis/israel-ref.txt', reference_id, 4)
+    # # ClustalJ = file json from clustal alignment; MuscleJ = file json from muscle alignment
+    # # Iran
+    # ClustalJ = runClustal('analysis/iran-ref.txt', reference_id, 3)
+    # MuscleJ = runMuscle('analysis/muscle-I20200523-084930-0610-44096621-p1m.clw', reference_id, 3)
+    # diff = utils.compare_outputs(clustal='output/'+ ClustalJ, muscle='output/'+ MuscleJ)
+    # utils.saveCompareFile("differences.txt", "Iran", diff)
 
-    # Muscle Parser israel
-    MuscleJ = runMuscle('analysis/muscle-I20200523-085708-0753-28920419-p1m.clw', reference_id, 4)
+    # # Israel
+    # ClustalJ = runClustal('analysis/israel-ref.txt', reference_id, 4)
+    # MuscleJ = runMuscle('analysis/muscle-I20200523-085708-0753-28920419-p1m.clw', reference_id, 4)
+    # diff = utils.compare_outputs(clustal='output/'+ ClustalJ, muscle='output/'+ MuscleJ)
+    # utils.saveCompareFile("differences.txt", "Israel ", diff)
 
-    diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    utils.saveCompareFile("differences.txt", "Israel ", diff)
+    # # GISAID only
+    # ClustalJ = runClustal('analysis/GISAID-all.txt', reference_id, 7)
+    # MuscleJ = runMuscle('analysis/muscle-I20200523-090216-0023-41230765-p1m.clw', reference_id, 7)
+    # diff = utils.compare_outputs(clustal='output/'+ ClustalJ, muscle='output/'+ MuscleJ)
+    # utils.saveCompareFile("differences.txt", "GISAID ", diff)
 
-    # Clustal Parser GISAID
-    ClustalJ = runClustal('analysis/GISAID-all.txt', reference_id, 7)
+    # # NCBI only
+    # ClustalJ = runClustal('analysis/all.txt', reference_id, 3)
+    # MuscleJ = runMuscle('analysis/muscle-I20200512-170208-0225-69454386-p1m.clw', reference_id, 8)
+    # diff = utils.compare_outputs(clustal='output/'+ ClustalJ, muscle='output/'+ MuscleJ)
+    # utils.saveCompareFile("differences.txt", "ncbi ", diff)
 
-    # Muscle Parser GISAID
-    MuscleJ = runMuscle('analysis/muscle-I20200523-090216-0023-41230765-p1m.clw', reference_id, 7)
+    # # All sequences
+    # ClustalJ = runClustal('analysis/global.txt', reference_id, 14)
+    # MuscleJ = runMuscle('analysis/muscle-I20200523-090837-0910-95910164-p1m.clw', reference_id, 15)
+    # diff = utils.compare_outputs(clustal='output/'+ ClustalJ, muscle='output/'+ MuscleJ)
+    # utils.saveCompareFile("differences.txt","Global ", diff)
 
-    diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    utils.saveCompareFile("differences.txt", "GISAID ", diff)
-
-    #Clustal Parser ncbi
-    ClustalJ = runClustal('analysis/all.txt', reference_id, 3)
-
-    # Muscle Parser ncbi
-    MuscleJ = runMuscle('analysis/muscle-I20200512-170208-0225-69454386-p1m.clw', reference_id, 8)
-
-    #compare them
-    data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    utils.saveCompareFile("differences.txt", "ncbi ", diff)
-
-    # Clustal Global Parser
-    ClustalJ = runClustal('analysis/global.txt', reference_id, 14)
-
-    # Muscle Global Parser
-    MuscleJ = runMuscle('analysis/muscle-I20200523-090837-0910-95910164-p1m.clw', reference_id, 15)
-
-    #compare them
-    data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
+    # Compare global alignments
+    ClustalJ = runClustal('analysis/clustal-global.clustal_num', reference_id, 14)
+    MuscleJ = runMuscle('analysis/muscle-global.clw', reference_id, 14)
+    diff = utils.compare_outputs(clustal='output/'+ ClustalJ, muscle='output/'+ MuscleJ)
     utils.saveCompareFile("differences.txt","Global ", diff)
 
 
