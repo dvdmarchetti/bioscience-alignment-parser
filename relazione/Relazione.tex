@@ -1,65 +1,94 @@
-\documentclass[12pt]{article}
-\usepackage{blindtext}
-\usepackage{imakeidx}
-\usepackage[utf8]{inputenc}
+\documentclass[11pt,italian]{article}
 \usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} %utf8 % lettere accentate da tastiera
+\usepackage[italian]{babel} % lingua del documento
+\usepackage{blindtext}
 \usepackage{enumitem}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{xcolor}   % for \textcolor
+\usepackage[font=small,labelfont=bf,skip=4pt]{caption}
+\setlength{\belowcaptionskip}{-10pt}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  frame=single,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
 
-\title{Multiple Sequence Alignment (MSA) di sequenze SARS-Cov2}
+\title{Multiple Sequence Alignment (MSA) \\ di sequenze SARS-CoV-2}
 
-\date{21/05/2020}
-\author{Silva Edoardo 816560, Marchetti Davide 815990}
+\date{A.A.: 2019/2020}
+
+\author{
+	\textsc{Silva Edoardo} 816560 \\
+	\textsc{Marchetti Davide} 815990
+}
 
 \begin{document}
 \maketitle
 %\makeindex
 
 \section*{Abstract}
+Usando i sequenziamente genomici del virus denominato Covid-19, reperibili tramite NCBI\footnote{\url{https://www.ncbi.nlm.nih.gov/genbank/sars-cov-2-seqs/}} e GISAID\footnote{\url{https://www.gisaid.org/}}, abbiamo allineato un insieme di sequenze, relative a paesi del medioriente, sfruttando gli strumenti messi a disposizione dall'European Bioinformatics Institute\footnote{\url{https://www.ebi.ac.uk/Tools/msa/}} al fine di identificare differenze con la sequenza di riferimento ottenuta su un campione di Wuhan.
+In particolare, per l'allineamento si è scelto di utilizzare \lstinline{Clustal Omega} e \lstinline{MUSCLE}.
 
-	Usando i sequenziamente genomici del virus denominato Covid-19, reperibili nul sito della banca genetica https://www.ncbi.nlm.nih.gov/genbank/sars-cov-2-seqs/ e https://www.gisaid.org/, abbiamo allineato un insieme di sequenze relativi a paesi mediorientali:
-	\begin{itemize} %dividi in sotttoliste
-		\item Iran: %identificativi%.
-		\begin{itemize}
-			\item MT320891.2, 
-			\item MT281530.2, 
-			\item hCov-19/Iran/KHGRC-1.1-IPI-8206/2020|EPI\_ISL\_442523|2020-03-09,
-			\item hCoV-19/Iran/HGRC-2-2162/2020|EPI\_ISL\_437512|2020-03-26. 
-		 \end{itemize}
-		\item Israele:
-		\begin{itemize}
-			\item MT276598.1, 
-			\item MT276597.1, 
-			\item hCoV-19/Israel/130710062/2020|EPI\_ISL\_447469|2020-04-14.
-		 \end{itemize}
-		\item Pakistan: 
-		\begin{itemize}
-			\item MT262993.1, 
-			\item MT240479.1, 
-			\item hCoV-19/Pakistan/Gilgit1/2020|EPI\_ISL\_417444|2020-03-04.
-		 \end{itemize}
-		\item Turchia: 
-		\begin{itemize}
-			\item MT327745.1,
-			\item hCoV-19/Turkey/HSGM-10232/2020|EPI\_ISL\_437334|2020-03-24,
-			\item hCoV-19/Turkey/HSGM-1027/2020|EPI\_ISL\_437317|2020-03-27.
-		 \end{itemize}
-	\end{itemize}
-	E allineati grazie ai tools Clustal Omega e MUSCLE , reperibili al sito https://www.ebi.ac.uk/Tools/msa/; al fine di ottenere le differenze con la sequenza di riferimento ottenuta su un campione di Whuan NC\_045512.2.\newline
-	\textbf{Il lavoro consiste in identificare le differenze tra le sequenze e tra gli allineamenti dei 2 tool sulle medesime sequenze}. \newpage
+
+\newpage
+\section{Sequenze Analizzate}
+In aggiunta alla sequenza di riferimento di Wuhan, sono state selezionate alcune sequenze relative a paesi dell'area mediorientale.
+
+\subsubsection*{Reference di Wuhan}
+\begin{itemize}
+	\item \lstinline{NC_045512.2} pubblicata il 17/01/2020 (aggiornamento)
+\end{itemize}
+
+\subsubsection*{Iran}
+\begin{itemize}
+	\item \lstinline{MT320891.2} pubblicata il 10/04/2020
+	\item \lstinline{MT281530.2} pubblicata il 04/04/2020
+	\item \lstinline{EPI_ISL_442523} sequenziata il 09/03/2020
+	\item \lstinline{EPI_ISL_437512} sequenziata il 26/03/2020
+\end{itemize}
+
+\subsubsection*{Israele}
+\begin{itemize}
+	\item \lstinline{MT276598.1} sequenziata il 02/04/2020
+	\item \lstinline{MT276597.1} sequenziata il 02/04/2020
+	\item \lstinline{EPI_ISL_447469} sequenziata il 14/04/2020
+\end{itemize}
+
+\subsubsection*{Pakistan}
+\begin{itemize}
+	\item \lstinline{MT262993.1} pubblicata il 25/03/2020
+	\item \lstinline{MT240479.1} pubblicata il 25/03/2020
+	\item \lstinline{EPI_ISL_417444} sequenziata il 04/03/2020
+\end{itemize}
+
+\subsubsection*{Turchia}
+\begin{itemize}
+	\item \lstinline{MT327745.1} pubblicata il 13/04/2020,
+	\item \lstinline{EPI_ISL_437334} sequenziata il 24/03/2020
+	\item \lstinline{EPI_ISL_437317} sequenziata il 27/03/2020
+\end{itemize}
+\textbf{Il lavoro consiste in identificare le differenze tra le sequenze e tra gli allineamenti dei 2 tool sulle medesime sequenze}. \newpage
 
 \section{Descrizione}
-	
+
 	L'analisi filogenetica serve a ricostruire la storia delle mutazioni, ossia come specie antiche si sono evolute in quelle moderne.\newline
 	I geni sono composti da sequenze di Acido Desossiribonucleico (DNA) (o RNA in caso di alcuni virus), composto da uno zucchero(dessossiribosio) che unisce un gruppo fosfato ad una base azotata per comporre nucleotidi (i nucleotidi sono unità ripetitive costitutive degli acidi nucleici) che compongono il genoma.\newline
 	Un GENE non è nient' altro che una particolare sequenza di DNA, che codifica l' informazione in un linguaggio a quattro lettere, nel quale ogni lettera è rappresentata da una base.\newline
 	Il genotipo di un individuo è dato dal suo corredo genetico.
 Il fenotipo, invece, è l'insieme dei caratteri che l'individuo manifesta:dipende dal suo genotipo, dalle interazioni fra geni e anche da fattori
-esterni.\newline 
-\newline Il DNA viene utilizzato: \begin{enumerate} \item trascrivendolo in RNA	
+esterni.\newline
+\newline Il DNA viene utilizzato: \begin{enumerate} \item trascrivendolo in RNA
 \item rendere l' RNA stabile aggiungendo ai limiti 7-metilguanosina (7mGTP)
 \item trascritto il risultato precedente in amminoacidi che creeranno proteine.
 	 \end{enumerate}
-	
+
 \newpage
 %BREVE DESCRIZIONE TOOLS?%
 \section{Codice}
@@ -87,20 +116,20 @@ esterni.\newline
 \item		\textbf{parse}(self, filename, reference=None, list=[]):  legge il file in ingresso e restituisce il file in input suddiviso in: reference, sequenze, lunghezza sequenze.
 	svolge la sua funzione sfruttando il metodo: \textbf{parseLines(self, lines)}
 \item		\textbf{save}(alignment, analyzer, reference\_id=None, tool=None, path=None): crea file json di output chiamato reference\_id\_hash-sha1 del tempo di inzio esecuzione concatenato con sequences\_ids delle sequenze.
-		
+
 \item		\textbf{jsonComp}(file1, file2): funzione cre prende i 2 file json generati dall'elaborazione clustal e muscle e ritorna le differenze tra i 2 oggetti al fine di compararli.
-		
+
 \item		\textbf{saveCompareFile}(filename = "differences.txt", country = "", diff = [], path='output'): file che divide per paese prende la lista di differenze tra gli allineamenti clustal e muscle e li aggiunge al file di output "differences.txt" per mostrarli.
-		
+
 	\end{itemize}
-\section{Output}	
+\section{Output}
 	Come output vengono prodotti dei file json corrispondenti al nome reference\_seq\_hash.hexdigest(): l'id della reference accostata all'hash sha1 con encoding utf8 dell'id delle sequenze usate concatenate al tempo di inizio lavorazione (aggiunto per evitare di sovrascrivere l'output dello stessa serie di sequenze sia con muscle che con clustal).\newline
 	l'oggetto JSON è così composto: \{ "reference": reference\_Id, \newline "analyzed\_sequences": insieme di sequenze analizzate, \newline
  	''unmatches": altri oggetti JSON = \newline\{ id (hash inizio mismatch + fine mismatch): "from": inizio mismatch, \newline
    "to": fine mismatch, \newline
    "sequences": lista sequenze in diverse tra loro in quell'intervallo \} \newline
  \}
- 
+
 \section{Conclusioni}
 	Clustal tronca id troppo lunghi, i 2 tool di allineamento non sono identici, ...
 \section{references}

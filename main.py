@@ -21,7 +21,7 @@ def runMuscle(inputFile, reference_id, nseq = 3):
     #print('Read {} bases'.format(len(muscle_alignment)))
     analyzer = AligmentDifferenceFinder() # matcher.py
     groups = analyzer.analyze(muscle_alignment) # vettori indici mismatch rispetto al reference per sequenza
-    return utils.save(muscle_alignment, analyzer, reference_id='NC_045512.2', tool='Clustal', path='output')
+    return utils.save(muscle_alignment, analyzer, reference_id=reference_id, tool='Clustal', path='output')
 
 
 def main():

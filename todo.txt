@@ -1,6 +1,3 @@
-Raddoppiare sequenze (Gisaid)
-Confronto tool allineamento
-Tracciamento date
 Ricostruzione filogenetica automatica
 Aggiungere tool
 Aggiungere sequenze
