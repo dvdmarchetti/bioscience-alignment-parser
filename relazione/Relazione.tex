@@ -116,13 +116,13 @@ Quest'ultimi verranno successivamente interpretate facendo riferimento allo IUPA
 \end{figure}
 
 \section{Codice}
-Il codice è in python ed esegue:
+Il codice è in python ed esegue le seguenti funzioni:
 \begin{enumerate}
   \item pulisce la cartella di output per far spazio ai nuovi file, usando la libreria os.
   \item per ogni coppia di file in input contenendo l'analisi di allineamento eseguita usando i due tool:
   \begin{enumerate}
     \item salva il nome del file json in ooutput seguendo l'analisi.
-    \item ne compara le differenze.
+    \item ne compara le differenze per verificare se esistono differenze tra i 2 tools.
   \end{enumerate}
 \end{enumerate}
 
@@ -168,8 +168,9 @@ l'oggetto JSON è così composto:
 \end{lstlisting}
 
 \section{Conclusioni}
-Clustal tronca id troppo lunghi, i 2 tool di allineamento non sono identici, ...
-
+La maggior parte dei disallineamenti si trovano entro le prime 100 basi e dopo la 2900esima, con pochi disallineamenti sporadici all'unterno.\newline
+Clustal tronca id troppo lunghi, i 2 tool di allineamento non eseguono allineamenti identici.\newline
+...
 \section{references}
 
 \end{document}
