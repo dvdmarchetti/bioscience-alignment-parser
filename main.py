@@ -40,6 +40,10 @@ def main():
             import sh
             sh.rm(f)
 
+    #create new empty file for differences
+    file = open(os.path.join(path_to_dir, "differences.txt"),"w+")
+    file.write("Differences Clustal-Muscle alignment" + '\n\n')
+    file.close()
     # #ClustalJ = file jason from clustal alignment; MuscleJ = file jason from muscle alignment
     # # Clustal Parser iran
     ClustalJ = runClustal('analysis/iran-ref.txt', reference_id, 3)
@@ -48,8 +52,9 @@ def main():
     MuscleJ = runMuscle('analysis/muscle-I20200523-084930-0610-44096621-p1m.clw', reference_id, 3)
 
     #compare them
-    left_diff, right_diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    print("Iran " + str(left_diff) + str(right_diff))
+    diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
+    #print("Iran " + str(diff))
+    utils.saveCompareFile("differences.txt", "Iran ", diff)
 
     # Clustal Parser israel
     ClustalJ = runClustal('analysis/israel-ref.txt', reference_id, 4)
@@ -57,19 +62,21 @@ def main():
     # Muscle Parser israel
     MuscleJ = runMuscle('analysis/muscle-I20200523-085708-0753-28920419-p1m.clw', reference_id, 4)
 
-    left_diff, right_diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    print("Israel " + str(left_diff) + str(right_diff))
-    # print("Israel " + str(data))
-    # # Clustal Parser GISAID
-    # ClustalJ = runClustal('analysis/GISAID-all.txt', reference_id, 7)
+    diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
+    #print("Israel " + str(diff))    # print("Israel " + str(data))
+    utils.saveCompareFile("differences.txt", "Israel ", diff)
 
-    # # Muscle Parser GISAID
-    # MuscleJ = runMuscle('analysis/muscle-I20200523-090216-0023-41230765-p1m.clw', reference_id, 7)
+    # Clustal Parser GISAID
+    ClustalJ = runClustal('analysis/GISAID-all.txt', reference_id, 7)
 
-    # data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    # #print("GISAID " + str(data))
+    # Muscle Parser GISAID
+    MuscleJ = runMuscle('analysis/muscle-I20200523-090216-0023-41230765-p1m.clw', reference_id, 7)
 
-    """#Clustal Parser ncbi
+    diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
+    #print("GISAID " + str(diff))
+    utils.saveCompareFile("differences.txt", "GISAID ", diff)
+
+    #Clustal Parser ncbi
     ClustalJ = runClustal('analysis/all.txt', reference_id, 3)
 
     # Muscle Parser ncbi
@@ -77,7 +84,8 @@ def main():
 
     #compare them
     data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    print("ncbi " + str(data))
+    #print("ncbi " + str(data))
+    utils.saveCompareFile("differences.txt", "ncbi ", diff)
 
     # Clustal Global Parser
     ClustalJ = runClustal('analysis/global.txt', reference_id, 14)
@@ -87,7 +95,8 @@ def main():
 
     #compare them
     data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    print("global " + str(data))"""
+    #print("global " + str(data))
+    utils.saveCompareFile("differences.txt","Global ", diff)
 
 
 if __name__ == "__main__":

@@ -99,6 +99,7 @@ def jsonComp(file1, file2):
             value.append(key)
 
     #salta sta parte e parti dagli allineamenti
+    #rimosse perchè Muscle taglia ID sequenze se troppo lungo
     """if 'reference' in value:
         return "insert wrong reference alignment WTF?"
 
@@ -122,46 +123,31 @@ def jsonComp(file1, file2):
         if right.get('unmatches').get(key) is not None:
             diff_right.append(right.get('unmatches').get(key))
 
-    return [diff_left, diff_right]
 
-    # xranges = []
-    # for x, xvalue in xunmatches.items():
-    #     xranges.append((xvalue.get('from'), xvalue.get('to')))
-
-    # yranges = []
-    # for y, yvalue in yunmatches.items():
-    #     rng = (yvalue.get('from'), yvalue.get('to'))
-
-    #     if rng in xranges:
-    #         # X and Y have the same ranges -> remove from X
-    #         xranges.remove(rng)
-    #     else:
-    #         yranges.append((yvalue.get('from'), yvalue.get('to')))
-
-    # for (xFrom, xTo) in xranges:
-    #     for (yFrom, yTo) in yranges:
-    #         if (xFrom == yFrom and xTo != yTo) or (xFrom != yFrom and xTo == yTo):
-    #             different_items.append([
-    #                 xunmatches.get(str(hash((xFrom, xTo)))),
-    #                 yunmatches.get(str(hash((yFrom, yTo))))
-    #             ])
-
-
-    """print(len(unmatches))
-    cont = 0;
-    for y in right.get('unmatches').keys():
-        #print(right.get('unmatches').get(y))
-        if ((right.get('unmatches').get(y).get('from') != unmatches[cont].get('from')) or
-            (right.get('unmatches').get(y).get('to') != unmatches[cont].get('to'))):
-            print(cont)
-            different_items[y] = [unmatches[cont], right.get('unmatches').get(y)]
-            #print(type(unmatches[cont]))
+    diff = []
+    cont = 0
+    while cont < len(diff_left) and cont < len(diff_right):
+        if cont > len(diff_left):
+            diff.append([None, diff_right[cont]])
+        else:
+            if cont > len(diff_right):
+                diff.append([diff_left[cont], None])
+            else:
+                diff.append([diff_left[cont], diff_right[cont]])
         cont = cont + 1
-    #for v in value:
-        #print(type(v))
-        #print(type(left.get(v, None)))
-        #print("right")
-        #print(type(right.get(v, None)))
-        """
 
-    # return different_items
+    return [diff]
+
+def saveCompareFile(filename = "differences.txt", country = "", diff = [], path='output'):
+    if not path:
+        path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+    #append new
+    file = open(os.path.join(path, filename),"a+")
+    file.write(country + '\n')
+    print(len(diff[0]))
+    for i in range(0, len(diff)):
+        file.write(str(diff[i]) + '\n')
+
+    file.write('\n')
+    file.close()
