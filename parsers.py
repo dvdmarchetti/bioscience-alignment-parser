@@ -21,9 +21,6 @@ class ClustalParser:
             """Modifica: solo sequenze volute"""
             if list == [] or list == None:  #if nothing in the list parse everytihng
                 sequences = self.parseLines(stream.readlines())
-            else:
-                print('else')
-                exit()  ###TODO
 
             return Alignment(
                 reference=reference,

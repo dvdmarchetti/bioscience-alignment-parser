@@ -1,14 +1,13 @@
 import utils
 from parsers import ClustalParser, MuscleParser
 from matcher import AligmentDifferenceFinder
-import os#to remove file in folder
+import os #to remove file in folder
 
 def runClustal(inputFile, reference_id, nseq = 3):
     """function that contain algorithm to compute mismatches Clustal
     clw-->txt file and return the output name"""
     parser = ClustalParser(nseq) #parser.py #(quante sequenze+file) --> sequenze lette
     alignment = parser.parse(inputFile, reference=reference_id)
-    #print('Read {} bases'.format(len(alignment)))
     analyzer = AligmentDifferenceFinder()
     groups = analyzer.analyze(alignment)
     return utils.save(alignment, analyzer, reference_id=reference_id, tool='Muscle', path='output')
@@ -18,7 +17,6 @@ def runMuscle(inputFile, reference_id, nseq = 3):
     clw file and return the output name"""
     muscle_parser = MuscleParser(nseq)  #parser.py #(quante sequenze+file) --> sequenze lette
     muscle_alignment = muscle_parser.parse(inputFile, reference=reference_id)
-    #print('Read {} bases'.format(len(muscle_alignment)))
     analyzer = AligmentDifferenceFinder() # matcher.py
     groups = analyzer.analyze(muscle_alignment) # vettori indici mismatch rispetto al reference per sequenza
     return utils.save(muscle_alignment, analyzer, reference_id=reference_id, tool='Clustal', path='output')
@@ -44,8 +42,9 @@ def main():
     file = open(os.path.join(path_to_dir, "differences.txt"),"w+")
     file.write("Differences Clustal-Muscle alignment" + '\n\n')
     file.close()
-    # #ClustalJ = file jason from clustal alignment; MuscleJ = file jason from muscle alignment
-    # # Clustal Parser iran
+
+    #ClustalJ = file jason from clustal alignment; MuscleJ = file jason from muscle alignment
+    # Clustal Parser iran
     ClustalJ = runClustal('analysis/iran-ref.txt', reference_id, 3)
 
     # # Muscle Parser iran
@@ -53,7 +52,6 @@ def main():
 
     #compare them
     diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    #print("Iran " + str(diff))
     utils.saveCompareFile("differences.txt", "Iran ", diff)
 
     # Clustal Parser israel
@@ -63,7 +61,6 @@ def main():
     MuscleJ = runMuscle('analysis/muscle-I20200523-085708-0753-28920419-p1m.clw', reference_id, 4)
 
     diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    #print("Israel " + str(diff))    # print("Israel " + str(data))
     utils.saveCompareFile("differences.txt", "Israel ", diff)
 
     # Clustal Parser GISAID
@@ -73,7 +70,6 @@ def main():
     MuscleJ = runMuscle('analysis/muscle-I20200523-090216-0023-41230765-p1m.clw', reference_id, 7)
 
     diff = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    #print("GISAID " + str(diff))
     utils.saveCompareFile("differences.txt", "GISAID ", diff)
 
     #Clustal Parser ncbi
@@ -84,7 +80,6 @@ def main():
 
     #compare them
     data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    #print("ncbi " + str(data))
     utils.saveCompareFile("differences.txt", "ncbi ", diff)
 
     # Clustal Global Parser
@@ -95,7 +90,6 @@ def main():
 
     #compare them
     data = utils.jsonComp('output/'+ ClustalJ, 'output/'+ MuscleJ)
-    #print("global " + str(data))
     utils.saveCompareFile("differences.txt","Global ", diff)
 
 

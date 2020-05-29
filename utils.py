@@ -98,17 +98,6 @@ def jsonComp(file1, file2):
         if (left.get(key, None) != right.get(key, None)):
             value.append(key)
 
-    #salta sta parte e parti dagli allineamenti
-    #rimosse perchè Muscle taglia ID sequenze se troppo lungo
-    """if 'reference' in value:
-        return "insert wrong reference alignment WTF?"
-
-    #if i get error for used different sequences in the alignment
-    if 'analyzed_sequences' in value:
-        list  = left.get('analyzed_sequences', None) + right.get('analyzed_sequences', None) #sum for then compare
-        extras = [value for value in list if (value in left.get('analyzed_sequences', None)) ^ (value in right.get('analyzed_sequences', None))]
-        return "different sequences used: {}".format(extras) """
-
     if left.get('unmatches') is None or right.get('unmatches') is None:
         print('Invalid output file provided')
         return [[], []]
@@ -145,7 +134,6 @@ def saveCompareFile(filename = "differences.txt", country = "", diff = [], path=
     #append new
     file = open(os.path.join(path, filename),"a+")
     file.write(country + '\n')
-    print(len(diff[0]))
     for i in range(0, len(diff)):
         file.write(str(diff[i]) + '\n')
 
