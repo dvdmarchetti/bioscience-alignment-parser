@@ -6,9 +6,9 @@
 \usepackage{enumitem}
 \usepackage{float}
 \usepackage{xcolor}   % for \textcolor
-\usepackage[font=small,labelfont=bf,skip=5pt]{caption}
+\usepackage[font=small,labelfont=bf,skip=10pt]{caption}
 \usepackage{subcaption}
-\setlength{\belowcaptionskip}{7pt}
+\setlength{\belowcaptionskip}{5pt}
 \usepackage{listings}
 \lstset{
   basicstyle=\ttfamily,
@@ -21,6 +21,15 @@
 \usepackage{cleveref}
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
+
+% Use lstinline as item in description
+\makeatletter
+\newcommand*{\lstitem}[1][]{%
+  \setbox0\hbox\bgroup
+    \patchcmd{\lst@InlineM}{\@empty}{\@empty\egroup\item[\usebox0]\leavevmode\ignorespaces}{}{}%
+    \lstinline[#1]%
+}
+\makeatother
 
 \title{Multiple Sequence Alignment (MSA) \\ di sequenze SARS-CoV-2}
 
@@ -35,6 +44,10 @@
 \maketitle
 
 \section*{Abstract}
+Il SARS-CoV-2 (dall'inglese \textit{Severe Acute Respiratory Syndrome CoronaVirus 2}), è un ceppo virale della specie SARS-related coronavirus/SARS-CoV, facente parte del genere Betacoronavirus (ceppo di virus a RNA).
+
+Il virus è stato sequenziato genomicamente dopo un test di acido nucleico effettuato su un campione prelevato da un paziente colpito da una polmonite, di cui non si conosceva la causa, ad inizio Dicembre 2019 a Wuhan, città continentale a est della Cina.
+
 L'obiettivo del progetto consiste nell'analizzare, allineare ed identificare le differenze con la sequenza di riferimento prelevata su un campione di Wuhan, progettando un formato di output nel quale memorizzare i risultati ottenuti.
 
 Usando i sequenziamente genomici del virus denominato Covid-19, reperibili tramite NCBI\footnote{\url{https://www.ncbi.nlm.nih.gov/genbank/sars-cov-2-seqs/}} e GISAID\footnote{\url{https://www.gisaid.org/}}.
@@ -42,48 +55,42 @@ Usando i sequenziamente genomici del virus denominato Covid-19, reperibili trami
 Sfruttando gli strumenti messi a disposizione dall'European Bioinformatics Institute\footnote{\url{https://www.ebi.ac.uk/Tools/msa/}} abbiamo effettuato l'allineamento di un insieme di sequenze relative a paesi del medioriente.
 
 \newpage
-\section{Descrizione}
-Il SARS-CoV-2 (acronimo dall'inglese Severe Acute Respiratory Syndrome - CoronaVirus - 2), è un ceppo virale della specie SARS-related coronavirus/SARS-CoV, facente parte del genere Betacoronavirus (ceppo di virus a RNA).
-
-Il virus è stato sequenziato genomicamente dopo un test di acido nucleico effettuato su un campione prelevato da un paziente colpito da una polmonite, di cui non si conosceva la causa, ad inizio Dicembre 2019 a Wuhan (città continentale a est della Cina).
-
-\newpage
 \section{Sequenze Analizzate}
 In aggiunta alla sequenza di riferimento di Wuhan, sono state selezionate alcune sequenze relative a paesi dell'area mediorientale.
 
 \subsubsection*{Reference di Wuhan}
-\begin{itemize}
-    \item \lstinline{NC_045512.2} pubblicata il 17/01/2020 (ultimo aggiornamento)
-\end{itemize}
+\begin{description}
+    \lstitem{NC_045512.2} pubblicata il 17/01/2020 (ultimo aggiornamento)
+\end{description}
 
 \subsubsection*{Iran}
-\begin{itemize}
-    \item \lstinline{MT320891.2} pubblicata il 10/04/2020
-    \item \lstinline{MT281530.2} pubblicata il 04/04/2020
-    \item \lstinline{EPI_ISL_442523} sequenziata il 09/03/2020
-    \item \lstinline{EPI_ISL_437512} sequenziata il 26/03/2020
-\end{itemize}
+\begin{description}
+    \lstitem{MT320891.2} pubblicata il 10/04/2020
+    \lstitem{MT281530.2} pubblicata il 04/04/2020
+    \lstitem{EPI_ISL_442523} sequenziata il 09/03/2020
+    \lstitem{EPI_ISL_437512} sequenziata il 26/03/2020
+\end{description}
 
 \subsubsection*{Israele}
-\begin{itemize}
-    \item \lstinline{MT276598.1} sequenziata il 02/04/2020
-    \item \lstinline{MT276597.1} sequenziata il 02/04/2020
-    \item \lstinline{EPI_ISL_447469} sequenziata il 14/04/2020
-\end{itemize}
+\begin{description}
+    \lstitem{MT276598.1} sequenziata il 02/04/2020
+    \lstitem{MT276597.1} sequenziata il 02/04/2020
+    \lstitem{EPI_ISL_447469} sequenziata il 14/04/2020
+\end{description}
 
 \subsubsection*{Pakistan}
-\begin{itemize}
-    \item \lstinline{MT262993.1} pubblicata il 25/03/2020
-    \item \lstinline{MT240479.1} pubblicata il 25/03/2020
-    \item \lstinline{EPI_ISL_417444} sequenziata il 04/03/2020
-\end{itemize}
+\begin{description}
+    \lstitem{MT262993.1} pubblicata il 25/03/2020
+    \lstitem{MT240479.1} pubblicata il 25/03/2020
+    \lstitem{EPI_ISL_417444} sequenziata il 04/03/2020
+\end{description}
 
 \subsubsection*{Turchia}
-\begin{itemize}
-    \item \lstinline{MT327745.1} pubblicata il 13/04/2020,
-    \item \lstinline{EPI_ISL_437334} sequenziata il 24/03/2020
-    \item \lstinline{EPI_ISL_437317} sequenziata il 27/03/2020
-\end{itemize}
+\begin{description}
+    \lstitem{MT327745.1} pubblicata il 13/04/2020,
+    \lstitem{EPI_ISL_437334} sequenziata il 24/03/2020
+    \lstitem{EPI_ISL_437317} sequenziata il 27/03/2020
+\end{description}
 
 \section{Strumenti utilizzati}
 L'analisi è stata effettuata utilizzando \lstinline{Clustal Omega} e \lstinline{MUSCLE}, due strumenti per l'allineamento di sequenze multiple (MSA) accessibili attraverso un'interfaccia web\footnote{\url{https://www.ebi.ac.uk/Tools/msa/clustalo/}} \footnote{\url{https://www.ebi.ac.uk/Tools/msa/muscle/}}.
@@ -92,13 +99,13 @@ L'analisi è stata effettuata utilizzando \lstinline{Clustal Omega} e \lstinline
 \section{Analisi preliminare}
 Una prima analisi delle sequenze è stata effettuata con l'ausilio di Jalview\footnote{\url{https://www.jalview.org/}}, un software open source che offre la possibilità di generare una visualizzazione grafica degli gli allineamenti effettuati dai tool.
 
-Tramite questa si riescono a mettere in evidenza aspetti interessanti: come osservabile nelle \cref{fig:jalview-start,fig:jalview-end}, la maggior parte delle differenze di allineamento si concentrano agli estremi delle sequenze stesse.
-
 \begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=1.3\linewidth]{jalview-clustal-start.png}}
   \caption{Differenze all'inizio dell'allineamento}
   \label{fig:jalview-start}
 \end{figure}
+
+Tramite questo strumento è possibile notare aspetti interessanti: esaminando l'allineamento la maggior parte delle differenze sono concentrate agli estremi dello stesso (\cref{fig:jalview-start,fig:jalview-end}).
 
 \begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=1.3\linewidth]{jalview-clustal-end.png}}
@@ -106,8 +113,10 @@ Tramite questa si riescono a mettere in evidenza aspetti interessanti: come osse
   \label{fig:jalview-end}
 \end{figure}
 
+\vfill
 Inoltre, due delle sequenze selezionate presentano basi mancanti o possibili problemi nel sequenziamento (\cref{fig:jalview-inner}).
-Quest'ultimi verranno successivamente interpretate facendo riferimento allo IUPAC Code\footnote{\url{https://www.bioinformatics.org/sms/iupac.html}} e, specificatamente, verranno considerate come match rispetto al reference.
+Quest'ultimi verranno successivamente interpretate e considerate come match rispetto al reference qualora rispettino la codifica definita dallo IUPAC Code\footnote{\url{https://www.bioinformatics.org/sms/iupac.html}}.
+\vfill
 
 \begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=1.5\linewidth]{jalview-clustal-inner.png}}
@@ -115,62 +124,98 @@ Quest'ultimi verranno successivamente interpretate facendo riferimento allo IUPA
   \label{fig:jalview-inner}
 \end{figure}
 
-\section{Codice}
-Il codice è in python ed esegue le seguenti funzioni:
-\begin{enumerate}
-  \item pulisce la cartella di output per far spazio ai nuovi file, usando la libreria os.
-  \item per ogni coppia di file in input contenendo l'analisi di allineamento eseguita usando i due tool:
-  \begin{enumerate}
-    \item salva il nome del file json in ooutput seguendo l'analisi.
-    \item ne compara le differenze per verificare se esistono differenze tra i 2 tools.
-  \end{enumerate}
-\end{enumerate}
+\newpage
+\section{Struttura del codice}
+L'esecuzione dell'analisi prevede, per ogni file di allineamento fornito in input, un corrispondente file di output che raggruppa le regioni di non match delle sequenze analizzate.
 
-\subsection{librerie}
-\begin{itemize}
-  \item\textbf{re:} usato in \textbf{parsers.py} per dividere ogni linea tra: [id\_sequenza, sequenza, posizioni] nelle funzioni di parsing.
-  \item\textbf{hashlib:} usato in \textbf{utils.py} per creare l'hash da inserire come nome ai file JSON di output.
-  \item\textbf{json:} usato in \textbf{utils.py} per elaborare ulteriormente l'uotput al fine di comparare i 2 tools di allineamento.
-  \item\textbf{datetime:} usato in \textbf{utils.py} per prendere il tempo da inserire nell'hash, al fine di rendere unico l'output ed evitare sovrascritture.
-  \item\textbf{os:} usato in \textbf{utils.py, main.py} per gestire input e output. Anche per pulire la cartella input nel main.
-\end{itemize}
+\noindent
+Lo script è composto da diversi file, ciascuno con la propria funzione specifica:
+\begin{description}
+  \lstitem{alignment_model.py:} definisce le strutture dati che verranno utilizzate dal parser per memorizzare i contenuti letti.
+  \lstitem{matcher.py:} contiene la classe che identifica le regioni di match/mismatch.
+  \lstitem{main.py:} entrypoint dello script che coordina l'esecuzione dell'analisi.
+  \lstitem{parsers.py:} definisce una classe per ogni tool di allineamento utilizzato per permettere di effettuare il parsing in una struttura dati omogenea.
+  \lstitem{utils.py:} contiene utility generiche e di supporto per l'input/output.
+\end{description}
 
-\subsection{descrizione metodi}
-\begin{itemize}
-  \item \lstinline{runClustal(inputFile, reference_id, nseq=3)}: funzione che esegue il parsing del file di allineamento clustal (inputFile), esegue il parsing degli allineamenti e li salva nel file di output. \newline nseq serve al parser in quanto la classe \lstinline{ClustalParser} richiede il numero di sequenze da elaborare nelle sue funzioni.
+% \begin{enumerate}
+%   \item Per ogni allineamento specificato avviene il parsing a seconda del tool utilizzato
+%   \item
+%   \begin{enumerate}
+%     \item salva il nome del file json in ooutput seguendo l'analisi.
+%     \item ne compara le differenze per verificare se esistono differenze tra i 2 tools.
+%   \end{enumerate}
+% \end{enumerate}
 
-  \item \lstinline{runMuscle(inputFile, reference_id, nseq=3)}: funzione che esegue il parsing del file di allineamento muscle (inputFile), esegue il parsing degli allineamenti e li salva nel file di output.
+% \item \lstinline{runClustal(inputFile, reference_id, nseq=3)}: funzione che esegue il parsing del file di allineamento clustal (inputFile), esegue il parsing degli allineamenti e li salva nel file di output. \newline nseq serve al parser in quanto la classe \lstinline{ClustalParser} richiede il numero di sequenze da elaborare nelle sue funzioni.
 
-  \item \lstinline{parse(self, filename, reference=None, list=[]}:  legge il file in ingresso e restituisce il file in input suddiviso in: reference, sequenze, lunghezza sequenze. svolge la sua funzione sfruttando il metodo: \lstinline{parseLines(self, lines)}
+% \item \lstinline{runMuscle(inputFile, reference_id, nseq=3)}: funzione che esegue il parsing del file di allineamento muscle (inputFile), esegue il parsing degli allineamenti e li salva nel file di output.
 
-  \item \lstinline{save(alignment, analyzer, reference_id=None, tool=None, path=None)}: crea file json di output chiamato reference\_id\_hash-sha1 del tempo di inzio esecuzione concatenato con sequences\_ids delle sequenze.
+% \item \lstinline{parse(self, filename, reference=None, list=[]}:  legge il file in ingresso e restituisce il file in input suddiviso in: reference, sequenze, lunghezza sequenze. svolge la sua funzione sfruttando il metodo: \lstinline{parseLines(self, lines)}
 
-  \item \lstinline{jsonComp(file1, file2)}: funzione cre prende i 2 file json generati dall'elaborazione clustal e muscle e ritorna le differenze tra i 2 oggetti al fine di compararli.
+% \item \lstinline{save(alignment, analyzer, reference_id=None, tool=None, path=None)}: crea file json di output chiamato reference\_id\_hash-sha1 del tempo di inzio esecuzione concatenato con sequences\_ids delle sequenze.
 
-  \item \lstinline{saveCompareFile(filename="differences.txt", country="", diff=[], path='output')}: file che divide per paese prende la lista di differenze tra gli allineamenti clustal e muscle e li aggiunge al file di output "differences.txt" per mostrarli.
-\end{itemize}
+% \item \lstinline{jsonComp(file1, file2)}: funzione cre prende i 2 file json generati dall'elaborazione clustal e muscle e ritorna le differenze tra i 2 oggetti al fine di compararli.
 
-\section{Output}
-Come output vengono prodotti dei file json corrispondenti al nome reference\_seq\_hash.hexdigest(): l'id della reference accostata all'hash sha1 con encoding utf8 dell'id delle sequenze usate concatenate al tempo di inizio lavorazione (aggiunto per evitare di sovrascrivere l'output dello stessa serie di sequenze sia con muscle che con clustal).\newline
-l'oggetto JSON è così composto:
-\begin{lstlisting}
+% \item \lstinline{saveCompareFile(filename="differences.txt", country="", diff=[], path='output')}: file che divide per paese prende la lista di differenze tra gli allineamenti clustal e muscle e li aggiunge al file di output "differences.txt" per mostrarli.
+
+\section{Formato di Output}
+L'output dell'analisi prevede un file json per ogni allineamento elaborato ed un file json di confronto dei due tool di allineamento raggruppando gli allineamenti identici.
+
+La struttura dell'output di analisi di un singolo allineamento comprende:
+\begin{description}
+  \lstitem{tool:} tool di allineamento utilizzato.
+  \lstitem{timestamp:} data e ora dell'analisi.
+  \lstitem{reference:} identificativo della sequenza reference.
+  \lstitem{analyzed_sequences:} identificativi delle sequenze allineate.
+  \lstitem{mismatch:} vettore contenente i gruppi di mismatch identificati dall'hash della posizione di inizio e fine:
+  \begin{description}
+    \lstitem{from:} posizione di partenza rispetto alla sequenza di reference.
+    \lstitem{to:} posizione finale del mismatch.
+    \lstitem{reference:} basi della sequenza reference da \lstinline{from} a \lstinline{to}.
+    \lstitem{alt:} basi delle sequenze non coincidenti con il reference da \lstinline{from} a \lstinline{to}.
+    \lstitem{sequences:} sequenze nelle quali si verifica il mismatch.
+  \end{description}
+\end{description}
+
+\noindent
+La struttura dell'output di analisi del confronto tra due tool, aggiunge una componente denominata \lstinline{tools} a ciascun gruppo di mismatch che contiene i tool che hanno rilevato il mismatch, come riportato nel listato \ref{code:json-output}.
+
+\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Esempio di output,label=code:json-output]
 {
-  "reference": reference_id,
-  "analyzed_sequences":  id delle sequenze analizzate,
-  "unmatches": {
-    "(hash inizio mismatch + fine mismatch)": {
-      "from": inizio mismatch,
-      "to": fine mismatch,
-      "sequences": sequenze contenenti la regione di mismatch
-    }
+  "tools": ["clustal", "muscle"],
+  "timestamp": "2020/05/14 12:05:18 UTC+0200",
+  "reference": "NC_045512.2",
+  "analyzed_sequences": ["MT281530.2", "EPI_ISL_447469", "EPI_ISL_437334", "EPI_ISL_437512", "MT276598.1", "EPI_ISL_437317", "MT240479.1", "EPI_ISL_417444", "MT327745.1", "MT320891.2", "EPI_ISL_442523", "MT276597.1", "MT262993.1"],
+  "mismatchs": {
+    ...,
+    "3715055078265645856": {
+      "from": 3040,
+      "to": 3041,
+      "reference": "C",
+      "alt": "T",
+      "sequences": ["EPI_ISL_447469", "MT276598.1"],
+      "tools": ["muscle", "clustal"]
+    },
+    ...
   }
 }
 \end{lstlisting}
 
 \section{Conclusioni}
-La maggior parte dei disallineamenti si trovano entro le prime 100 basi e dopo la 2900esima, con pochi disallineamenti sporadici all'unterno.\newline
-Clustal tronca id troppo lunghi, i 2 tool di allineamento non eseguono allineamenti identici.\newline
-...
-\section{references}
+Dall'analisi preliminare si nota che le sequenze non hanno tutte lo stesso numero di basi, ma la maggior parte dei mismatch si manifesta agli estremi delle sequenze.
 
+Attraverso il confronto degli allineamenti effettuati con Clustal Omega e MUSCLE, la sequenza \lstinline{MT262993.1} è quella che presenta evidenti cancellazioni di più basi contigue che non siano posizionate ai capi della sequenza stessa.
+In particolare, sono state rilevate due cancellazioni considerevoli rilevate da entrambi i tool: da \lstinline{9724} a \lstinline{9739}; da \lstinline{19519} a \lstinline{19540}.
+
+Tuttavia, non possiamo determinare se l'incongruenza di questa sequenza rispetto alla reference sia determinata da un'effettiva mutazione piuttosto che da un errore in fase di sequenziamento della stessa.
+Le restanti variazioni sporadiche tra le sequenze risultano coinvolgere solamente singole basi.
+
+\subsection{Divisone del lavoro}
+Durante la realizzazione del progetto entrambi i componenti del gruppo hanno partecipato attivamente alla sua realizzazione. In particolare:
+\begin{itemize}
+  \item \textbf{Edoardo Silva} si è occupato principalmente di recuperare le sequenze identificate su NCBI e GISAID e della generazione dei file di output.
+  \item \textbf{Davide Marchetti} si è occupato principalmente di scrivere i parser per i tool di allineamento e dell'elaborazione dei gruppi di mismatch per generare il confronto tra i due tool.
+  \item entrambi hanno lavorato all'identificazione dei mismatch tra sequenze sui singoli tool e collaborato alla stesura di questo documento.
+\end{itemize}
 \end{document}

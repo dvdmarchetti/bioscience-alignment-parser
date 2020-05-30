@@ -1,7 +1,7 @@
 import re
 """parser oggetti output clustal"""
 
-from clustal import Alignment, AlignmentSequence
+from alignment_model import Alignment, AlignmentSequence
 import utils
 
 

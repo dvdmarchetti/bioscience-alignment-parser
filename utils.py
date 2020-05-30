@@ -44,17 +44,14 @@ def save(alignment, analyzer, reference_id=None, tool=None, path=None):
         for start, end in groups:
             key = hash((start, end))
             if key in unmatching_groups:
-                unmatching_groups[key]['sequences'].append({
-                    sequence: alignment.sequences[sequence][start:end]
-                })
+                unmatching_groups[key]['sequences'].append(sequence)
             else:
                 unmatching_groups[key] = {
                     'from': start,
                     'to': end,
                     'reference': alignment.sequences[alignment.reference][start:end],
-                    'sequences': [{
-                        sequence: alignment.sequences[sequence][start:end]
-                    }]
+                    'alt': alignment.sequences[sequence][start:end],
+                    'sequences': [ sequence ]
                 }
 
     now = time.localtime()
@@ -77,7 +74,7 @@ def save(alignment, analyzer, reference_id=None, tool=None, path=None):
     return filename
 
 
-def compare_outputs(clustal=None, muscle=None):
+def compare_outputs(clustal=None, muscle=None, path=None):
     """return differences file json output"""
     if not clustal or not muscle:
         print('You must provide valid alignment output for both clustal and muscle')
@@ -89,6 +86,7 @@ def compare_outputs(clustal=None, muscle=None):
     with open(muscle) as f2:
         right = json.load(f2)
 
+    merge = left
     diff_left = []
     diff_right = []
 
@@ -99,7 +97,7 @@ def compare_outputs(clustal=None, muscle=None):
 
     if left.get('unmatches') is None or right.get('unmatches') is None:
         print('Invalid output file provided')
-        return [[], []]
+        return [], []
 
     leftKeys = set(left.get('unmatches').keys())
     rightKeys = set(right.get('unmatches').keys())
@@ -111,19 +109,30 @@ def compare_outputs(clustal=None, muscle=None):
         if right.get('unmatches').get(key) is not None:
             diff_right.append(right.get('unmatches').get(key))
 
-    # diff = []
-    # cont = 0
-    # while cont < len(diff_left) and cont < len(diff_right):
-    #     if cont > len(diff_left):
-    #         diff.append([None, diff_right[cont]])
-    #     else:
-    #         if cont > len(diff_right):
-    #             diff.append([diff_left[cont], None])
-    #         else:
-    #             diff.append([diff_left[cont], diff_right[cont]])
-    #     cont = cont + 1
+    tools = [left.get('tool'), right.get('tool')]
+    for key in leftKeys & rightKeys:
+        item = left.get('unmatches').get(key)
+        item['tools'] = tools
+        merge['unmatches'][key] = item
 
-    # return [diff]
+    for key in rightKeys - leftKeys:
+        item = right.get('unmatches').get(key)
+        item['tools'] = [right.get('tool')]
+        merge['unmatches'][key] = item
+
+    for key in leftKeys - rightKeys:
+        item = left.get('unmatches').get(key)
+        item['tools'] = [left.get('tool')]
+        merge['unmatches'][key] = item
+
+    now = time.localtime()
+    merge['tools'] = tools
+    merge.pop('tool')
+    merge['timestamp'] = time.strftime('%Y/%m/%d %H:%M:%S UTC%z', now)
+
+    filename = '{}-{}_{}.json'.format('_'.join(tools), merge['reference'], time.strftime('%Y-%m-%d_%H-%M', now))
+    with open(os.path.join(path, filename), 'w') as output:
+        output.write(json.dumps(merge, indent=True))
 
     return diff_left, diff_right
 

@@ -79,10 +79,18 @@ def main():
     # utils.saveCompareFile("differences.txt","Global ", diff)
 
     # Compare global alignments
+    print('[...]  Parsing ClustalW analysis...')
     ClustalJ = runClustal('analysis/clustal-global.clustal_num', reference_id, 14)
+    print('[DONE] Parsing ClustalW analysis')
+
+    print('[...]  Parsing Muscle analysis...')
     MuscleJ = runMuscle('analysis/muscle-global.clw', reference_id, 14)
-    diff = utils.compare_outputs(clustal='output/'+ ClustalJ, muscle='output/'+ MuscleJ)
-    utils.saveCompareFile("differences.txt","Global ", diff)
+    print('[DONE] Parsing Muscle analysis ')
+
+    print('[...]  Comparing alignments...')
+    diff = utils.compare_outputs(clustal='output/'+ ClustalJ, muscle='output/'+ MuscleJ, path='output')
+    print('[DONE] Comparing alignments')
+    # utils.saveCompareFile("differences.txt","Global ", diff)
 
 
 if __name__ == "__main__":
