@@ -36,8 +36,8 @@
 \date{A.A.: 2019/2020}
 
 \author{
-    \textsc{Silva Edoardo} 816560 \\
-    \textsc{Marchetti Davide} 815990
+    \textsc{Edoardo Silva} 816560 \\
+    \textsc{Davide Marchetti} 815990
 }
 
 \begin{document}
@@ -56,7 +56,7 @@ Sfruttando gli strumenti messi a disposizione dall'European Bioinformatics Insti
 
 \newpage
 \section{Sequenze Analizzate}
-In aggiunta alla sequenza di riferimento di Wuhan, sono state selezionate alcune sequenze relative a paesi dell'area mediorientale.
+In aggiunta alla sequenza di riferimento di Wuhan, ne sono state selezionate alcune relative a paesi dell'area mediorientale.
 
 \subsubsection*{Reference di Wuhan}
 \begin{description}
@@ -179,7 +179,10 @@ La struttura dell'output di analisi di un singolo allineamento comprende:
 \end{description}
 
 \noindent
-La struttura dell'output di analisi del confronto tra due tool, aggiunge una componente denominata \lstinline{tools} a ciascun gruppo di mismatch che contiene i tool che hanno rilevato il mismatch, come riportato nel listato \ref{code:json-output}.
+Come riportato nel listato \ref{code:json-output}, la struttura dell'output di analisi del confronto tra due tool, prevede un'informazione aggiuntiva a ciascun gruppo di mismatch:
+\begin{description}
+  \lstitem{tools:} contiene i tool che hanno rilevato quel particolare mismatch
+\end{description}
 
 \begin{lstlisting}[basicstyle=\small\ttfamily,caption=Esempio di output,label=code:json-output]
 {
@@ -187,7 +190,7 @@ La struttura dell'output di analisi del confronto tra due tool, aggiunge una com
   "timestamp": "2020/05/14 12:05:18 UTC+0200",
   "reference": "NC_045512.2",
   "analyzed_sequences": ["MT281530.2", "EPI_ISL_447469", "EPI_ISL_437334", "EPI_ISL_437512", "MT276598.1", "EPI_ISL_437317", "MT240479.1", "EPI_ISL_417444", "MT327745.1", "MT320891.2", "EPI_ISL_442523", "MT276597.1", "MT262993.1"],
-  "mismatchs": {
+  "mismatches": {
     ...,
     "3715055078265645856": {
       "from": 3040,
