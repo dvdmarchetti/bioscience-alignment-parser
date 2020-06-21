@@ -54,6 +54,17 @@ Amino_acids = {
 def main():
     reference_id = open(os.path.join('..', '..', 'project-1', 'input', 'reference.fasta'), 'r').readline().split(' ')[0][1:] # NC_045512.2
     #print(reference_id)
+    reference = open(os.path.join('..', '..', 'project-1', 'input', 'reference_ncbi_gisaid_sequences.fasta'), 'r').readlines()[1:]
+    seqlist=[]
+    for line in reference: #linee file
+        if not (line.startswith(">") and line.startswith('\n')): #same gene
+            seqlist.append(line.rstrip()) #remove \n for each line
+    #unify lines in single string
+    reference = seqlist[0].join(seqlist[1:])
+    del(seqlist) #usless
+    #print(seqlist[0:20])
+    #print(reference[266:13483])
+    #print(reference[1135])
 
     # Read input files (Json + Excel)
     muscle_output = load_output('Muscle-NC_045512.2_2020-05-30_16-51.json')
@@ -89,12 +100,21 @@ def main():
             gene_end = gene.iloc[0]['End']
             cds_start = affected_cds.iloc[0]['from']
             cds_end = affected_cds.iloc[0]['to']
-            altered_codone = '' #TODO
+          ###MOVED altered_codone at the end
             sequence = value['alt']
             relative_start = value['from'] - gene_start + 1
             relative_end = relative_start + len(sequence) - 1
-            encoded_aminoacid = ''  #TODO
-
+            ###MOVED encoded_aminoacid after altered_codone       
+            altered = ((relative_start - cds_start)%3) #closest multiple by 3 to relative_start - cds_start
+            original = reference[relative_start]
+            reference = reference[:relative_start] + str(sequence[0]) + reference[relative_start+1:] 
+            altered_codone = reference[relative_start - altered: relative_start - altered + 3]#'' #TODO
+            reference = reference[:relative_start] + str(original[0]) + reference[relative_start+1:]  #to not change original reference
+            encoded_aminoacid = ''  #TODO 
+            for key, value in Amino_acids.items():
+                if altered_codone in value:
+                    encoded_aminoacid = key
+            
             variations_to_genes.append({
                 'gene_id': gene_id,
                 'gene_start': gene_start,
