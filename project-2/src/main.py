@@ -25,29 +25,29 @@ def load_excel(path, sheets=None):
 
 #dict RNA Translation as global variable
 Amino_acids = {
-    "START" : 'AUG',
-    "STOP" : ["UAA", "UAG", "UGA"],
-    'F' : ['UUU', 'UUC'],
-    'L' : ['UUA', 'UUG','CUU', 'CUA', 'CUC', 'CUG'],
-    'I' : ['AUU', 'AUC', 'AUA'],
-    'M' : ['AUG'],
-    'V' : ['GUU', 'GUA', 'GUC', 'GUG'],
-    'S' : ['UCU', 'UCA', 'UCC', 'UCG'],
-    'P' : ['CCU', 'CCA', 'CCC', 'CCG'],
-    'T' : ['ACU', 'ACA', 'ACC', 'ACG'],
-    'A' : ['GCU', 'GCA', 'GCC', 'GCG'],
-    'Y' : ['UAU', 'UAC'],
-    'H' : ['CAU', 'CAC'],
+    "START" : 'ATG',
+    "STOP" : ["TAA", "TAG", "TGA"],
+    'F' : ['TTT', 'TTC'],
+    'L' : ['TTA', 'TTG','CTT', 'CTA', 'CTC', 'CTG'],
+    'I' : ['ATT', 'ATC', 'ATA'],
+    'M' : ['ATG'],
+    'V' : ['GTT', 'GTA', 'GTC', 'GTG'],
+    'S' : ['TCT', 'TCA', 'TCC', 'TCG'],
+    'P' : ['CCT', 'CCA', 'CCC', 'CCG'],
+    'T' : ['ACT', 'ACA', 'ACC', 'ACG'],
+    'A' : ['GCT', 'GCA', 'GCC', 'GCG'],
+    'Y' : ['TAT', 'TAC'],
+    'H' : ['CAT', 'CAC'],
     'Q' : ['CAA', 'CAG'],
-    'N' : ['AAU', 'AAC'],
+    'N' : ['AAT', 'AAC'],
     'K' : ['AAA', 'AAG'],
-    'D' : ['GAU', 'GAC'],
+    'D' : ['GAT', 'GAC'],
     'E' : ['GAA', 'GAG'],
-    'C' : ['UGU', 'UGC'],
-    'W' : ['UGG'],
-    'R' : ['CGU', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
-    'S' : ['AGU', 'AGC'],
-    'G' : ['GGU', 'GGA', 'GGC', 'GGG']
+    'C' : ['TGT', 'TGC'],
+    'W' : ['TGG'],
+    'R' : ['CGT', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
+    'S' : ['AGT', 'AGC'],
+    'G' : ['GGT', 'GGA', 'GGC', 'GGG']
 }
 
 
@@ -60,11 +60,12 @@ def main():
         if not (line.startswith(">") and line.startswith('\n')): #same gene
             seqlist.append(line.rstrip()) #remove \n for each line
     #unify lines in single string
-    reference = seqlist[0].join(seqlist[1:])
-    del(seqlist) #usless
+    reference = seqlist[0].join(seqlist[0:])
     #print(seqlist[0:20])
+    del(seqlist) #usless
     #print(reference[266:13483])
     #print(reference[1135])
+    #print(reference[0:30])
 
     # Read input files (Json + Excel)
     muscle_output = load_output('Muscle-NC_045512.2_2020-05-30_16-51.json')
@@ -106,10 +107,10 @@ def main():
             relative_end = relative_start + len(sequence) - 1
             ###MOVED encoded_aminoacid after altered_codone       
             altered = ((relative_start - cds_start)%3) #closest multiple by 3 to relative_start - cds_start
-            original = reference[relative_start]
-            reference = reference[:relative_start] + str(sequence[0]) + reference[relative_start+1:] 
-            altered_codone = reference[relative_start - altered: relative_start - altered + 3]#'' #TODO
-            reference = reference[:relative_start] + str(original[0]) + reference[relative_start+1:]  #to not change original reference
+            original = reference[relative_start:relative_end]
+            reference = reference[:relative_start] + str(sequence[0:relative_start-relative_end]) + reference[relative_start+1:] 
+            altered_codone = reference[relative_start - altered: relative_start - altered + 3*(relative_start-relative_end + 1)]#'' #TODO
+            reference = reference[:relative_start] + str(original[0:relative_start-relative_end]) + reference[relative_start+1:]  #to not change original reference
             encoded_aminoacid = ''  #TODO 
             for key, value in Amino_acids.items():
                 if altered_codone in value:
