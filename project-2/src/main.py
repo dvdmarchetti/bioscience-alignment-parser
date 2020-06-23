@@ -108,13 +108,21 @@ def main():
             ###MOVED encoded_aminoacid after altered_codone       
             altered = ((relative_start - cds_start)%3) #closest multiple by 3 to relative_start - cds_start
             original = reference[relative_start:relative_end]
-            reference = reference[:relative_start] + str(sequence[0:relative_start-relative_end]) + reference[relative_start+1:] 
+            reference = reference[:relative_start] + str(sequence[0:relative_end-relative_start]) + reference[relative_start+(relative_end-relative_start)+1:] 
             altered_codone = reference[relative_start - altered: relative_start - altered + 3*(relative_start-relative_end + 1)]#'' #TODO
-            reference = reference[:relative_start] + str(original[0:relative_start-relative_end]) + reference[relative_start+1:]  #to not change original reference
-            encoded_aminoacid = ''  #TODO 
+            reference = reference[:relative_start] + str(original[0:relative_end-relative_start]) + reference[relative_start+(relative_end-relative_start)+1:]  #to not change original reference 
+            encode = [] #if multiple amminoacids
             for key, value in Amino_acids.items():
                 if altered_codone in value:
-                    encoded_aminoacid = key
+                    encode.append(key)
+            encoded_aminoacid = ''.join(encode) #TODO
+            
+            #DEBUG# Amino_acids non legge 'S' WTF?
+            if encoded_aminoacid == '':
+                print(relative_end-relative_start, altered_codone)  
+            if altered_codone == '':
+                print(relative_end-relative_start, sequence)   
+            #END DEBUG 
             
             variations_to_genes.append({
                 'gene_id': gene_id,
