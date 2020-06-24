@@ -103,46 +103,62 @@ def main():
             cds_end = affected_cds.iloc[0]['to']
             ###MOVED altered_codone at the end
             sequence = value['alt']
-            relative_start = value['from'] - gene_start + 1
-            relative_end = relative_start + len(sequence) - 1
-            ###MOVED encoded_aminoacid after altered_codone 
-            #TOFIX
-            multiple = 3*((relative_end-relative_start)%3 + 1)  #lenght codons
-            altered = (relative_start - (relative_start)%3) #closest multiple by 3 to relative_start - cds_start
-            
-            altered_codone = reference[altered:relative_start] +str(sequence)+ reference[relative_start+len(sequence)+1:altered + multiple+1]
-            encoded_aminoacid = ''  
+            relative_start = value['from'] - gene_start
+            relative_end = relative_start + len(sequence)
+            ###MOVED encoded_aminoacid after altered_codone
+
+            # CAG AAG CTA
+            #      ^^ ^ alteration
+            #     ^ altered group start
+            # gene_length = gene_end - gene_start
+            alteration_start = relative_start - ((relative_start + 1) % 3)
+            global_alteration_start = alteration_start + gene_start
+
+            alteration_end = alteration_start
+            while alteration_end < relative_end:
+                alteration_end += 3
+            global_alteration_end = alteration_end + gene_start
+
+            # print(global_alteration_start, value['from'], value['to'], global_alteration_end)
+            # print(reference[global_alteration_start:global_alteration_end])
+            # print(reference[global_alteration_start:value['from']] + str(sequence) + reference[value['to']:global_alteration_end])
+            # print()
+
+            altered_codone = reference[global_alteration_start:value['from']] + str(sequence) + reference[value['to']:global_alteration_end]
+
+            encoded_aminoacid = ''
             ngrams, encode = [], [] #groups of 3 altered_codones, encoded_aminoacid
             for i in range(0, len(altered_codone)%3, 3): #n-gram: n = 3
                 ngrams.append(altered_codone[i:i+3])
-            print(ngrams)
+            # print(ngrams)
             for x in range(len(ngrams)):
+                print('loop')
                 n = ngrams[x]
                 for key, value in Amino_acids.items():
                     if n in value:
-                        print(n, key, value)
+                        # print(n, key, value)
                         encode.append(key)
                 encoded_aminoacid = ''.join(encode) #TODO
             """altered = ((relative_start - cds_start)%3) #closest multiple by 3 to relative_start - cds_start
             original = reference[relative_start:relative_end]
-            reference = reference[:relative_start] + str(sequence[0:relative_end-relative_start]) + reference[relative_start+(relative_end-relative_start)+1:] 
+            reference = reference[:relative_start] + str(sequence[0:relative_end-relative_start]) + reference[relative_start+(relative_end-relative_start)+1:]
             altered_codone = reference[relative_start - altered: relative_start + (3*(relative_end-relative_start) + 1) - altered ] #'' #TODO
-            reference = reference[:relative_start] + str(original[0:relative_end-relative_start]) + reference[relative_start+(relative_end-relative_start)+1:]  #to not change original reference 
+            reference = reference[:relative_start] + str(original[0:relative_end-relative_start]) + reference[relative_start+(relative_end-relative_start)+1:]  #to not change original reference
             encode = [] #if multiple amminoacids
             alt = altered_codone
             [alt[i:i+3] for i in range(0, len(alt), 3)]
             for a in alt:
                 for key, value in Amino_acids.items():
                     if a in value:
-                        encode.append(key)"""    
-            
-            #DEBUG# Amino_acids non legge 'S' WTF?
-            if encoded_aminoacid == '':
-                print(relative_end-relative_start, altered_codone)  
-            if altered_codone == '':
-                print(relative_end-relative_start, sequence)   
-            #END DEBUG 
-            
+                        encode.append(key)"""
+
+            # #DEBUG# Amino_acids non legge 'S' WTF?
+            # if encoded_aminoacid == '':
+            #     print(relative_end-relative_start, altered_codone)
+            # if altered_codone == '':
+            #     print(relative_end-relative_start, sequence)
+            # #END DEBUG
+
             variations_to_genes.append({
                 'gene_id': gene_id,
                 'gene_start': gene_start,
@@ -150,7 +166,7 @@ def main():
                 'cds_start': cds_start,
                 'cds_end': cds_end,
                 'altered_codone': altered_codone,
-                'relative_start': relative_start,
+                'relative_start': relative_start + 1,
                 'relative_end': relative_end,
                 'sequence': sequence,
                 'encoded_aminoacid': encoded_aminoacid,
