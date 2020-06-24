@@ -101,21 +101,40 @@ def main():
             gene_end = gene.iloc[0]['End']
             cds_start = affected_cds.iloc[0]['from']
             cds_end = affected_cds.iloc[0]['to']
-          ###MOVED altered_codone at the end
+            ###MOVED altered_codone at the end
             sequence = value['alt']
             relative_start = value['from'] - gene_start + 1
             relative_end = relative_start + len(sequence) - 1
-            ###MOVED encoded_aminoacid after altered_codone       
-            altered = ((relative_start - cds_start)%3) #closest multiple by 3 to relative_start - cds_start
+            ###MOVED encoded_aminoacid after altered_codone 
+            #TOFIX
+            multiple = 3*((relative_end-relative_start)%3 + 1)  #lenght codons
+            altered = (relative_start - (relative_start)%3) #closest multiple by 3 to relative_start - cds_start
+            
+            altered_codone = reference[altered:relative_start] +str(sequence)+ reference[relative_start+len(sequence)+1:altered + multiple+1]
+            encoded_aminoacid = ''  
+            ngrams, encode = [], [] #groups of 3 altered_codones, encoded_aminoacid
+            for i in range(0, len(altered_codone)%3, 3): #n-gram: n = 3
+                ngrams.append(altered_codone[i:i+3])
+            print(ngrams)
+            for x in range(len(ngrams)):
+                n = ngrams[x]
+                for key, value in Amino_acids.items():
+                    if n in value:
+                        print(n, key, value)
+                        encode.append(key)
+                encoded_aminoacid = ''.join(encode) #TODO
+            """altered = ((relative_start - cds_start)%3) #closest multiple by 3 to relative_start - cds_start
             original = reference[relative_start:relative_end]
             reference = reference[:relative_start] + str(sequence[0:relative_end-relative_start]) + reference[relative_start+(relative_end-relative_start)+1:] 
-            altered_codone = reference[relative_start - altered: relative_start - altered + 3*(relative_start-relative_end + 1)]#'' #TODO
+            altered_codone = reference[relative_start - altered: relative_start + (3*(relative_end-relative_start) + 1) - altered ] #'' #TODO
             reference = reference[:relative_start] + str(original[0:relative_end-relative_start]) + reference[relative_start+(relative_end-relative_start)+1:]  #to not change original reference 
             encode = [] #if multiple amminoacids
-            for key, value in Amino_acids.items():
-                if altered_codone in value:
-                    encode.append(key)
-            encoded_aminoacid = ''.join(encode) #TODO
+            alt = altered_codone
+            [alt[i:i+3] for i in range(0, len(alt), 3)]
+            for a in alt:
+                for key, value in Amino_acids.items():
+                    if a in value:
+                        encode.append(key)"""    
             
             #DEBUG# Amino_acids non legge 'S' WTF?
             if encoded_aminoacid == '':
@@ -143,6 +162,7 @@ def main():
     print(df_variations_to_genes)
 
     #print(Amino_acids)
+    print("not crashed")
 
 if __name__ == "__main__":
     main()
