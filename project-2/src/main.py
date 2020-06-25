@@ -60,20 +60,19 @@ def translate_into_aminoacid(rna):
 
 def main():
     reference_id = None
-    with open(os.path.join('..', '..', 'project-1', 'input', 'reference.fasta'), 'r') as f:
-        reference_id = f.readline().split(' ')[0][1:] # NC_045512.2
-
     reference = None
-    with open(os.path.join('..', '..', 'project-1', 'input', 'reference_ncbi_gisaid_sequences.fasta'), 'r') as f:
+    with open(os.path.join('..', '..', 'project-1', 'input', 'reference.fasta'), 'r') as f:
+        lines = f.readlines()
+        reference_id = lines[0].split(' ')[0][1:] # NC_045512.2
         seqlist = []
-        for line in f.readlines()[1:]: #linee file
+        for line in lines[1:]: #linee file
             if not (line.startswith(">") and line.startswith('\n')): #same gene
                 seqlist.append(line.rstrip()) #remove \n for each line
-        reference = seqlist[0].join(seqlist[0:])
+        reference = ''.join(seqlist[0:])
 
     # Read input files (Json + Excel)
-    muscle_output = load_output('Muscle-NC_045512.2_2020-05-30_16-51.json')
-    alignment_output = load_output('Muscle_Clustal-NC_045512.2_2020-05-30_16-51.json')
+    # muscle_output = load_output('Muscle-NC_045512.2_2020-05-30_16-51.json')
+    # alignment_output = load_output('Muscle_Clustal-NC_045512.2_2020-05-30_16-51.json')
     clustal_output = load_output('Clustal-NC_045512.2_2020-05-30_16-51.json')
 
     #variations = muscle_output['unmatches'].items()
@@ -93,6 +92,8 @@ def main():
     # 3) Append informations to list used to build dataframe (more efficient than df.append for each row)
     variations_to_genes = []
     for key, value in variations:
+        value['from'] -= 4
+        value['to'] -= 4
         affected_cds = df_ref_cds.loc[(value['from'] > df_ref_cds['from']) & (value['to'] < df_ref_cds['to'])]
 
         if not affected_cds.empty:
@@ -121,6 +122,7 @@ def main():
             # print(reference[global_alteration_start:global_alteration_end])
             # print(reference[global_alteration_start:value['from']] + str(sequence) + reference[value['to']:global_alteration_end])
             # print()
+
             original_aminoacid = ''
             encoded_aminoacid = ''
             original_codone = reference[global_alteration_start: global_alteration_end]
@@ -131,14 +133,6 @@ def main():
                 if '-' not in group:
                     encoded_aminoacid += translate_into_aminoacid(group)
                     original_aminoacid += translate_into_aminoacid(ref_group)
-            # print (len(altered_codone), len(altered_codone) / 3, encoded_aminoacid)
-
-            # #DEBUG# Amino_acids non legge 'S' WTF?
-            # if encoded_aminoacid == '':
-            #     print(relative_end-relative_start, altered_codone)
-            # if altered_codone == '':
-            #     print(relative_end-relative_start, sequence)
-            # #END DEBUG
 
             variations_to_genes.append({
                 'gene_id': gene_id,
@@ -158,11 +152,9 @@ def main():
     # Convert the list to dataframe
     columns = ['gene_id', 'gene_start', 'gene_end', 'cds_start', 'cds_end', 'original_codone', 'altered_codone', 'relative_start', 'relative_end', 'sequence', 'original_aminoacid', 'encoded_aminoacid']
     df_variations_to_genes = pd.DataFrame(variations_to_genes, columns=columns)
+    df_variations_to_genes.to_csv(os.path.join('..', 'output', 'out.csv'))
     print(df_variations_to_genes)
 
-    #print(Amino_acids)
-    
 
 if __name__ == "__main__":
     main()
-    print("not crashed")
