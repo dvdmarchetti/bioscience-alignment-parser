@@ -52,7 +52,7 @@ aminoacids_lookup_table = {
 
 def translate_into_aminoacid(rna):
     for key, value in aminoacids_lookup_table.items():
-        print (rna, key, value)
+        #print (rna, key, value)
         if rna in value:
             return key
 
@@ -121,13 +121,16 @@ def main():
             # print(reference[global_alteration_start:global_alteration_end])
             # print(reference[global_alteration_start:value['from']] + str(sequence) + reference[value['to']:global_alteration_end])
             # print()
-
+            original_aminoacid = ''
             encoded_aminoacid = ''
+            original_codone = reference[global_alteration_start: global_alteration_end]
             altered_codone = reference[global_alteration_start:value['from']] + str(sequence) + reference[value['to']:global_alteration_end]
             for i in range(0, len(altered_codone), 3):
                 group = altered_codone[i:i+3]
+                ref_group = reference[global_alteration_start+i:global_alteration_start+i+3]
                 if '-' not in group:
                     encoded_aminoacid += translate_into_aminoacid(group)
+                    original_aminoacid += translate_into_aminoacid(ref_group)
             # print (len(altered_codone), len(altered_codone) / 3, encoded_aminoacid)
 
             # #DEBUG# Amino_acids non legge 'S' WTF?
@@ -143,20 +146,23 @@ def main():
                 'gene_end': gene_end,
                 'cds_start': cds_start,
                 'cds_end': cds_end,
+                'original_codone': original_codone,
                 'altered_codone': altered_codone,
                 'relative_start': relative_start + 1,
                 'relative_end': relative_end,
                 'sequence': sequence,
-                'encoded_aminoacid': encoded_aminoacid,
+                'original_aminoacid': original_aminoacid,
+                'encoded_aminoacid': encoded_aminoacid
             })
 
     # Convert the list to dataframe
-    columns = ['gene_id', 'gene_start', 'gene_end', 'cds_start', 'cds_end', 'altered_codone', 'relative_start', 'relative_end', 'sequence', 'encoded_aminoacid']
+    columns = ['gene_id', 'gene_start', 'gene_end', 'cds_start', 'cds_end', 'original_codone', 'altered_codone', 'relative_start', 'relative_end', 'sequence', 'original_aminoacid', 'encoded_aminoacid']
     df_variations_to_genes = pd.DataFrame(variations_to_genes, columns=columns)
     print(df_variations_to_genes)
 
     #print(Amino_acids)
-    print("not crashed")
+    
 
 if __name__ == "__main__":
     main()
+    print("not crashed")
