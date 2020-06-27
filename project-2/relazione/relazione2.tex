@@ -104,6 +104,35 @@ variations_to_genes.append({
 }
 \end{lstlisting}	
 	da generare come file output.
+	\newpage
+\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Tabella per la traduzione in amminoacidi,label=code:aminoacids_table]
+{
+aminoacids_lookup_table = {
+    "START" : 'ATG',
+    "STOP" : ["TAA", "TAG", "TGA"],
+    'F' : ['TTT', 'TTC'],
+    'L' : ['TTA', 'TTG', 'CTT', 'CTA', 'CTC', 'CTG'],
+    'I' : ['ATT', 'ATC', 'ATA'],
+    'M' : ['ATG'],
+    'V' : ['GTT', 'GTA', 'GTC', 'GTG'],
+    'S' : ['TCT', 'TCA', 'TCC', 'TCG', 'AGT', 'AGC'],
+    'P' : ['CCT', 'CCA', 'CCC', 'CCG'],
+    'T' : ['ACT', 'ACA', 'ACC', 'ACG'],
+    'A' : ['GCT', 'GCA', 'GCC', 'GCG'],
+    'Y' : ['TAT', 'TAC'],
+    'H' : ['CAT', 'CAC'],
+    'Q' : ['CAA', 'CAG'],
+    'N' : ['AAT', 'AAC'],
+    'K' : ['AAA', 'AAG'],
+    'D' : ['GAT', 'GAC'],
+    'E' : ['GAA', 'GAG'],
+    'C' : ['TGT', 'TGC'],
+    'W' : ['TGG'],
+    'R' : ['CGT', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
+    'G' : ['GGT', 'GGA', 'GGC', 'GGG']
+}
+}
+\end{lstlisting}	
 	
 \section{output}
 \begin{lstlisting}[basicstyle=\small\ttfamily,caption=Generazione di output,label=code:output]
