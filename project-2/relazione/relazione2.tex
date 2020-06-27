@@ -1,0 +1,120 @@
+\documentclass[11pt,italian]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} %utf8 % lettere accentate da tastiera
+\usepackage[italian]{babel} % lingua del documento
+\usepackage{blindtext}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{xcolor}   % for \textcolor
+\usepackage[font=small,labelfont=bf,skip=10pt]{caption}
+\usepackage{subcaption}
+\setlength{\belowcaptionskip}{5pt}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  frame=single,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+
+% Use lstinline as item in description
+\makeatletter
+\newcommand*{\lstitem}[1][]{%
+  \setbox0\hbox\bgroup
+    \patchcmd{\lst@InlineM}{\@empty}{\@empty\egroup\item[\usebox0]\leavevmode\ignorespaces}{}{}%
+    \lstinline[#1]%
+}
+\makeatother
+
+\title{Multiple Sequence Alignment (MSA) \\ di sequenze SARS-CoV-2}
+
+\date{A.A.: 2019/2020}
+
+\author{
+    \textsc{Edoardo Silva} 816560 \\
+    \textsc{Davide Marchetti} 815990
+}
+
+\begin{document}
+\maketitle
+
+\section{Abstract}
+Per ogni variazione registrata nell\'output della parte1, viene creata un entità nella tabella di output contenente:
+
+\begin{itemize}
+    \item \textbf{gene\_id}: id del gene in cui cade la variazione
+    \item \textbf{gene\_start}: inizio del gene in cui cade la variazione
+    \item \textbf{gene\_end}: fine del gene in cui cade la variazione
+    \item \textbf{cds\_start}: inizio della \textit{coding DNA sequence} della porzione del gene in cui cade la variazione
+    \item \textbf{cds\_end}: fine della \textit{coding DNA sequence} della porzione del gene in cui cade la variazione
+    \item \textbf{original\_codone}: codone della reference prima della modifica
+    \item \textbf{altered\_codone}: codone della reference modificati dalla variazione
+    \item \textbf{relative\_start}: inizio della variazione in rispetto all'inizio della cds
+    \item \textbf{relative\_end}: fine della variazione in rispetto all'inizio della cds
+    \item \textbf{sequence}: variazione
+    \item \textbf{encoded\_aminoacid}: amminoacido codificato da \textbf{altered\_codone}
+\end{itemize}
+% aminoacids_lookup_table
+\section{codice}
+	Il codice inizia caricando la sequenza di reference dal file \textbf{'reference.fasta\'} e un file di output.\newline % qui il codice può cambiar e%
+	Infine carica in una lista le CDS della reference dal file \textbf{'Genes-CDS.xlsx\'}. \newline
+	Il  corpo del codice esegue un ciclo per ogni variazione nel file di output 
+	\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:variations_to_genes = []]
+{
+for key, value in variations:
+        ...
+        
+        affected_cds = df_ref_cds.loc[(value['from'] > df_ref_cds['from']) & (value['to'] < df_ref_cds['to'])]
+
+        if not affected_cds.empty:
+            gene = df_ref_genes.loc[affected_cds['GeneID']]
+            gene_id = affected_cds.iloc[0]['GeneID']
+            gene_start = gene.iloc[0]['Start']
+            gene_end = gene.iloc[0]['End']
+            cds_start = affected_cds.iloc[0]['from']
+            cds_end = affected_cds.iloc[0]['to']
+            sequence = value['alt']
+            relative_start = value['from'] - gene_start
+            relative_end = relative_start + len(sequence),
+    ...
+  }
+}
+\end{lstlisting}
+	e riempie la tebella
+\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Appending nel file di output,label=code:variations_to_genes]
+{
+variations_to_genes.append({
+	'gene_id': gene_id,
+	'gene_start': gene_start,
+	'gene_end': gene_end,
+	'cds_start': cds_start,
+	'original_codone': original_codone,
+	'altered_codone': altered_codone,
+	'relative_start': relative_start + 1,
+	'relative_end': relative_end,
+	'sequence': sequence,
+	'original_aminoacid': original_aminoacid,
+	'encoded_aminoacid': encoded_aminoacid
+  })
+}
+\end{lstlisting}	
+	da generare come file output.
+	
+\section{output}
+\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Generazione di output,label=code:output]
+	columns = ['gene_id', 'gene_start', 'gene_end', 'cds_start', 'cds_end', 'original_codone', 'altered_codone', 'relative_start', 'relative_end', 'sequence', 'original_aminoacid', 'encoded_aminoacid']
+	df_variations_to_genes = pd.DataFrame(variations_to_genes, columns=columns)
+	df_variations_to_genes.to_csv(os.path.join('..', 'output', 'out.csv'))
+\end{lstlisting}	
+Genera file \textbf{out.csv} nella sotocartella \' output \' .
+% inserire immagine output?%
+
+\section{conclusione}
+Eccetto per la variazione con cancellazione di sequenze, tutti gli altri codoni modificati sono traducibili.
+
+\end{document}
