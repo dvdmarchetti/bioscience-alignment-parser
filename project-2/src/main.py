@@ -58,6 +58,14 @@ def translate_into_aminoacid(rna):
 
     raise Exception('Invalid protein: {}'.format(rna))
 
+def load_fasta_id(dir):
+    with open(dir, 'r') as f:
+        line = f.readline()
+        id = line.split(' ')[0][1:]
+
+    return str(id)
+
+
 def main():
     reference_id = None
     reference = None
@@ -155,6 +163,47 @@ def main():
     df_variations_to_genes.to_csv(os.path.join('..', 'output', 'out.csv'))
     print(df_variations_to_genes)
 
+### END PART 2 ###############################################################
+###PART 3 ####################################################################
+    #print(variations)
+    sequences = []
+    #GISAID ones
+    mydir = os.path.join('..', '..', 'project-1', 'input', 'GISAID')
+    for file in os.listdir(mydir):
+        if file.endswith(".fasta"): #.split('|')[1] perchè per qualche motivo nel file di output è tagliato in 
+            sequences.append(load_fasta_id(os.path.join(mydir, file)).split('|')[1]) #questo modo e deve combaciare
+    #ncbi ones
+    mydir = os.path.join('..', '..', 'project-1', 'input', 'ncbi')
+    for file in os.listdir(mydir):
+        if file.endswith(".fasta"):
+            sequences.append(load_fasta_id(os.path.join(mydir, file)))
+
+    #print(len(sequences)) #must be 13
+    #print(sequences)
+
+    ###to put in already existing cicle in part 2
+    indexes = []
+    data3 = []
+    for key, value in variations:
+        #print(key, value)
+        row = [0] * (len(sequences)) 
+        indexes.append(key)
+        for v in value['sequences']:
+            row[sequences.index(v)]  = 1
+        data3.append(row)
+
+    #print(data3)
+    """NEED NEW NAME"""
+    df3 = pd.DataFrame(data3, index = indexes, columns=sequences)
+    print(df3)
+
+### END PART 3 ###############################################################
 
 if __name__ == "__main__":
     main()
+
+    """sequenze X id_variazione [bool], fare tabella come dataframe
+3712119265286846256, 3723817058275059156
+   ["MT281530.2", 0 1
+   "MT320891.2",  1, 0
+   "EPI_ISL_442523"] 1,1"""
