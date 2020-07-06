@@ -198,7 +198,7 @@ def main():
     df3 = phylogeny.SortDF(df3) #sorting function
     #df3.to_csv(os.path.join('..', 'output', 'table.csv'))
     print(df3)
-    #phylogeny.test(df3, reference)
+    phylogeny.test(df3, reference)
 
 ### END PART 3 ###############################################################
 

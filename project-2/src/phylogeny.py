@@ -53,9 +53,41 @@ def SortDF(dataframe, ascending=False):
         print("error")
         return dataframe
 
+class Node:
+    def __init__(self, name = "root", data = [], left = None, right = None):
+        self.left = left
+        self.right = right
+        self.name = name
+        self.data = data
+    def __str__(self):  #print/tostring
+        string = str(self.name) + ":" + str(' '.join([str(elem) for elem in self.data]))
+        if (not self.isLeaf()):
+            if (not self.left == None):
+                string = '(' + self.left.__str__() + ')' + string 
+            if (not self.right == None):
+                string = string + '(' + self.right.__str__() + ')'
+        return string
+    def isLeaf(self):
+        if self.left == None and self.right == None:
+            return True
+        else:
+            return False
+    def setLeft(self, node):
+        self.left = node
+    def setRight(self, node):
+        self.right = node
+#visit recursive
+def visit(node):
+    if node.isLeaf():
+        return node
+    if node.left is not None:
+        visit(node.left)
+    if node.right is not None:
+        visit(node.right)
+
 def test(dataframe, reference):
     """attempt anytree tre build"""
-    ref = Node(reference) #parent node tree
+    #ref = Node(reference) #parent node tree
 
     """https://www.it-swarm.dev/it/python/come-posso-implementare-un-albero-python-ci-sono-delle-strutture-dati-integrate-python-come-java/967995793/
     For i in row
@@ -64,5 +96,31 @@ def test(dataframe, reference):
                 if column has mutation [left]
                 else rightt
         """
+    #print(RenderTree(ref))
+    """try normal tree
+    devo trovare il modo di mettere sta parte in funzione ricorsiva
+    e capire come stampare l'albero"""
 
-    print(RenderTree(ref))
+    """root = Tree(name = reference, data = dataframe.head())
+    for index, row in dataframe.iterrows():
+        left = []
+        right = []
+        #print("index =", index)
+        #print(row)
+        for element in row:
+            if element == 1:
+                right.append(element)
+            else:
+                left.append(element)
+        
+        root.left = Tree(name = str('NOT' + index), data = left)
+        root.right = Tree(name = index, data = right)"""
+    """custom node test"""
+    nr = Node("test1", data = [0,1,0,1])
+    nl = Node("test2", data = [0,0,0,0])
+    root = Node(data = [0,1,0,1,0,0,0,0], left= nl, right=nr )
+    nr.setLeft(Node("test3", data = [1,1,1,1], right = (Node("test4", data = [1,0]))))
+
+    print(root)
+
+
