@@ -1,7 +1,7 @@
 import os   #IO
 import json #Differences.json
 import pandas as pd  #to read excels
-
+import phylogeny
 
 def load_output(filename):
     """
@@ -195,15 +195,13 @@ def main():
     #print(data3)
     """NEED NEW NAME"""
     df3 = pd.DataFrame(data3, index = indexes, columns=sequences)
+    df3 = phylogeny.SortDF(df3) #sorting function
+    #df3.to_csv(os.path.join('..', 'output', 'table.csv'))
     print(df3)
+    #phylogeny.test(df3, reference)
 
 ### END PART 3 ###############################################################
 
 if __name__ == "__main__":
-    main()
+    main()  
 
-    """sequenze X id_variazione [bool], fare tabella come dataframe
-3712119265286846256, 3723817058275059156
-   ["MT281530.2", 0 1
-   "MT320891.2",  1, 0
-   "EPI_ISL_442523"] 1,1"""
