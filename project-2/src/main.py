@@ -161,7 +161,7 @@ def main():
     columns = ['gene_id', 'gene_start', 'gene_end', 'cds_start', 'cds_end', 'original_codone', 'altered_codone', 'relative_start', 'relative_end', 'sequence', 'original_aminoacid', 'encoded_aminoacid']
     df_variations_to_genes = pd.DataFrame(variations_to_genes, columns=columns)
     df_variations_to_genes.to_csv(os.path.join('..', 'output', 'out.csv'))
-    print(df_variations_to_genes)
+    #print(df_variations_to_genes)#
 
 ### END PART 2 ###############################################################
 ###PART 3 ####################################################################
@@ -197,8 +197,8 @@ def main():
     df3 = pd.DataFrame(data3, index = indexes, columns=sequences)
     df3 = phylogeny.SortDF(df3) #sorting function
     #df3.to_csv(os.path.join('..', 'output', 'table.csv'))
-    print(df3)
-    phylogeny.test(df3, reference)
+    #print(df3)
+    phylogeny.test(df3, reference_id)
 
 ### END PART 3 ###############################################################
 

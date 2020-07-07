@@ -60,7 +60,7 @@ class Node:
         self.name = name
         self.data = data
     def __str__(self):  #print/tostring
-        string = str(self.name) + ":" + str(' '.join([str(elem) for elem in self.data]))
+        string = str(self.name) + ": " + str(' '.join([str(elem) for elem in self.data]))
         if (not self.isLeaf()):
             if (not self.left == None):
                 string = '(' + self.left.__str__() + ')' + string 
@@ -85,6 +85,32 @@ def visit(node):
     if node.right is not None:
         visit(node.right)
 
+def Build_from_dataframe(root, df):
+    #https://pandas.pydata.org/pandas-docs/stable/getting_started/10min.html
+    #print(type(root.data), root.data)
+    if df.empty or len(root.data) <= 1:
+        return 
+    else:
+        left_data = []
+        right_data = []
+        #split left and right if have mutation
+        id = df.index[0]
+        i = 0
+        #print("id = " + id)
+        for element in df.iloc[0]: #guarda df.iloc and df.loc:  By integer slices, acting similar to numpy/python;  Selecting on a multi-axis by label.
+            if element == 1:
+                right_data.append(root.data[i]) #column name with mutation = 1
+            else:
+                left_data.append(root.data[i])  #column name without mutation = 0
+            i = i+1
+        right = Node(id, data = right_data)
+        left = Node("!" + id, data = left_data)
+        root.setLeft(left)
+        root.setRight(right)
+        Build_from_dataframe(right, df[1:]) 
+        Build_from_dataframe(left, df[1:])
+       
+
 def test(dataframe, reference):
     """attempt anytree tre build"""
     #ref = Node(reference) #parent node tree
@@ -100,9 +126,9 @@ def test(dataframe, reference):
     """try normal tree
     devo trovare il modo di mettere sta parte in funzione ricorsiva
     e capire come stampare l'albero"""
-
-    """root = Tree(name = reference, data = dataframe.head())
-    for index, row in dataframe.iterrows():
+    #tree: node name = mutation, data = columns with that mutation
+    root = Node(name = reference, data = list(dataframe.columns)) 
+    """for index, row in dataframe.iterrows():
         left = []
         right = []
         #print("index =", index)
@@ -115,12 +141,15 @@ def test(dataframe, reference):
         
         root.left = Tree(name = str('NOT' + index), data = left)
         root.right = Tree(name = index, data = right)"""
-    """custom node test"""
+    
+    """custom node test
     nr = Node("test1", data = [0,1,0,1])
     nl = Node("test2", data = [0,0,0,0])
     root = Node(data = [0,1,0,1,0,0,0,0], left= nl, right=nr )
-    nr.setLeft(Node("test3", data = [1,1,1,1], right = (Node("test4", data = [1,0]))))
-
+    nr.setLeft(Node("test3", data = [1,1,1,1], right = (Node("test4", data = [1,0]))))"""
+    #print(root.data)
+    Build_from_dataframe(root, dataframe.iloc[:2])
+    #Build_from_dataframe(root, dataframe)
     print(root)
 
 
