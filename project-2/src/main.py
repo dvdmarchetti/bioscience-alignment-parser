@@ -195,7 +195,7 @@ def main():
     #print(data3)
     """NEED NEW NAME"""
     df3 = pd.DataFrame(data3, index = indexes, columns=sequences)
-    df3 = phylogeny.SortDF(df3) #sorting function
+    df3 = phylogeny.SortDF(df3, False) #sorting function
     #df3.to_csv(os.path.join('..', 'output', 'table.csv'))
     #print(df3)
     phylogeny.test(df3, reference_id)
