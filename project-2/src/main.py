@@ -3,71 +3,6 @@ import json
 import pandas as pd
 
 
-def load_output(filename):
-    """
-    Load a json file from output folder of project 1 given its filename
-    """
-    path = os.path.join(os.getcwd(), '..', '..', 'project-1', 'output', filename)
-    with open(path) as json_file:
-        return json.load(json_file)
-
-
-def load_excel(path, sheets=None):
-    """
-    Load and excel file given its path. If sheets param is specified load only these specific sheets.
-    """
-    xls = pd.ExcelFile(os.path.join(os.getcwd(), path))
-
-    if sheets is None:
-        return pd.read_excel(path)
-
-    for sheet in sheets:
-        yield pd.read_excel(xls, sheet)
-
-
-# Dict RNA Translation Table
-aminoacids_lookup_table = {
-    "START" : 'ATG',
-    "STOP" : ["TAA", "TAG", "TGA"],
-    'F' : ['TTT', 'TTC'],
-    'L' : ['TTA', 'TTG', 'CTT', 'CTA', 'CTC', 'CTG'],
-    'I' : ['ATT', 'ATC', 'ATA'],
-    'M' : ['ATG'],
-    'V' : ['GTT', 'GTA', 'GTC', 'GTG'],
-    'S' : ['TCT', 'TCA', 'TCC', 'TCG', 'AGT', 'AGC'],
-    'P' : ['CCT', 'CCA', 'CCC', 'CCG'],
-    'T' : ['ACT', 'ACA', 'ACC', 'ACG'],
-    'A' : ['GCT', 'GCA', 'GCC', 'GCG'],
-    'Y' : ['TAT', 'TAC'],
-    'H' : ['CAT', 'CAC'],
-    'Q' : ['CAA', 'CAG'],
-    'N' : ['AAT', 'AAC'],
-    'K' : ['AAA', 'AAG'],
-    'D' : ['GAT', 'GAC'],
-    'E' : ['GAA', 'GAG'],
-    'C' : ['TGT', 'TGC'],
-    'W' : ['TGG'],
-    'R' : ['CGT', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
-    'G' : ['GGT', 'GGA', 'GGC', 'GGG']
-}
-
-
-def translate_into_aminoacid(rna):
-    for key, value in aminoacids_lookup_table.items():
-        if rna in value:
-            return key
-
-    raise Exception('Invalid protein: {}'.format(rna))
-
-
-def load_fasta_id(dir):
-    with open(dir, 'r') as f:
-        line = f.readline()
-        id = line.split(' ')[0][1:]
-
-    return str(id)
-
-
 def main():
     reference_id = None
     reference = None
@@ -162,6 +97,64 @@ def main():
     df_variations_to_genes = pd.DataFrame(variations_to_genes, columns=columns)
     df_variations_to_genes.to_csv(os.path.join('..', 'output', 'out.csv'))
     # print(df_variations_to_genes)
+
+
+def load_output(filename):
+    """
+    Load a json file from output folder of project 1 given its filename
+    """
+    path = os.path.join(os.getcwd(), '..', '..', 'project-1', 'output', filename)
+    with open(path) as json_file:
+        return json.load(json_file)
+
+
+def load_excel(path, sheets=None):
+    """
+    Load and excel file given its path. If sheets param is specified load only these specific sheets.
+    """
+    xls = pd.ExcelFile(os.path.join(os.getcwd(), path))
+
+    if sheets is None:
+        return pd.read_excel(path)
+
+    for sheet in sheets:
+        yield pd.read_excel(xls, sheet)
+
+
+# Dict RNA Translation Table
+aminoacids_lookup_table = {
+    "START" : 'ATG',
+    "STOP" : ["TAA", "TAG", "TGA"],
+    'F' : ['TTT', 'TTC'],
+    'L' : ['TTA', 'TTG', 'CTT', 'CTA', 'CTC', 'CTG'],
+    'I' : ['ATT', 'ATC', 'ATA'],
+    'M' : ['ATG'],
+    'V' : ['GTT', 'GTA', 'GTC', 'GTG'],
+    'S' : ['TCT', 'TCA', 'TCC', 'TCG', 'AGT', 'AGC'],
+    'P' : ['CCT', 'CCA', 'CCC', 'CCG'],
+    'T' : ['ACT', 'ACA', 'ACC', 'ACG'],
+    'A' : ['GCT', 'GCA', 'GCC', 'GCG'],
+    'Y' : ['TAT', 'TAC'],
+    'H' : ['CAT', 'CAC'],
+    'Q' : ['CAA', 'CAG'],
+    'N' : ['AAT', 'AAC'],
+    'K' : ['AAA', 'AAG'],
+    'D' : ['GAT', 'GAC'],
+    'E' : ['GAA', 'GAG'],
+    'C' : ['TGT', 'TGC'],
+    'W' : ['TGG'],
+    'R' : ['CGT', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
+    'G' : ['GGT', 'GGA', 'GGC', 'GGG']
+}
+
+
+def translate_into_aminoacid(rna):
+    for key, value in aminoacids_lookup_table.items():
+        if rna in value:
+            return key
+
+    raise Exception('Invalid protein: {}'.format(rna))
+
 
 if __name__ == "__main__":
     main()
