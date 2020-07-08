@@ -2,42 +2,6 @@ from anytree import Node, RenderTree
 import numpy as np
 import pandas as pd
 
-### form https://www.geeksforgeeks.org/check-if-two-arrays-are-equal-or-not/ ###
-#check if 2 arrays are identical [used to check index sorted correctly]
-def areEqual(arr1, arr2, n, m):
-
-    # If lengths of array are not
-    # equal means array are not equal
-    if (n != m):
-        return False;
-
-    # Linearly compare elements
-    for i in range(0, n - 1):
-        if (arr1[i] != arr2[i]):
-            return False;
-
-    # If all elements were same.
-    return True;
-
-def SortDF(dataframe, ascending=False):
-    """sort pandas.dataframe by row (descending by value) and return sorted one
-    (value = number of 1s)"""
-    ### array counting '1' for row ###
-    #count = dataframe.astype(bool).sum(axis=0) ##questo lo fa per colonna
-    count = dataframe.astype(bool).sum(axis=1) ##questo lo fa per riga
-    #print(count)
-    ### sort dataframe by number of 1s """https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.sort_values.html"""###
-    count.sort_values(ascending = ascending, inplace=True, ignore_index=False) #inplace or doesn't work
-    #print('Sorted count:\n', count)
-    #print(count.index)
-    #print(dataframe.reindex(count.index).index)
-    #print(areEqual(count.index, dataframe.reindex(count.index).index, len(count.index), len(dataframe.reindex(count.index).index)))
-    #dataframe.sort_index(level = count, ascending=True) ###SOMETHING WRONG HERE
-    if areEqual(count.index, dataframe.reindex(count.index).index, len(count.index), len(dataframe.reindex(count.index).index)):
-        return dataframe.reindex(count.index)
-    else:
-        print("error")
-        return dataframe
 
 """class Node:
     def __init__(self, name = "root", data = [], left = None, right = None):
@@ -70,6 +34,7 @@ def visit(node):
         visit(node.left)
     if node.right is not None:
         visit(node.right) """
+
 
 def Build_from_dataframe(root, df):
     #https://pandas.pydata.org/pandas-docs/stable/getting_started/10min.html
@@ -143,6 +108,7 @@ def build_tree(dataframe, reference):
     #Build_from_dataframe(root, dataframe)
     #print(root)
     print(RenderTree(root))
+
 
 def is_forbidden_matrix(df):
     # Build auxiliary matrix
