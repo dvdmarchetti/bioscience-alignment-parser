@@ -79,12 +79,8 @@ def main():
         reference = ''.join(seqlist[0:])
 
     # Read input files (Json + Excel)
-    # muscle_output = load_output('Muscle-NC_045512.2_2020-05-30_16-51.json')
-    # alignment_output = load_output('Muscle_Clustal-NC_045512.2_2020-05-30_16-51.json')
     clustal_output = load_output('Clustal-NC_045512.2_2020-05-30_16-51.json')
 
-    #variations = muscle_output['unmatches'].items()
-    #variations = alignment_output['unmatches'].items()
     variations = clustal_output['unmatches'].items()
 
     [df_ref_genes, df_ref_cds] = [x for x in load_excel(os.path.join('..', 'Genes-CDS.xlsx'), ['Geni', 'CDS'])]
@@ -102,15 +98,20 @@ def main():
     for key, value in variations:
         value['from'] -= 4
         value['to'] -= 4
-        affected_cds = df_ref_cds.loc[(value['from'] > df_ref_cds['from']) & (value['to'] < df_ref_cds['to'])]
+        affected_cdses = df_ref_cds.loc[(value['from'] > df_ref_cds['from']) & (value['to'] < df_ref_cds['to'])]
 
-        if not affected_cds.empty:
-            gene = df_ref_genes.loc[affected_cds['GeneID']]
-            gene_id = affected_cds.iloc[0]['GeneID']
-            gene_start = gene.iloc[0]['Start']
-            gene_end = gene.iloc[0]['End']
-            cds_start = affected_cds.iloc[0]['from']
-            cds_end = affected_cds.iloc[0]['to']
+        for index, cds in affected_cdses.iterrows():
+            cds_sequence = reference[cds['from']:cds['to'] + 1]
+            if pd.notna(cds['join_at']):
+                join_at = int(cds['join_at'])
+                cds_sequence = reference[cds['from']:join_at + 1] + reference[join_at:cds['to'] + 1]
+
+            gene = df_ref_genes.loc[cds['GeneID']]
+            gene_id = cds['GeneID']
+            gene_start = gene['Start']
+            gene_end = gene['End']
+            cds_start = cds['from']
+            cds_end = cds['to']
             sequence = value['alt']
             relative_start = value['from'] - gene_start
             relative_end = relative_start + len(sequence)
@@ -126,18 +127,16 @@ def main():
                 alteration_end -= 3
             global_alteration_end = alteration_end + gene_start
 
-            # print(global_alteration_start, value['from'], value['to'], global_alteration_end)
-            # print(reference[global_alteration_start:global_alteration_end])
-            # print(reference[global_alteration_start:value['from']] + str(sequence) + reference[value['to']:global_alteration_end])
-            # print()
-
             original_aminoacid = ''
             encoded_aminoacid = ''
-            original_codone = reference[global_alteration_start: global_alteration_end]
-            altered_codone = reference[global_alteration_start:value['from']] + str(sequence) + reference[value['to']:global_alteration_end]
+            original_codone = cds_sequence[alteration_start:alteration_end]
+            altered_codone = cds_sequence[alteration_start:relative_start] + str(sequence) + cds_sequence[relative_end:alteration_end]
+            # original_codone = reference[global_alteration_start: global_alteration_end]
+            # altered_codone = reference[global_alteration_start:value['from']] + str(sequence) + reference[value['to']:global_alteration_end]
             for i in range(0, len(altered_codone), 3):
                 group = altered_codone[i:i+3]
-                ref_group = reference[global_alteration_start+i:global_alteration_start+i+3]
+                # ref_group = reference[global_alteration_start+i:global_alteration_start+i+3]
+                ref_group = cds_sequence[alteration_start+i:alteration_start+i+3]
                 if '-' not in group:
                     encoded_aminoacid += translate_into_aminoacid(group)
                     original_aminoacid += translate_into_aminoacid(ref_group)
@@ -161,16 +160,16 @@ def main():
     columns = ['gene_id', 'gene_start', 'gene_end', 'cds_start', 'cds_end', 'original_codone', 'altered_codone', 'relative_start', 'relative_end', 'sequence', 'original_aminoacid', 'encoded_aminoacid']
     df_variations_to_genes = pd.DataFrame(variations_to_genes, columns=columns)
     df_variations_to_genes.to_csv(os.path.join('..', 'output', 'out.csv'))
-    #print(df_variations_to_genes)#
+    # print(df_variations_to_genes)
 
-### END PART 2 ###############################################################
-###PART 3 ####################################################################
+    ### END PART 2 ###############################################################
+    ###PART 3 ####################################################################
     #print(variations)
     sequences = []
     #GISAID ones
     mydir = os.path.join('..', '..', 'project-1', 'input', 'GISAID')
     for file in os.listdir(mydir):
-        if file.endswith(".fasta"): #.split('|')[1] perchè per qualche motivo nel file di output è tagliato in 
+        if file.endswith(".fasta"): #.split('|')[1] perchè per qualche motivo nel file di output è tagliato in
             sequences.append(load_fasta_id(os.path.join(mydir, file)).split('|')[1]) #questo modo e deve combaciare
     #ncbi ones
     mydir = os.path.join('..', '..', 'project-1', 'input', 'ncbi')
@@ -186,7 +185,7 @@ def main():
     data3 = []
     for key, value in variations:
         #print(key, value)
-        row = [0] * (len(sequences)) 
+        row = [0] * (len(sequences))
         indexes.append(key)
         for v in value['sequences']:
             row[sequences.index(v)]  = 1
@@ -196,12 +195,11 @@ def main():
     """NEED NEW NAME"""
     df3 = pd.DataFrame(data3, index = indexes, columns=sequences)
     df3 = phylogeny.SortDF(df3) #sorting function
-    #df3.to_csv(os.path.join('..', 'output', 'table.csv'))
+    df3.to_csv(os.path.join('..', 'output', 'table.csv'))
     #print(df3)
     phylogeny.test(df3, reference_id)
 
 ### END PART 3 ###############################################################
 
 if __name__ == "__main__":
-    main()  
-
+    main()
