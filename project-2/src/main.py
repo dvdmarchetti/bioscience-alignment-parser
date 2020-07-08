@@ -1,7 +1,7 @@
-import os   #IO
-import json #Differences.json
-import pandas as pd  #to read excels
-import phylogeny
+import os
+import json
+import pandas as pd
+
 
 def load_output(filename):
     """
@@ -9,7 +9,8 @@ def load_output(filename):
     """
     path = os.path.join(os.getcwd(), '..', '..', 'project-1', 'output', filename)
     with open(path) as json_file:
-        return json.load(json_file) #json.load reads the string from the file, parses the JSON data, populates a Python dict with the data and returns it back to you.
+        return json.load(json_file)
+
 
 def load_excel(path, sheets=None):
     """
@@ -23,7 +24,8 @@ def load_excel(path, sheets=None):
     for sheet in sheets:
         yield pd.read_excel(xls, sheet)
 
-#dict RNA Translation as global variable
+
+# Dict RNA Translation Table
 aminoacids_lookup_table = {
     "START" : 'ATG',
     "STOP" : ["TAA", "TAG", "TGA"],
@@ -52,11 +54,11 @@ aminoacids_lookup_table = {
 
 def translate_into_aminoacid(rna):
     for key, value in aminoacids_lookup_table.items():
-        #print (rna, key, value)
         if rna in value:
             return key
 
     raise Exception('Invalid protein: {}'.format(rna))
+
 
 def load_fasta_id(dir):
     with open(dir, 'r') as f:
@@ -80,15 +82,14 @@ def main():
 
     # Read input files (Json + Excel)
     clustal_output = load_output('Clustal-NC_045512.2_2020-05-30_16-51.json')
-
     variations = clustal_output['unmatches'].items()
 
     [df_ref_genes, df_ref_cds] = [x for x in load_excel(os.path.join('..', 'Genes-CDS.xlsx'), ['Geni', 'CDS'])]
     df_ref_genes.set_index('Gene ID', inplace=True)
-    #print(df_ref_genes)
-    #print()
-    #print(df_ref_cds)
-    #print()
+    df_ref_genes['Start'] -= 1
+    # df_ref_genes['End'] -= 1
+    df_ref_cds['from'] -= 1
+    # df_ref_cds['to'] -= 1
 
     # For each variation:
     # 1) Find the CDS where it fall into
@@ -143,9 +144,9 @@ def main():
 
             variations_to_genes.append({
                 'gene_id': gene_id,
-                'gene_start': gene_start,
+                'gene_start': gene_start + 1,
                 'gene_end': gene_end,
-                'cds_start': cds_start,
+                'cds_start': cds_start + 1,
                 'cds_end': cds_end,
                 'original_codone': original_codone,
                 'altered_codone': altered_codone,
@@ -161,45 +162,6 @@ def main():
     df_variations_to_genes = pd.DataFrame(variations_to_genes, columns=columns)
     df_variations_to_genes.to_csv(os.path.join('..', 'output', 'out.csv'))
     # print(df_variations_to_genes)
-
-    ### END PART 2 ###############################################################
-    ###PART 3 ####################################################################
-    #print(variations)
-    sequences = []
-    #GISAID ones
-    mydir = os.path.join('..', '..', 'project-1', 'input', 'GISAID')
-    for file in os.listdir(mydir):
-        if file.endswith(".fasta"): #.split('|')[1] perchè per qualche motivo nel file di output è tagliato in
-            sequences.append(load_fasta_id(os.path.join(mydir, file)).split('|')[1]) #questo modo e deve combaciare
-    #ncbi ones
-    mydir = os.path.join('..', '..', 'project-1', 'input', 'ncbi')
-    for file in os.listdir(mydir):
-        if file.endswith(".fasta"):
-            sequences.append(load_fasta_id(os.path.join(mydir, file)))
-
-    #print(len(sequences)) #must be 13
-    #print(sequences)
-
-    ###to put in already existing cicle in part 2
-    indexes = []
-    data3 = []
-    for key, value in variations:
-        #print(key, value)
-        row = [0] * (len(sequences))
-        indexes.append(key)
-        for v in value['sequences']:
-            row[sequences.index(v)]  = 1
-        data3.append(row)
-
-    #print(data3)
-    """NEED NEW NAME"""
-    df3 = pd.DataFrame(data3, index = indexes, columns=sequences)
-    df3 = phylogeny.SortDF(df3, False) #sorting function
-    #df3.to_csv(os.path.join('..', 'output', 'table.csv'))
-    #print(df3)
-    phylogeny.test(df3, reference_id)
-
-### END PART 3 ###############################################################
 
 if __name__ == "__main__":
     main()

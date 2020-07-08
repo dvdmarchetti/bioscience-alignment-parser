@@ -1,54 +1,71 @@
-import os   #IO
-import json #Differences.json
-import pandas as pd  #to read excels
+import os
+import json
+import numpy as np
+import pandas as pd
+import phylogeny
 
-def load_fasta(dir):
-    with open(dir, 'r') as f:
-        lines = f.readlines()
-        id = lines[0].split(' ')[0][1:]
-        seqlist = []
-        for line in lines[1:]: #linee file
-            if not (line.startswith(">") and line.startswith('\n')): #same gene
-                seqlist.append(line.rstrip()) #remove \n for each line
-        sequence = ''.join(seqlist[0:])
-
-    return str(id + '\n' + sequence)
+def load_output(filename):
+    """
+    Load a json file from output folder of project 1 given its filename
+    """
+    path = os.path.join(os.getcwd(), '..', '..', 'project-1', 'output', filename)
+    with open(path) as json_file:
+        return json.load(json_file)
 
 def main():
-    with open(os.path.join('..', '..', 'project-1', 'input', 'reference.fasta'), 'r') as f:
-        lines = f.readlines()
-        reference_id = lines[0].split(' ')[0][1:] # NC_045512.2
-        seqlist = []
-        for line in lines[1:]: #linee file
-            if not (line.startswith(">") and line.startswith('\n')): #same gene
-                seqlist.append(line.rstrip()) #remove \n for each line
-        reference = ''.join(seqlist[0:])
+    # 1. Read fasta sequences
+    reference_id = load_fasta_id(os.path.join('..', '..', 'project-1', 'input', 'reference.fasta'))
+    sequence_ids = read_sequence_ids(paths=[
+        os.path.join('..', '..', 'project-1', 'input', 'GISAID'),
+        os.path.join('..', '..', 'project-1', 'input', 'ncbi'),
+    ])
+    sequence_ids.insert(0, reference_id)
 
-    with open(os.path.join(os.getcwd(), '..', '..', 'project-1', 'output', 'Clustal-NC_045512.2_2020-05-30_16-51.json')) as json_file:
-        clustal_output = json.load(json_file)
+    assert len(sequence_ids) == 14
 
-    #sequence of sequences
-    sequences = []
-    #GISAID ones
-    mydir = os.path.join('..', '..', 'project-1', 'input', 'GISAID')
-    for file in os.listdir(mydir):
-        if file.endswith(".fasta"):
-            sequences.append(load_fasta(os.path.join(mydir, file)))
-    #ncbi ones
-    mydir = os.path.join('..', '..', 'project-1', 'input', 'ncbi')
-    for file in os.listdir(mydir):
-        if file.endswith(".fasta"):
-            sequences.append(load_fasta(os.path.join(mydir, file)))
-    
-    print(len(sequences))
-    #print(sequences[0][0:50])
-    #print(sequences[7][0:50])
-    #print(sequences[6][0:500])
+    # 2. Read variations (project 1 output)
+    clustal_output = load_output('Clustal-NC_045512.2_2020-05-30_16-51.json')
+    variations = clustal_output['unmatches'].items()
 
-    """se invece di controllare ogni singola sequenza ci segnassimo in una tabella da clustal_output
-    quali id hanno variazioni con 0,1 come da descrizione e ...
-    cercare algoritmo alberi filogenetici appena finisco gli altri esami"""
+    # 3. Build trait matrix
+    indexes = []
+    rows = []
+    for key, value in variations:
+        row = np.zeros(len(sequence_ids))
+        indexes.append(key)
+        for sequence in value['sequences']:
+            row[sequence_ids.index(sequence)] = 1
+        rows.append(row)
+
+    # print(rows)
+
+    # 4. Build tree
+    trait_matrix = pd.DataFrame(rows, index=indexes, columns=sequence_ids, dtype=bool).transpose()
+    trait_matrix = phylogeny.reorder_columns(trait_matrix, axis=1)
+    print(trait_matrix)
+    trait_matrix.to_csv(os.path.join('..', 'output', 'table.csv'))
+
+    print(phylogeny.is_forbidden_matrix(trait_matrix))
+
+    phylogeny.build_tree(trait_matrix, reference_id)
+
+
+def read_sequence_ids(paths=[]):
+    ids = []
+
+    for path in paths:
+        for f in os.listdir(path):
+            if f.endswith('.fasta'):
+                ids.append(load_fasta_id(os.path.join(path, f)))
+
+    return ids
+
+
+def load_fasta_id(path):
+    with open(path, 'r') as f:
+        line = f.readline()
+        return line.split('|')[1] if '|' in line else line.split(' ')[0][1:]
+
 
 if __name__ == "__main__":
     main()
-    print("not crashed")
