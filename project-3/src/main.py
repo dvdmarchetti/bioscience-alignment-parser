@@ -4,13 +4,6 @@ import numpy as np
 import pandas as pd
 import phylogeny
 
-def load_output(filename):
-    """
-    Load a json file from output folder of project 1 given its filename
-    """
-    path = os.path.join(os.getcwd(), '..', '..', 'project-1', 'output', filename)
-    with open(path) as json_file:
-        return json.load(json_file)
 
 def main():
     # 1. Read fasta sequences
@@ -65,6 +58,15 @@ def load_fasta_id(path):
     with open(path, 'r') as f:
         line = f.readline()
         return line.split('|')[1] if '|' in line else line.split(' ')[0][1:]
+
+
+def load_output(filename):
+    """
+    Load a json file from output folder of project 1 given its filename
+    """
+    path = os.path.join(os.getcwd(), '..', '..', 'project-1', 'output', filename)
+    with open(path) as json_file:
+        return json.load(json_file)
 
 
 if __name__ == "__main__":
