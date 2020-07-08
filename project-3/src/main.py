@@ -23,19 +23,20 @@ def main():
     # 3. Build trait matrix
     indexes = []
     rows = []
+    counter = 1
     for key, value in variations:
         row = np.zeros(len(sequence_ids))
-        indexes.append(key)
+        indexes.append('C{}'.format(counter))
         for sequence in value['sequences']:
             row[sequence_ids.index(sequence)] = 1
         rows.append(row)
+        counter += 1
 
     # print(rows)
 
     # 4. Build tree
     trait_matrix = pd.DataFrame(rows, index=indexes, columns=sequence_ids, dtype=bool).transpose()
-    trait_matrix = phylogeny.reorder_columns(trait_matrix, axis=1)
-    print(trait_matrix)
+    trait_matrix = phylogeny.reorder_columns(trait_matrix, axis=0)
     trait_matrix.to_csv(os.path.join('..', 'output', 'table.csv'))
 
     print(phylogeny.is_forbidden_matrix(trait_matrix))
