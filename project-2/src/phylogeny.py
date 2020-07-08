@@ -41,7 +41,7 @@ def SortDF(dataframe, ascending=False):
     count = dataframe.astype(bool).sum(axis=1) ##questo lo fa per riga
     #print(count)
     ### sort dataframe by number of 1s """https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.sort_values.html"""###
-    count.sort_values(ascending=True, inplace=True, ignore_index=False) #inplace or doesn't work
+    count.sort_values(ascending = ascending, inplace=True, ignore_index=False) #inplace or doesn't work
     #print('Sorted count:\n', count)
     #print(count.index)
     #print(dataframe.reindex(count.index).index)
@@ -53,7 +53,7 @@ def SortDF(dataframe, ascending=False):
         print("error")
         return dataframe
 
-class Node:
+"""class Node:
     def __init__(self, name = "root", data = [], left = None, right = None):
         self.left = left
         self.right = right
@@ -83,7 +83,7 @@ def visit(node):
     if node.left is not None:
         visit(node.left)
     if node.right is not None:
-        visit(node.right)
+        visit(node.right) """
 
 def Build_from_dataframe(root, df):
     #https://pandas.pydata.org/pandas-docs/stable/getting_started/10min.html
@@ -94,21 +94,24 @@ def Build_from_dataframe(root, df):
         left_data = []
         right_data = []
         #split left and right if have mutation
-        id = df.index[0]
+        id = df.index[0] #name mutation
         i = 0
         #print("id = " + id)
         for element in df.iloc[0]: #guarda df.iloc and df.loc:  By integer slices, acting similar to numpy/python;  Selecting on a multi-axis by label.
             if element == 1:
-                right_data.append(root.data[i]) #column name with mutation = 1
+                right_data.append(root.data[i]) #column name with mutation = 1 
             else:
                 left_data.append(root.data[i])  #column name without mutation = 0
             i = i+1
-        right = Node(id, data = right_data)
-        left = Node("!" + id, data = left_data)
-        root.setLeft(left)
-        root.setRight(right)
+        right = Node(id, parent = root, data = right_data)
+        left = Node("!" + id, parent = root, data = left_data)
+        #root.setLeft(left)
+        #root.setRight(right)
         Build_from_dataframe(right, df[1:]) 
         Build_from_dataframe(left, df[1:])
+
+        #for node in root.iter_path_reverse():
+            #print(node)
        
 
 def test(dataframe, reference):
@@ -127,7 +130,7 @@ def test(dataframe, reference):
     devo trovare il modo di mettere sta parte in funzione ricorsiva
     e capire come stampare l'albero"""
     #tree: node name = mutation, data = columns with that mutation
-    root = Node(name = reference, data = list(dataframe.columns)) 
+    #root = Node(name = reference, data = list(dataframe.columns))# custom node 
     """for index, row in dataframe.iterrows():
         left = []
         right = []
@@ -142,14 +145,18 @@ def test(dataframe, reference):
         root.left = Tree(name = str('NOT' + index), data = left)
         root.right = Tree(name = index, data = right)"""
     
-    """custom node test
+    """#custom node test#
     nr = Node("test1", data = [0,1,0,1])
     nl = Node("test2", data = [0,0,0,0])
     root = Node(data = [0,1,0,1,0,0,0,0], left= nl, right=nr )
     nr.setLeft(Node("test3", data = [1,1,1,1], right = (Node("test4", data = [1,0]))))"""
     #print(root.data)
-    Build_from_dataframe(root, dataframe.iloc[:2])
+    #https://anytree.readthedocs.io/en/latest/api/anytree.node.html
+    root = Node(reference, data = list(dataframe.columns))
+    Build_from_dataframe(root, dataframe.iloc[:1])
     #Build_from_dataframe(root, dataframe)
-    print(root)
+    #print(root)
+    for pre, fill, node in RenderTree(root):
+        print("%s%s%s" % (pre, node.name, fill))
 
 
