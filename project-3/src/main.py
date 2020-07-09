@@ -5,17 +5,6 @@ import pandas as pd
 import phylogeny
 
 
-class ModularCounter():
-    def __init__(self, start, modulo, decrement=True):
-        self.value = start
-        self.modulo = modulo
-        self.decrement = decrement
-
-    def step(self):
-        self.value += -1 if self.decrement else 1
-        self.value %= self.modulo
-
-
 def main():
     # 1. Read fasta sequences
     reference_id = load_fasta_id(os.path.join('..', '..', 'project-1', 'input', 'reference.fasta'))

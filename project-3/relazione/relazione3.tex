@@ -5,17 +5,27 @@
 \usepackage{blindtext}
 \usepackage{enumitem}
 \usepackage{float}
+\usepackage{upquote}
 \usepackage{xcolor}   % for \textcolor
 \usepackage[font=small,labelfont=bf,skip=10pt]{caption}
 \usepackage{subcaption}
 \setlength{\belowcaptionskip}{5pt}
 \usepackage{listings}
 \lstset{
-  basicstyle=\ttfamily,
+  basicstyle=\small\ttfamily,
+  otherkeywords={self},             % Add keywords here
+  basicstyle=\small\ttfamily,
   columns=fullflexible,
   frame=single,
   breaklines=true,
   postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+  tabsize=4, % tab space width
+  showstringspaces=false, % don't mark spaces in strings
+  numbers=left, % display line numbers on the left
+  commentstyle=\color[HTML]{a0a1a7}, % comment color
+  keywordstyle=\color[HTML]{40a3f5}, % keyword color
+  stringstyle=\color{red}, % string color,
+  emphstyle={\color[HTML]{40a3f5}}
 }
 \usepackage{hyperref}
 \usepackage{cleveref}
@@ -44,121 +54,160 @@
 \maketitle
 
 \section{Abstract}
-Il lavoro svolto è diviso in 2 parti e il codice in 4 sezioni:
-\subsection{Matrice delle variazioni}
-Qui si trovano le prime 2 parti del codice: il recupero per intero delle 14 sequenze usate e la lettura dei file di variazione generati in output nella parte1
-\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:Read fasta = [], language = Python]
 
-    reference_id = load_fasta_id(os.path.join('..', '..', 'project-1', 'input', 'reference.fasta'))
-    sequence_ids = read_sequence_ids(paths=[
-        os.path.join('..', '..', 'project-1', 'input', 'GISAID'),
-        os.path.join('..', '..', 'project-1', 'input', 'ncbi'),
-    ])
-    sequence_ids.insert(0, reference_id)    #insert reference no variations
-    
-    ...
-
-    clustal_output = load_output('Clustal-NC_045512.2_2020-05-30_16-51.json')
-    variations = clustal_output['unmatches'].items()
-
-\end{lstlisting}
 \newpage
-Infine nella parte 3 del nostro codice generiamo la tabella delle variazioni \textbf{`table.csv'} per variazione, per poi trasporla.
+\section{Algoritmo}
+\subsection{Matrice delle variazioni}
+Inizialmente, vengono recuperati gli identificativi delle 14 sequenze usate e caricati i file delle variazioni degli allineamenti generati in output nella prima parte del progetto:
 
-\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:creation table.csv = [], language = Python]
+\begin{lstlisting}[language=Python,caption=Caricamento dei file necessari per l'elaborazione,label=code:read_input_files]
+reference_id = load_fasta_id(
+  os.path.join('..', '..', 'project-1', 'input', 'reference.fasta')
+)
+sequence_ids = read_sequence_ids(paths=[
+  os.path.join('..', '..', 'project-1', 'input', 'GISAID'),
+  os.path.join('..', '..', 'project-1', 'input', 'ncbi'),
+])
+sequence_ids.insert(0, reference_id) #insert reference no variations
 
-...
-
-for key, value in variations:
-        row = np.zeros(len(sequence_ids))
-        indexes.append('C{}'.format(counter))
-        for sequence in value['sequences']:
-            row[sequence_ids.index(sequence)] = 1
-        rows.append(row)
-        counter += 1
-        
-...
-
-trait_matrix = pd.DataFrame(rows, index=indexes, columns=sequence_ids, dtype=bool).transpose()
-trait_matrix = phylogeny.reorder_columns(trait_matrix, axis=0, ascending=False)
-trait_matrix.to_csv(os.path.join('..', 'output', 'table.csv'))
-
+clustal_output = load_output('Clustal-NC_045512.2.json')
+variations = clustal_output['unmatches'].items()
 \end{lstlisting}
 
-%%insert image 'table.csv'%%
+\noindent
+L'algoritmo a partire dai file di output della prima parte del progetto genera una matrice binaria utilizzando come indici di riga gli identificativi delle sequenze e come colonne un identificativo univoco assegnato ad ogni variazione.
 
-\subsection{Albero filogenetico}
-La quarta e ultima parte del codice consiste nel ricostrure l'albero filogenetico prendendo l'output del punto 3 e facendo estensivo uso di funzioni create per questo lavoro nel file \textbf{`phylogeny.py'} per:
-\begin{enumerate}
-	\item generare matrice compatibile con filogenesi perfetta.
-	\item assicurarsi che tutto abbia funzionato e non sia più presente matrice proibita.
-	\item generare e stampare in output l'albero delle sequenze.
-\end{enumerate}
-\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:creation table.csv = [], language = Python]
+La matrice binaria così impostata contiene il valore \lstinline{1} qualora la variazione identificata dalla colonna sia presente nella sequenza identificata dalla riga, altrimenti il valore della cella sarà pari a \lstinline{0}.
+Questa è salvata nel file \lstinline{character_table.csv}.
+
+\begin{lstlisting}[caption=Generazione della matrice binaria di caratteri,label=code:creation table.csv,language=Python]
+for key, value in variations:
+  row = np.zeros(len(sequence_ids))
+  indexes.append('C{}'.format(counter))
+  for sequence in value['sequences']:
+    row[sequence_ids.index(sequence)] = 1
+  rows.append(row)
+  counter += 1
+
+trait_matrix = pd.DataFrame(rows, index=indexes, columns=sequence_ids, dtype=np.uint8).transpose()
+trait_matrix = phylogeny.reorder_columns(trait_matrix, axis=0)
+trait_matrix.to_csv(os.path.join('..', 'output', 'character_table.csv'))
+\end{lstlisting}
+
+\subsection{Filogenesi perfetta}
+Prima di procedere con la creazione dell'albero è necessario verificare che la matrice binaria generata in precedenza sia valida per una filogenesi perfetta.
+
+Il metodo riportato nel listato \ref{code:get_perfect_phylogeny_function} riporta il codice utilizzato
+per costruire la matrice binaria più grande che non sia \lstinline{"matrice proibita"}.
+
+\begin{lstlisting}[caption=Funzione di generazione della matrice binaria per filogenesi perfetta,label=code:get_perfect_phylogeny_function,language=Python]
+def get_perfect_phylogeny_character_matrix(df):
+  columns = df.columns
+  candidate_matrix = df[columns[0:1]]
+  for i in range(1, len(columns)):
+    candidate_matrix = candidate_matrix.join(df[columns[i:i+1]])
+
+    if phylogeny.is_forbidden_matrix(candidate_matrix):
+      candidate_matrix = candidate_matrix.drop(labels=candidate_matrix.columns[-1], axis=1)
+
+  return candidate_matrix
+\end{lstlisting}
+
+\subsection{Generazione dell'albero}
+A questo punto è possibile procedere con la ricostruzione dell'albero filogenetico a partire dalla \lstinline{candidate_matrix} e utilizzando funzioni definite nel file \lstinline{phylogeny.py} per costruire e visualizzare in output l'albero della filogenesi.
+
+\begin{lstlisting}[caption=Chiamata alla generazione dell'albero,label=code:tree_creation,language=Python]
 candidate_matrix = get_perfect_phylogeny_character_matrix(trait_matrix)
-if phylogeny.is_forbidden_matrix(candidate_matrix):
-        raise Exception('Invalid perfect phylogeny matrix')
 phylogeny.build_tree(candidate_matrix)
 \end{lstlisting}
 
-%%parte filogenesi perfetta da mettere?%%
-
+\subsubsection{Creazione dell'albero}
+\noindent
 La generazione dell'albero viene svolta come segue:
-	
 \begin{enumerate}
-	\item Riordino il dataframe ordinando le colonne per numero decrescende di 1
-\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:1 = [], language = Python]	
-    sorted_axis = df.sum(axis=0).sort_values(ascending=False)
-    if axis == 0:
-        return df[sorted_axis.index]
-    return df.reindex(sorted_axis.index)
-\end{lstlisting}
-	\item Genera nodo radice, poi per ogni sequenza genera nodi da collegare a root se incontra la presenza di variazione per ogni nodo non già presente
-	%guarda questa parte
-\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:1 = [], language = Python]	
-for i, row in df.iterrows():
-        current_node = root
-
-        for j in range(len(row)):
-            # If alteration is present in the current sequence
-            if row.iloc[j]: #true in cell
-                key = j
-                # If current_node is already linked to the j-th variation
-                # edges = dictionary with links from (current_node, u)
-                if key in current_node.edges:
-                    # Update the current node
-                    current_node = current_node.edges[key]
-                else:
-                    # Create a new node u and link it with the last node of this sequence
-                    u = Node('U-{}'.format(row.index[j]), edges={}, parent=current_node)
-                    current_node.edges[key] = u
-                    current_node = u
-        # We looped all the variations, insert the sequence node at the end of the chain
-        Node(i, parent=current_node)	
-\end{lstlisting}
-\item Conversione dell'albero precedentemente generato in un newick\_tree elaborabile dalla libreria \textbf{Phylo}, usata per la visualizzazione.
-\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:1 = [], language = Python]	
-newick_tree = to_newick_tree(root, intermediates=False)
-newick_tree = Phylo.read(io.StringIO(newick_tree), 'newick')
-\end{lstlisting}
-\item Generazione immagine output
-\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:1 = [], language = Python]	
-fig = plt.figure(figsize=(10, 8))
-    ax = fig.add_subplot(1, 1, 1)
-
-    # Assign sequences data to the leaf
-    root = newick_tree.clade
-    merge_sequences_data(root, sequences_data) # Add sequence data to sequence leaves
-    # Render with plt
-    Phylo.draw(newick_tree, do_show=False, axes=ax)
-
-    ax.set_xlabel('Number of alterations')
-    ax.set_ylabel('Sequences')
-    plt.tight_layout()
-    plt.savefig(os.path.join('..', 'output', 'phylogenetic-tree.png'))
-    plt.show()
-\end{lstlisting}
+  \item Ordinamento decrescente delle colonne del dataframe in base al numero di valori \lstinline{1} presenti.
 \end{enumerate}
+\begin{lstlisting}[caption=Ordinamento decrescente delle colonne,label=code:desc_column_sorting,language=Python]
+sorted_axis = df.sum(axis=0).sort_values(ascending=False)
+return df[sorted_axis.index]
+\end{lstlisting}
+
+\begin{enumerate}
+  \setcounter{enumi}{1}
+  \item A partire dal nodo \lstinline{root}, per ogni sequenza genera una sequenza di nodi uno per ogni variazione presente, collegandola alla variazione precedente o al nodo \lstinline{root}.
+
+  Durante l'elaborazione delle sequenze successive, se esiste già un figlio del \lstinline{current_node} rappresentante la variazione attuale, questo viene riutilizzato, altrimenti viene creato un nuovo nodo e collegato come figlio di \lstinline{current_node}.
+\end{enumerate}
+\begin{lstlisting}[caption=Funzione di creazione dell'albero,label=code:tree_creation_function,language=Python]
+root = Node('root', edges={})
+for i, row in df.iterrows():
+  current_node = root
+
+  for j in range(len(row)):
+    # If alteration is present in the current sequence
+    if row.iloc[j]:
+      # If current_node has a link to the variation with label=j
+      if j in current_node.edges:
+        # Follow the same path without creating new nodes
+        current_node = current_node.edges[j]
+      else:
+        u = Node('U-{}'.format(row.index[j]), edges={})
+        current_node.parent = current_node
+        current_node.edges[j] = u
+        current_node = u
+
+  Node(i, parent=current_node)
+  \end{lstlisting}
+
+\begin{enumerate}
+  \setcounter{enumi}{2}
+  \item Conversione dell'albero precedentemente generato in un \lstinline{newick_tree} elaborabile dalla libreria \lstinline{biopython.Phylo} usata per la visualizzazione.
+\end{enumerate}
+
+\begin{lstlisting}[caption=Funzione di conversione in Newick Tree,label=code:newick_tree_function,language=Python]
+def to_newick_tree(node):
+  if node.is_leaf:
+    return node.name
+
+  return '({})'.format(','.join([ to_newick_tree(child) for child in node.children ]))
+
+newick_string = to_newick_tree(root)
+tree = Phylo.read(io.StringIO(newick_string), 'newick')
+\end{lstlisting}
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item Inserimento delle informazioni aggiuntive sulle sequenze nelle foglie dell'albero. Questo step non può essere effettuato durante la conversione a \lstinline{newick_tree} perché alcuni caratteri usati verrebbero interpretati come parte della struttura dell'albero, alterando il risultato finale.
+\end{enumerate}
+\begin{lstlisting}[caption=Funzione per l'inserimento dei dati nelle foglie dell'albero,label=code:merge_sequence_data_function,language=Python]
+def merge_sequences_data(node, sequences_data):
+  if node.is_terminal():
+    data = sequences_data[node.name]
+    node.name = '{}\n {} in {}'.format(node.name, data['date'], data['location'])
+    return
+
+  [ merge_sequences_data(child, sequences_data) for child in node.clades ]
+
+root = newick_tree.clade
+merge_sequences_data(root, sequences_data)
+\end{lstlisting}
+
+\begin{enumerate}
+  \setcounter{enumi}{4}
+  \item Salvataggio e visualizzazione dell'albero filogenetico finale.
+\end{enumerate}
+\begin{lstlisting}[caption=Salvataggio e visualizzazione dell'albero filogenetico finale,label=code:build_tree_function,language=Python]
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(1, 1, 1)
+
+Phylo.draw(tree, do_show=False, axes=ax)
+
+ax.set_xlabel('Number of alterations')
+ax.set_ylabel('Sequences')
+plt.tight_layout()
+plt.savefig(os.path.join('..', 'output', 'phylogenetic-tree.png'))
+plt.show()
+\end{lstlisting}
 
 \section{Confronto alberi}
 \begin{figure}[H]
@@ -172,7 +221,8 @@ fig = plt.figure(figsize=(10, 8))
   \label{fig:jalview-end}
 \end{figure}
 
-\section{conclusione}
+\newpage
+\section{Conclusioni}
 
 
 \end{document}
