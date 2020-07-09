@@ -73,9 +73,9 @@ def main():
                 group = altered_codone[i:i+3]
                 # ref_group = reference[global_alteration_start+i:global_alteration_start+i+3]
                 ref_group = cds_sequence[alteration_start+i:alteration_start+i+3]
+                original_aminoacid += translate_into_aminoacid(ref_group)
                 if '-' not in group:
                     encoded_aminoacid += translate_into_aminoacid(group)
-                    original_aminoacid += translate_into_aminoacid(ref_group)
 
             variations_to_genes.append({
                 'gene_id': gene_id,
