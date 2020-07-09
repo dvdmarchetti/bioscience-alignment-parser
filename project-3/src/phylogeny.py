@@ -1,4 +1,5 @@
 import io
+import os
 
 from anytree import Node, RenderTree, AsciiStyle
 from Bio import Phylo
@@ -116,6 +117,7 @@ def build_tree(df):
     ax.set_xlabel('Number of alterations')
     ax.set_ylabel('Sequences')
     plt.tight_layout()
+    plt.savefig(os.path.join('..', 'output', 'phylogenetic-tree.png'))
     plt.show()
 
 
