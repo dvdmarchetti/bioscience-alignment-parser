@@ -78,8 +78,7 @@ def build_tree(df, reference_id):
     Phylo.draw(newick_tree)
 
 
-with_intermediate_alteration_nodes = True
-def to_newick_tree(node):
+def to_newick_tree(node, with_intermediate_alteration_nodes = True):
     if node.is_leaf:
         return node.sequence
 
@@ -91,16 +90,16 @@ def to_newick_tree(node):
 
 def is_forbidden_matrix(df):
     # Build auxiliary matrix
-    M = reorder_columns(df).to_numpy()
+    M = reorder_columns(df).to_numpy() #Sort the columns by decreasing number of 1’s
     rows, columns = M.shape
 
-    L = np.zeros(M.shape)
+    L = np.zeros(M.shape)   #build the auxiliary matrix L defined as follows:
     for i in range(rows):
         k = -1
-        for j in range(columns):
-            if M[i,j] == 1:
-                L[i,j] = k
-                k = j + 1
+        for j in range(columns):    #if Mij = 0, then Lij = 0
+            if M[i,j] == 1:     #if Mij = 1 then Lij = k,
+                L[i,j] = k      #being k the rightmost column to the left of j such that Mik = 1, 
+                k = j + 1       #otherwise Lij = −1
 
     # Ensure it's not forbidden matrix
     for j in range(columns):
@@ -108,18 +107,18 @@ def is_forbidden_matrix(df):
             if L[i,j] != 0:
                 for l in range(rows):
                     if L[l,j] != 0 and L[i,j] != L[l,j]:
-                        return False
+                        return False    #not laminar --> no perfect phylogeny 
 
-    return True
+    return True #laminar --> support perfect phylogeny
 
 
-def reorder_columns(df, axis=0):
+def reorder_columns(df, axis=0, ascending=False):
     """Sort a dataframe in descending number of ones by the specified axis (default: by columns).
 
     The sorting is not done in place, you must reassign the dataframe
     with the return value of this function call.
     """
-    sorted_axis = df.sum(axis=axis).sort_values(ascending=False)
+    sorted_axis = df.sum(axis=axis).sort_values(ascending=ascending)
     if axis == 0:
         return df[sorted_axis.index]
 

@@ -36,9 +36,8 @@ def main():
 
     # 4. Build tree
     trait_matrix = pd.DataFrame(rows, index=indexes, columns=sequence_ids, dtype=bool).transpose()
-    trait_matrix = phylogeny.reorder_columns(trait_matrix, axis=0)
+    trait_matrix = phylogeny.reorder_columns(trait_matrix, axis=0, ascending=False)
     trait_matrix.to_csv(os.path.join('..', 'output', 'table.csv'))
-
     print(phylogeny.is_forbidden_matrix(trait_matrix))
 
     phylogeny.build_tree(trait_matrix, reference_id)
