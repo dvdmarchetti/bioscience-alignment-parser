@@ -87,13 +87,13 @@ def main():
                 'altered_codone': altered_codone,
                 'relative_start': relative_start + 1,
                 'relative_end': relative_end,
-                'sequence': sequence,
+                'alteration': sequence,
                 'original_aminoacid': original_aminoacid,
                 'encoded_aminoacid': encoded_aminoacid
             })
 
     # Convert the list to dataframe
-    columns = ['gene_id', 'gene_start', 'gene_end', 'cds_start', 'cds_end', 'original_codone', 'altered_codone', 'relative_start', 'relative_end', 'sequence', 'original_aminoacid', 'encoded_aminoacid']
+    columns = ['gene_id', 'gene_start', 'gene_end', 'cds_start', 'cds_end', 'original_codone', 'altered_codone', 'relative_start', 'relative_end', 'alteration', 'original_aminoacid', 'encoded_aminoacid']
     df_variations_to_genes = pd.DataFrame(variations_to_genes, columns=columns)
     df_variations_to_genes.to_csv(os.path.join('..', 'output', 'out.csv'))
     # print(df_variations_to_genes)
