@@ -83,7 +83,8 @@ def build_tree(df):
             if row.iloc[j]: #true in cell
                 key = j
                 # If current_node is already linked to the j-th variation
-                if key in current_node.edges:   #edges = dictionary
+                # edges = dictionary with links from (current_node, u)
+                if key in current_node.edges:
                     # Update the current node
                     current_node = current_node.edges[key]
                 else:
@@ -110,8 +111,8 @@ def build_tree(df):
     ax = fig.add_subplot(1, 1, 1)
 
     # Assign sequences data to the leaf
-    root = newick_tree.clade 
-    merge_sequences_data(root, sequences_data) #add infos from dict at beginning
+    root = newick_tree.clade
+    merge_sequences_data(root, sequences_data) # Add sequence data to sequence leaves
     # Render with plt
     Phylo.draw(newick_tree, do_show=False, axes=ax)
 

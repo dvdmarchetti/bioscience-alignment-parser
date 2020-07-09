@@ -44,14 +44,15 @@ def main():
         counter += 1
 
     # 4. Build tree
-    trait_matrix = pd.DataFrame(rows, index=indexes, columns=sequence_ids, dtype=bool).transpose()
+    trait_matrix = pd.DataFrame(rows, index=indexes, columns=sequence_ids, dtype=np.uint8).transpose()
     trait_matrix = phylogeny.reorder_columns(trait_matrix, axis=0, ascending=False)
-    trait_matrix.to_csv(os.path.join('..', 'output', 'table.csv'))
+    trait_matrix.to_csv(os.path.join('..', 'output', 'character_table.csv'))
 
     candidate_matrix = get_perfect_phylogeny_character_matrix(trait_matrix)
     if phylogeny.is_forbidden_matrix(candidate_matrix):
         raise Exception('Invalid perfect phylogeny matrix')
     #print(phylogeny.is_forbidden_matrix(candidate_matrix))
+    candidate_matrix.to_csv(os.path.join('..', 'output', 'perfect_phylogeny_table.csv'))
 
     phylogeny.build_tree(candidate_matrix)
 
