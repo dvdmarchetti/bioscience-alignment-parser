@@ -63,15 +63,20 @@ Per ogni variazione registrata nell\'output della parte1, viene creata un entit�
 \section{codice}
 	Il codice inizia caricando la sequenza di reference dal file \textbf{'reference.fasta\'} e un file di output.\newline % qui il codice può cambiar e%
 	Infine carica in una lista le CDS della reference dal file \textbf{'Genes-CDS.xlsx\'}. \newline
-	Il  corpo del codice esegue un ciclo per ogni variazione nel file di output 
+	Il  corpo del codice esegue un ciclo per ogni variazione nel file di output: \newline
+	Nel ciclo è inserito un controllo per la sequenza CDS da unire: prendo valori dalla tabella e se trovo valori nella collonna \textbf{'join\_at'}, eseguo sulla nuova CDS. 
 	\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:variations_to_genes = []]
 {
 for key, value in variations:
         ...
         
-        affected_cds = df_ref_cds.loc[(value['from'] > df_ref_cds['from']) & (value['to'] < df_ref_cds['to'])]
-
-        if not affected_cds.empty:
+        %#affected_cds = df_ref_cds.loc[(value['from'] > df_ref_cds['from']) & (value['to'] < df_ref_cds['to'])]
+	for index, cds in affected_cdses.iterrows():
+            cds_sequence = reference[cds['from']:cds['to'] + 1]
+            if pd.notna(cds['join_at']):
+                join_at = int(cds['join_at'])
+                cds_sequence = reference[cds['from']:join_at + 1] + reference[join_at:cds['to'] + 1]
+        %#if not affected_cds.empty:
             gene = df_ref_genes.loc[affected_cds['GeneID']]
             gene_id = affected_cds.iloc[0]['GeneID']
             gene_start = gene.iloc[0]['Start']
