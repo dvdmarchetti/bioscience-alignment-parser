@@ -6,6 +6,7 @@
 \usepackage{enumitem}
 \usepackage{upquote}
 \usepackage{float}
+\usepackage{rotating}
 \usepackage{xcolor}   % for \textcolor
 \usepackage[font=small,labelfont=bf,skip=10pt]{caption}
 \usepackage{subcaption}
@@ -83,7 +84,7 @@ Dopo la lettura del materiale rilevante a questa fase di elaborazione, l'algorit
 \noindent
 Al termine dell'elaborazione di tutte le alterazioni, viene costruito un oggetto di tipo \lstinline{DataFrame} fornito dalla libreria \lstinline{pandas}.
 
-Le chiavi utilizzate nella costuzione della struttura dati a lista diventeranno le colonne del \lstinline{DataFrame}. Questo sarà esportato in CSV nella cartella \lstinline{/project-2/output/alteration-table.csv} per permettere una visualizzazione più semplice tramite programmi terzi.
+Le chiavi utilizzate nella costuzione della struttura dati a lista diventeranno le colonne del \lstinline{DataFrame}. Questo sarà esportato in CSV nella cartella \lstinline{/project-2/output/alteration-table.csv} per permettere una visualizzazione più semplice tramite programmi terzi (come riportato in \cref{fig:alteration_table})
 
 \newpage
 \section{Informazioni memorizzate}
@@ -94,18 +95,29 @@ Ad ogni variazione analizzata corrisponde un entrata nella struttura dati a list
     \item \textbf{gene\_end}: fine del gene in cui cade la variazione (1-based)
     \item \textbf{cds\_start}: inizio della \lstinline{Coding DNA Sequence} della porzione del gene in cui cade la variazione (1-based)
     \item \textbf{cds\_end}: fine della \lstinline{Coding DNA Sequence} della porzione del gene in cui cade la variazione (1-based)
-    \item \textbf{original\_codone}: codone della reference prima della modifica
-    \item \textbf{altered\_codone}: codone della reference modificati dalla variazione
     \item \textbf{relative\_start}: inizio della variazione in rispetto all'inizio della cds (1-based)
     \item \textbf{relative\_end}: fine della variazione in rispetto all'inizio della cds (1-based)
     \item \textbf{alteration}: sequenza della variazione
+    \item \textbf{original\_codone}: codone della reference prima della modifica
+    \item \textbf{original\_aminoacid}: amminoacido codificato da \textbf{original\_codone}
+    \item \textbf{altered\_codone}: codone della reference modificati dalla variazione
     \item \textbf{encoded\_aminoacid}: amminoacido codificato da \textbf{altered\_codone}
 \end{itemize}
 
 \newpage
 \section{Output}
+Come riportato in \cref{fig:alteration_table} la maggior parte delle alterazioni coinvolgono un singolo codone e quelli ottenuti rimangono traducibili.
 
-TODO Screenshot della tabella
+In alcuni casi, l'amminoacido risultante dalla traduzione dell'alterazione non viene modificato.\hspace{1mm}La maggior parte delle variazioni si concentrano nel gene \lstinline{ORF1ab} identificato da \lstinline{gene_id = 43740578}.
+
+Le ultime righe della tabella riportano delle alterazioni che determinano la cacellazione di alcune basi rispetto alla sequenza reference.
+Queste sono relative solo alla sequenza \lstinline{MT262993.1} e si pensa possano derivare da un errore in fase di sequenziamento.
+
+\begin{sidewaysfigure}
+  \makebox[\textwidth][c]{\includegraphics[width=1\linewidth]{alteration-table.png}}
+  \caption{Tabella di output delle alterazioni}
+  \label{fig:alteration_table}
+\end{sidewaysfigure}
 
 \newpage
 \section{Listati di codice}
