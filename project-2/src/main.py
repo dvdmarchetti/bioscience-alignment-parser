@@ -93,7 +93,7 @@ def main():
             })
 
     # Convert the list to dataframe
-    columns = ['gene_id', 'gene_start', 'gene_end', 'cds_start', 'cds_end', 'original_codone', 'altered_codone', 'relative_start', 'relative_end', 'alteration', 'original_aminoacid', 'encoded_aminoacid']
+    columns = ['gene_id', 'gene_start', 'gene_end', 'cds_start', 'cds_end', 'relative_start', 'relative_end', 'alteration', 'original_codone', 'original_aminoacid', 'altered_codone', 'encoded_aminoacid']
     df_variations_to_genes = pd.DataFrame(variations_to_genes, columns=columns)
     df_variations_to_genes.to_csv(os.path.join('..', 'output', 'alteration-table.csv'))
     # print(df_variations_to_genes)
@@ -123,28 +123,28 @@ def load_excel(path, sheets=None):
 
 # Dict RNA Translation Table
 aminoacids_lookup_table = {
-    "START" : 'ATG',
-    "STOP" : ["TAA", "TAG", "TGA"],
-    'F' : ['TTT', 'TTC'],
-    'L' : ['TTA', 'TTG', 'CTT', 'CTA', 'CTC', 'CTG'],
-    'I' : ['ATT', 'ATC', 'ATA'],
-    'M' : ['ATG'],
-    'V' : ['GTT', 'GTA', 'GTC', 'GTG'],
-    'S' : ['TCT', 'TCA', 'TCC', 'TCG', 'AGT', 'AGC'],
-    'P' : ['CCT', 'CCA', 'CCC', 'CCG'],
-    'T' : ['ACT', 'ACA', 'ACC', 'ACG'],
-    'A' : ['GCT', 'GCA', 'GCC', 'GCG'],
-    'Y' : ['TAT', 'TAC'],
-    'H' : ['CAT', 'CAC'],
-    'Q' : ['CAA', 'CAG'],
-    'N' : ['AAT', 'AAC'],
-    'K' : ['AAA', 'AAG'],
-    'D' : ['GAT', 'GAC'],
-    'E' : ['GAA', 'GAG'],
-    'C' : ['TGT', 'TGC'],
-    'W' : ['TGG'],
-    'R' : ['CGT', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
-    'G' : ['GGT', 'GGA', 'GGC', 'GGG']
+    'START': ['ATG'],
+    'STOP': ['TAA', 'TAG', 'TGA'],
+    'F': ['TTT', 'TTC'],
+    'L': ['TTA', 'TTG', 'CTT', 'CTA', 'CTC', 'CTG'],
+    'I': ['ATT', 'ATC', 'ATA'],
+    'M': ['ATG'],
+    'V': ['GTT', 'GTA', 'GTC', 'GTG'],
+    'S': ['TCT', 'TCA', 'TCC', 'TCG', 'AGT', 'AGC'],
+    'P': ['CCT', 'CCA', 'CCC', 'CCG'],
+    'T': ['ACT', 'ACA', 'ACC', 'ACG'],
+    'A': ['GCT', 'GCA', 'GCC', 'GCG'],
+    'Y': ['TAT', 'TAC'],
+    'H': ['CAT', 'CAC'],
+    'Q': ['CAA', 'CAG'],
+    'N': ['AAT', 'AAC'],
+    'K': ['AAA', 'AAG'],
+    'D': ['GAT', 'GAC'],
+    'E': ['GAA', 'GAG'],
+    'C': ['TGT', 'TGC'],
+    'W': ['TGG'],
+    'R': ['CGT', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
+    'G': ['GGT', 'GGA', 'GGC', 'GGG']
 }
 
 
