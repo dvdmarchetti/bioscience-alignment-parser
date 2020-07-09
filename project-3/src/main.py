@@ -23,7 +23,7 @@ def main():
         os.path.join('..', '..', 'project-1', 'input', 'GISAID'),
         os.path.join('..', '..', 'project-1', 'input', 'ncbi'),
     ])
-    sequence_ids.insert(0, reference_id)
+    sequence_ids.insert(0, reference_id)    #insert reference no variations
 
     assert len(sequence_ids) == 14
 
@@ -43,8 +43,6 @@ def main():
         rows.append(row)
         counter += 1
 
-    # print(rows)
-
     # 4. Build tree
     trait_matrix = pd.DataFrame(rows, index=indexes, columns=sequence_ids, dtype=bool).transpose()
     trait_matrix = phylogeny.reorder_columns(trait_matrix, axis=0, ascending=False)
@@ -53,12 +51,16 @@ def main():
     candidate_matrix = get_perfect_phylogeny_character_matrix(trait_matrix)
     if phylogeny.is_forbidden_matrix(candidate_matrix):
         raise Exception('Invalid perfect phylogeny matrix')
-    print(phylogeny.is_forbidden_matrix(candidate_matrix))
+    #print(phylogeny.is_forbidden_matrix(candidate_matrix))
 
     phylogeny.build_tree(candidate_matrix)
 
 
 def get_perfect_phylogeny_character_matrix(df):
+    """parameters = boolean dataframe
+    for each column, add dataframe if only doesn't create prohibited matrix
+    return resulted matrix (with forbidden column removed)
+    """
     columns = df.columns
     candidate_matrix = df[columns[0:1]]
     for i in range(1, len(columns)):

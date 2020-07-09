@@ -9,6 +9,7 @@ import pandas as pd
 
 
 def build_tree(df):
+    #create dictionary datas for rendering tree
     sequences_data = {
         'NC_045512.2': {
             'date': '17/01/2020',
@@ -79,10 +80,10 @@ def build_tree(df):
         # For each alteration
         for j in range(len(row)):
             # If alteration is present in the current sequence
-            if row.iloc[j]:
+            if row.iloc[j]: #true in cell
                 key = j
                 # If current_node is already linked to the j-th variation
-                if key in current_node.edges:
+                if key in current_node.edges:   #edges = dictionary
                     # Update the current node
                     current_node = current_node.edges[key]
                 else:
@@ -101,16 +102,16 @@ def build_tree(df):
     newick_tree = Phylo.read(io.StringIO(newick_tree), 'newick')
 
     # Display tree in ascii mode
-    newick_tree.ladderize()
-    Phylo.draw_ascii(newick_tree)
+    # newick_tree.ladderize() # to put leaf on the right
+    # Phylo.draw_ascii(newick_tree)
 
     # Figure aesthetics
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(1, 1, 1)
 
     # Assign sequences data to the leaf
-    root = newick_tree.clade
-    merge_sequences_data(root, sequences_data)
+    root = newick_tree.clade 
+    merge_sequences_data(root, sequences_data) #add infos from dict at beginning
     # Render with plt
     Phylo.draw(newick_tree, do_show=False, axes=ax)
 
@@ -122,6 +123,9 @@ def build_tree(df):
 
 
 def to_newick_tree(node, intermediates=False):
+    """recursively create tree in order to format it for Phylo (newick format)
+    choose if intermediate node have to be seen
+    """
     if node.is_leaf:
         return node.name
 
