@@ -1,0 +1,107 @@
+\documentclass[11pt,italian]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} %utf8 % lettere accentate da tastiera
+\usepackage[italian]{babel} % lingua del documento
+\usepackage{blindtext}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{xcolor}   % for \textcolor
+\usepackage[font=small,labelfont=bf,skip=10pt]{caption}
+\usepackage{subcaption}
+\setlength{\belowcaptionskip}{5pt}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  frame=single,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+
+% Use lstinline as item in description
+\makeatletter
+\newcommand*{\lstitem}[1][]{%
+  \setbox0\hbox\bgroup
+    \patchcmd{\lst@InlineM}{\@empty}{\@empty\egroup\item[\usebox0]\leavevmode\ignorespaces}{}{}%
+    \lstinline[#1]%
+}
+\makeatother
+
+\title{Multiple Sequence Alignment (MSA) \\ di sequenze SARS-CoV-2}
+
+\date{A.A.: 2019/2020}
+
+\author{
+    \textsc{Edoardo Silva} 816560 \\
+    \textsc{Davide Marchetti} 815990
+}
+
+\begin{document}
+\maketitle
+
+\section{Abstract}
+Il lavoro svolto è diviso in 2 parti e il codice in 4 sezioni:
+\subsection{Matrice delle variazioni}
+Qui si trovano le prime 2 parti del codice: il recupero per intero delle 14 sequenze usate e la lettura dei file di variazione generati in output nella parte1
+\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:Read fasta = [], language = Python]
+
+    reference_id = load_fasta_id(os.path.join('..', '..', 'project-1', 'input', 'reference.fasta'))
+    sequence_ids = read_sequence_ids(paths=[
+        os.path.join('..', '..', 'project-1', 'input', 'GISAID'),
+        os.path.join('..', '..', 'project-1', 'input', 'ncbi'),
+    ])
+    sequence_ids.insert(0, reference_id)    #insert reference no variations
+    
+    ...
+
+    clustal_output = load_output('Clustal-NC_045512.2_2020-05-30_16-51.json')
+    variations = clustal_output['unmatches'].items()
+
+\end{lstlisting}
+\newpage
+Infine nella parte 3 del nostro codice generiamo la tabella delle variazioni \textbf{`table.csv'} per variazione, per poi trasporla.
+
+\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:creation table.csv = [], language = Python]
+
+...
+
+for key, value in variations:
+        row = np.zeros(len(sequence_ids))
+        indexes.append('C{}'.format(counter))
+        for sequence in value['sequences']:
+            row[sequence_ids.index(sequence)] = 1
+        rows.append(row)
+        counter += 1
+        
+...
+
+trait_matrix = pd.DataFrame(rows, index=indexes, columns=sequence_ids, dtype=bool).transpose()
+trait_matrix = phylogeny.reorder_columns(trait_matrix, axis=0, ascending=False)
+trait_matrix.to_csv(os.path.join('..', 'output', 'table.csv'))
+
+\end{lstlisting}
+
+%%insert image 'table.csv'%%
+
+\subsection{Albero filogenetico}
+La quarta e ultima parte del codice consiste nel ricostrure l'albero filogenetico prendendo l'output del punto 3 e facendo estensivo uso di funzioni create per questo lavoro nel file \textbf{`phylogeny.py'} per:
+\begin{enumerate}
+	\item generare matrice compatibile con filogenesi perfetta.
+	\item assicurarsi che tutto abbia funzionato e non sia più presente matrice proibita.
+	\item generare e stampare in output l'albero delle sequenze.
+\end{enumerate}
+\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:creation table.csv = [], language = Python]
+candidate_matrix = get_perfect_phylogeny_character_matrix(trait_matrix)
+if phylogeny.is_forbidden_matrix(candidate_matrix):
+        raise Exception('Invalid perfect phylogeny matrix')
+phylogeny.build_tree(candidate_matrix)
+\end{lstlisting}
+
+\section{conclusione}
+
+
+\end{document}
