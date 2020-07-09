@@ -4,6 +4,7 @@
 \usepackage[italian]{babel} % lingua del documento
 \usepackage{blindtext}
 \usepackage{enumitem}
+\usepackage{upquote}
 \usepackage{float}
 \usepackage{xcolor}   % for \textcolor
 \usepackage[font=small,labelfont=bf,skip=10pt]{caption}
@@ -11,12 +12,22 @@
 \setlength{\belowcaptionskip}{5pt}
 \usepackage{listings}
 \lstset{
-  basicstyle=\ttfamily,
+  basicstyle=\small\ttfamily,
+  otherkeywords={self},             % Add keywords here
+  basicstyle=\small\ttfamily,
   columns=fullflexible,
   frame=single,
   breaklines=true,
   postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+  tabsize=4, % tab space width
+  showstringspaces=false, % don't mark spaces in strings
+  numbers=left, % display line numbers on the left
+  commentstyle=\color[HTML]{a0a1a7}, % comment color
+  keywordstyle=\color[HTML]{40a3f5}, % keyword color
+  stringstyle=\color{red}, % string color,
+  emphstyle={\color[HTML]{40a3f5}}
 }
+\usepackage{pythonhighlight}
 \usepackage{hyperref}
 \usepackage{cleveref}
 \usepackage{graphicx}
@@ -44,111 +55,106 @@
 \maketitle
 
 \section{Abstract}
-Per ogni variazione registrata nell' output della parte1, viene creata un entità nella tabella di output contenente:
+La seconda parte del progetto prevede di elaborare i file prodotti in precedenza ricavando informazioni relative alle alterazioni rilevate e producendo in output una tabella riassuntiva contenente:
+\begin{itemize}
+  \item il gene id del gene in cui cade la variazione con lo start e l'end della sua CDS rispetto alla reference
+  \item il codone (o i codoni) alterato della reference, con posizione di inizio rispetto alla CDS, sequenza del codone e amminoacido codifcato
+  \item il nuovo codone generato dalla variazione (o i nuovi codoni generati) specifcando la sequenza del codone e il nuovo amminoacido codifcato
+\end{itemize}
 
+\newpage
+\section{Algoritmo}
+L'algoritmo inizia caricando tutti i file necessari per l'elaborazione, in particolare quelli prodotti in output nella parte precedente del progetto:
+\begin{enumerate}
+  \item Caricamento della sequenza reference dal file corrispondente memorizzato in \lstinline{/project-1/input/reference.fasta}.
+  \item Caricamento di uno dei file di output prodotti nella prima parte di progetto. Nel nostro caso è stato utilizzata l'analisi dell'allineamento di \lstinline{ClustalW}.
+  \item Lettura del file \lstinline{Genes-CDS.xlsx} contenente le informazioni sui geni e le CDS della sequenza di reference. In particolare, per le CDS che derivano dalla join di due sequenze è possibile specificare il punto di unione della sequenza.
+\end{enumerate}
+
+\noindent
+Dopo la lettura del materiale rilevante a questa fase di elaborazione, l'algoritmo itera le variazioni rilevate nell'allineamento e per ciascuna di esse esegue i seguenti step:
+\begin{enumerate}
+  \item Trova le CDS nelle quali avviene l'alterazione rispetto alla reference.
+  \item Recupera le informazioni del gene associato alle CDS rilevate calcolando le posizioni globali e relative alla CDS dell'alterazione.
+  \item Identifica i codoni alterati e ne effettua la ritraduzione in amminoacidi grazie ad una look-up table (listato \ref{code:aminoacids_table}). Vengono ignorate le alterazioni che presentano sequenze di soli \lstinline{-}, derivate probabilmente da un sequenziamento errato o un'alterazione posta ai capi dell'allineamento.
+  \item Memorizza tutte le informazioni ricavate in una struttura dati tramite cui derivare la tabella per l'output finale associando i valori a chiavi prestabilite (listato \ref{code:variation_loop}).
+\end{enumerate}
+
+\noindent
+Al termine dell'elaborazione di tutte le alterazioni, viene costruito un oggetto di tipo \lstinline{DataFrame} fornito dalla libreria \lstinline{pandas}.
+
+Le chiavi utilizzate nella costuzione della struttura dati a lista diventeranno le colonne del \lstinline{DataFrame}. Questo sarà esportato in CSV nella cartella \lstinline{/project-2/output/alteration-table.csv} per permettere una visualizzazione più semplice tramite programmi terzi.
+
+\newpage
+\section{Informazioni memorizzate}
+Ad ogni variazione analizzata corrisponde un entrata nella struttura dati a lista contenente le seguenti informazioni:
 \begin{itemize}
     \item \textbf{gene\_id}: id del gene in cui cade la variazione
-    \item \textbf{gene\_start}: inizio del gene in cui cade la variazione
-    \item \textbf{gene\_end}: fine del gene in cui cade la variazione
-    \item \textbf{cds\_start}: inizio della \textit{coding DNA sequence} della porzione del gene in cui cade la variazione
-    \item \textbf{cds\_end}: fine della \textit{coding DNA sequence} della porzione del gene in cui cade la variazione
+    \item \textbf{gene\_start}: inizio del gene in cui cade la variazione (1-based)
+    \item \textbf{gene\_end}: fine del gene in cui cade la variazione (1-based)
+    \item \textbf{cds\_start}: inizio della \lstinline{Coding DNA Sequence} della porzione del gene in cui cade la variazione (1-based)
+    \item \textbf{cds\_end}: fine della \lstinline{Coding DNA Sequence} della porzione del gene in cui cade la variazione (1-based)
     \item \textbf{original\_codone}: codone della reference prima della modifica
     \item \textbf{altered\_codone}: codone della reference modificati dalla variazione
-    \item \textbf{relative\_start}: inizio della variazione in rispetto all'inizio della cds
-    \item \textbf{relative\_end}: fine della variazione in rispetto all'inizio della cds
-    \item \textbf{sequence}: variazione
+    \item \textbf{relative\_start}: inizio della variazione in rispetto all'inizio della cds (1-based)
+    \item \textbf{relative\_end}: fine della variazione in rispetto all'inizio della cds (1-based)
+    \item \textbf{alteration}: sequenza della variazione
     \item \textbf{encoded\_aminoacid}: amminoacido codificato da \textbf{altered\_codone}
 \end{itemize}
-% aminoacids_lookup_table
-\section{codice}
-	Il codice inizia caricando la sequenza di reference dal file \textbf{'reference.fasta\'} e un file di output.\newline % qui il codice può cambiar e%
-	Infine carica in una lista le CDS della reference dal file \textbf{'Genes-CDS.xlsx\'}. \newline
-	Il  corpo del codice esegue un ciclo per ogni variazione nel file di output: \newline
-	Nel ciclo è inserito un controllo per la sequenza CDS da unire: prendo valori dalla tabella e se trovo valori nella collonna \textbf{'join\_at'}, eseguo sulla nuova CDS. 
-	\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:variations_to_genes = [], language = Python]
 
-for key, value in variations:
-        ...
-        
-	for index, cds in affected_cdses.iterrows():
-            cds_sequence = reference[cds['from']:cds['to'] + 1]
-            if pd.notna(cds['join_at']):
-                join_at = int(cds['join_at'])
-                cds_sequence = reference[cds['from']:join_at + 1] + reference[join_at:cds['to'] + 1]
-        
-            gene = df_ref_genes.loc[affected_cds['GeneID']]
-            gene_id = affected_cds.iloc[0]['GeneID']
-            gene_start = gene.iloc[0]['Start']
-            gene_end = gene.iloc[0]['End']
-            cds_start = affected_cds.iloc[0]['from']
-            cds_end = affected_cds.iloc[0]['to']
-            sequence = value['alt']
-            relative_start = value['from'] - gene_start
-            relative_end = relative_start + len(sequence),
-    ...
-  
-
-\end{lstlisting}
 \newpage
-	e riempie la tebella
-\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Appending nel file di output,label=code:variations_to_genes]
+\section{Output}
 
-variations_to_genes.append({
-	'gene_id': gene_id,
-	'gene_start': gene_start,
-	'gene_end': gene_end,
-	'cds_start': cds_start,
-	'original_codone': original_codone,
-	'altered_codone': altered_codone,
-	'relative_start': relative_start + 1,
-	'relative_end': relative_end,
-	'sequence': sequence,
-	'original_aminoacid': original_aminoacid,
-	'encoded_aminoacid': encoded_aminoacid
-  })
+TODO Screenshot della tabella
 
-\end{lstlisting}	
-	da generare come file output.
-	\newpage
-\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Tabella per la traduzione in amminoacidi,label=code:aminoacids_table]
-{
+\newpage
+\section{Listati di codice}
+\begin{lstlisting}[language=Python,caption=Tabella per la traduzione in amminoacidi,label=code:aminoacids_table]
 aminoacids_lookup_table = {
-    "START" : 'ATG',
-    "STOP" : ["TAA", "TAG", "TGA"],
-    'F' : ['TTT', 'TTC'],
-    'L' : ['TTA', 'TTG', 'CTT', 'CTA', 'CTC', 'CTG'],
-    'I' : ['ATT', 'ATC', 'ATA'],
-    'M' : ['ATG'],
-    'V' : ['GTT', 'GTA', 'GTC', 'GTG'],
-    'S' : ['TCT', 'TCA', 'TCC', 'TCG', 'AGT', 'AGC'],
-    'P' : ['CCT', 'CCA', 'CCC', 'CCG'],
-    'T' : ['ACT', 'ACA', 'ACC', 'ACG'],
-    'A' : ['GCT', 'GCA', 'GCC', 'GCG'],
-    'Y' : ['TAT', 'TAC'],
-    'H' : ['CAT', 'CAC'],
-    'Q' : ['CAA', 'CAG'],
-    'N' : ['AAT', 'AAC'],
-    'K' : ['AAA', 'AAG'],
-    'D' : ['GAT', 'GAC'],
-    'E' : ['GAA', 'GAG'],
-    'C' : ['TGT', 'TGC'],
-    'W' : ['TGG'],
-    'R' : ['CGT', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
-    'G' : ['GGT', 'GGA', 'GGC', 'GGG']
+    'START': 'ATG',
+    'STOP': ['TAA', 'TAG', 'TGA'],
+    'F': ['TTT', 'TTC'],
+    'L': ['TTA', 'TTG', 'CTT', 'CTA', 'CTC', 'CTG'],
+    'I': ['ATT', 'ATC', 'ATA'],
+    'M': ['ATG'],
+    'V': ['GTT', 'GTA', 'GTC', 'GTG'],
+    'S': ['TCT', 'TCA', 'TCC', 'TCG', 'AGT', 'AGC'],
+    'P': ['CCT', 'CCA', 'CCC', 'CCG'],
+    'T': ['ACT', 'ACA', 'ACC', 'ACG'],
+    'A': ['GCT', 'GCA', 'GCC', 'GCG'],
+    'Y': ['TAT', 'TAC'],
+    'H': ['CAT', 'CAC'],
+    'Q': ['CAA', 'CAG'],
+    'N': ['AAT', 'AAC'],
+    'K': ['AAA', 'AAG'],
+    'D': ['GAT', 'GAC'],
+    'E': ['GAA', 'GAG'],
+    'C': ['TGT', 'TGC'],
+    'W': ['TGG'],
+    'R': ['CGT', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
+    'G': ['GGT', 'GGA', 'GGC', 'GGG']
 }
-}
-\end{lstlisting}	
-	
-\section{output}
-\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Generazione di output,label=code:output]
-	columns = ['gene_id', 'gene_start', 'gene_end', 'cds_start', 'cds_end', 'original_codone', 'altered_codone', 'relative_start', 'relative_end', 'sequence', 'original_aminoacid', 'encoded_aminoacid']
-	df_variations_to_genes = pd.DataFrame(variations_to_genes, columns=columns)
-	df_variations_to_genes.to_csv(os.path.join('..', 'output', 'out.csv'))
-\end{lstlisting}	
-Genera file \textbf{out.csv} nella sotocartella \' output \' .
-% inserire immagine output?%
+\end{lstlisting}
 
-\section{conclusione}
-Eccetto per la variazione con cancellazione di sequenze, tutti gli altri codoni modificati sono traducibili.
+\newpage
+\begin{lstlisting}[language=Python,caption=Memorizzazione dei risultati nella struttura dati a lista,label=code:variation_loop]
+  for key, value in variations:
+    for index, cds in affected_cdses.iterrows():
+      ...
+      variations_to_genes.append({
+        'gene_id': gene_id,
+        'gene_start': gene_start + 1, # 1-based position
+        'gene_end': gene_end,
+        'cds_start': cds_start + 1, # 1-based position
+        'cds_end': cds_end,
+        'original_codone': original_codone,
+        'altered_codone': altered_codone,
+        'relative_start': relative_start + 1, # 1-based position
+        'relative_end': relative_end,
+        'alteration': sequence,
+        'original_aminoacid': original_aminoacid,
+        'encoded_aminoacid': encoded_aminoacid
+      })
+\end{lstlisting}
 
 \end{document}
