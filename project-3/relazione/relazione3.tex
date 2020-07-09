@@ -101,6 +101,77 @@ if phylogeny.is_forbidden_matrix(candidate_matrix):
 phylogeny.build_tree(candidate_matrix)
 \end{lstlisting}
 
+%%parte filogenesi perfetta da mettere?%%
+
+La generazione dell'albero viene svolta come segue:
+	
+\begin{enumerate}
+	\item Riordino il dataframe ordinando le colonne per numero decrescende di 1
+\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:1 = [], language = Python]	
+    sorted_axis = df.sum(axis=0).sort_values(ascending=False)
+    if axis == 0:
+        return df[sorted_axis.index]
+    return df.reindex(sorted_axis.index)
+\end{lstlisting}
+	\item Genera nodo radice, poi per ogni sequenza genera nodi da collegare a root se incontra la presenza di variazione per ogni nodo non già presente
+	%guarda questa parte
+\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:1 = [], language = Python]	
+for i, row in df.iterrows():
+        current_node = root
+
+        for j in range(len(row)):
+            # If alteration is present in the current sequence
+            if row.iloc[j]: #true in cell
+                key = j
+                # If current_node is already linked to the j-th variation
+                # edges = dictionary with links from (current_node, u)
+                if key in current_node.edges:
+                    # Update the current node
+                    current_node = current_node.edges[key]
+                else:
+                    # Create a new node u and link it with the last node of this sequence
+                    u = Node('U-{}'.format(row.index[j]), edges={}, parent=current_node)
+                    current_node.edges[key] = u
+                    current_node = u
+        # We looped all the variations, insert the sequence node at the end of the chain
+        Node(i, parent=current_node)	
+\end{lstlisting}
+\item Conversione dell'albero precedentemente generato in un newick\_tree elaborabile dalla libreria \textbf{Phylo}, usata per la visualizzazione.
+\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:1 = [], language = Python]	
+newick_tree = to_newick_tree(root, intermediates=False)
+newick_tree = Phylo.read(io.StringIO(newick_tree), 'newick')
+\end{lstlisting}
+\item Generazione immagine output
+\begin{lstlisting}[basicstyle=\small\ttfamily,caption=Porzione di ciclo,label=code:1 = [], language = Python]	
+fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(1, 1, 1)
+
+    # Assign sequences data to the leaf
+    root = newick_tree.clade
+    merge_sequences_data(root, sequences_data) # Add sequence data to sequence leaves
+    # Render with plt
+    Phylo.draw(newick_tree, do_show=False, axes=ax)
+
+    ax.set_xlabel('Number of alterations')
+    ax.set_ylabel('Sequences')
+    plt.tight_layout()
+    plt.savefig(os.path.join('..', 'output', 'phylogenetic-tree.png'))
+    plt.show()
+\end{lstlisting}
+\end{enumerate}
+
+\section{Confronto alberi}
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1.3\linewidth]{../output/phylogenetic-tree.png}}
+  \caption{Albero di output dello script}
+  \label{fig:jalview-end}
+\end{figure}
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1.3\linewidth]{ncbi_tree.png}}
+  \caption{Albero di output del sito delle sequenze}
+  \label{fig:jalview-end}
+\end{figure}
+
 \section{conclusione}
 
 
