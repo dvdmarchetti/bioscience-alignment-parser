@@ -6,35 +6,6 @@ import numpy as np
 import pandas as pd
 
 
-# def build_tree_recursive(root, df):
-#     #https://pandas.pydata.org/pandas-docs/stable/getting_started/10min.html
-#     #print(type(root.data), root.data)
-#     if df.empty or len(root.data) <= 1:
-#         return
-#     else:
-#         left_data = []
-#         right_data = []
-#         #split left and right if have mutation
-#         id = df.index[0] #name mutation
-#         i = 0
-#         #print("id = " + id)
-#         for element in df.iloc[0]: #guarda df.iloc and df.loc:  By integer slices, acting similar to numpy/python;  Selecting on a multi-axis by label.
-#             if element == 1:
-#                 right_data.append(root.data[i]) #column name with mutation = 1
-#             else:
-#                 left_data.append(root.data[i])  #column name without mutation = 0
-#             i = i+1
-#         right = Node(id, parent = root, data = right_data)
-#         left = Node("!" + id, parent = root, data = left_data)
-#         #root.setLeft(left)
-#         #root.setRight(right)
-#         build_tree_recursive(right, df[1:])
-#         build_tree_recursive(left, df[1:])
-
-#         #for node in root.iter_path_reverse():
-#             #print(node)
-
-
 def build_tree(df, reference_id):
     """
     #custom node test#
@@ -84,7 +55,6 @@ def build_tree(df, reference_id):
     # Phylo.draw(newick_tree)
 
 
-
 def to_newick_tree(node, intermediates=False):
     if node.is_leaf:
         return node.sequence
@@ -97,16 +67,16 @@ def to_newick_tree(node, intermediates=False):
 
 def is_forbidden_matrix(df):
     # Build auxiliary matrix
-    M = reorder_columns(df).to_numpy()
+    M = reorder_columns(df).to_numpy() # sort the columns by decreasing number of 1’s
     rows, columns = M.shape
 
-    L = np.zeros(M.shape)
+    L = np.zeros(M.shape)   # build the auxiliary matrix L defined as follows:
     for i in range(rows):
         k = -1
-        for j in range(columns):
-            if M[i,j] == 1:
-                L[i,j] = k
-                k = j + 1
+        for j in range(columns):    # if Mij = 0, then Lij = 0
+            if M[i,j] == 1:         # if Mij = 1 then Lij = k,
+                L[i,j] = k          # being k the rightmost column to the left of j such that Mik = 1,
+                k = j + 1           # otherwise Lij = −1
 
     # Check if we have a forbidden matrix
     for j in range(columns):
@@ -114,18 +84,18 @@ def is_forbidden_matrix(df):
             if L[i,j] != 0:
                 for l in range(rows):
                     if L[l,j] != 0 and L[i,j] != L[l,j]:
-                        return True
+                        return True # laminar --> support perfect phylogeny
 
-    return False
+    return False # not laminar --> no perfect phylogeny
 
 
-def reorder_columns(df, axis=0):
+def reorder_columns(df, axis=0, ascending=False):
     """Sort a dataframe in descending number of ones by the specified axis (default: by columns).
 
     The sorting is not done in place, you must reassign the dataframe
     with the return value of this function call.
     """
-    sorted_axis = df.sum(axis=axis).sort_values(ascending=False)
+    sorted_axis = df.sum(axis=axis).sort_values(ascending=ascending)
     if axis == 0:
         return df[sorted_axis.index]
 
