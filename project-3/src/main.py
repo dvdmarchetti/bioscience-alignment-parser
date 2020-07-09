@@ -5,6 +5,17 @@ import pandas as pd
 import phylogeny
 
 
+class ModularCounter():
+    def __init__(self, start, modulo, decrement=True):
+        self.value = start
+        self.modulo = modulo
+        self.decrement = decrement
+
+    def step(self):
+        self.value += -1 if self.decrement else 1
+        self.value %= self.modulo
+
+
 def main():
     # 1. Read fasta sequences
     reference_id = load_fasta_id(os.path.join('..', '..', 'project-1', 'input', 'reference.fasta'))
@@ -39,11 +50,24 @@ def main():
     trait_matrix = phylogeny.reorder_columns(trait_matrix, axis=0, ascending=False)
     trait_matrix.to_csv(os.path.join('..', 'output', 'table.csv'))
 
-    # if phylogeny.is_forbidden_matrix(trait_matrix):
-    #     raise Exception('Invalid perfect phylogeny matrix')
-    print(phylogeny.is_forbidden_matrix(trait_matrix))
+    candidate_matrix = get_perfect_phylogeny_character_matrix(trait_matrix)
+    if phylogeny.is_forbidden_matrix(candidate_matrix):
+        raise Exception('Invalid perfect phylogeny matrix')
+    print(phylogeny.is_forbidden_matrix(candidate_matrix))
 
-    phylogeny.build_tree(trait_matrix, reference_id)
+    phylogeny.build_tree(candidate_matrix)
+
+
+def get_perfect_phylogeny_character_matrix(df):
+    columns = df.columns
+    candidate_matrix = df[columns[0:1]]
+    for i in range(1, len(columns)):
+        candidate_matrix = candidate_matrix.join(df[columns[i:i+1]])
+
+        if phylogeny.is_forbidden_matrix(candidate_matrix):
+            candidate_matrix = candidate_matrix.drop(labels=candidate_matrix.columns[-1], axis=1)
+
+    return candidate_matrix
 
 
 def read_sequence_ids(paths=[]):

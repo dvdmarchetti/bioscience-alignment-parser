@@ -2,19 +2,72 @@ import io
 
 from anytree import Node, RenderTree, AsciiStyle
 from Bio import Phylo
+from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 
 
-def build_tree(df, reference_id):
-    """
-    #custom node test#
-    nr = Node("test1", data = [0,1,0,1])
-    nl = Node("test2", data = [0,0,0,0])
-    root = Node(data = [0,1,0,1,0,0,0,0], left= nl, right=nr )
-    nr.setLeft(Node("test3", data = [1,1,1,1], right = (Node("test4", data = [1,0]))))
-    #print(root.data)
-    """
+def build_tree(df):
+    sequences_data = {
+        'NC_045512.2': {
+            'date': '17/01/2020',
+            'location': 'China'
+        },
+        'MT320891.2': {
+            'date': '10/04/2020',
+            'location': 'Iran'
+        },
+        'MT281530.2': {
+            'date': '04/04/2020',
+            'location': 'Iran'
+        },
+        'EPI_ISL_442523': {
+            'date': '09/03/2020',
+            'location': 'Iran'
+        },
+        'EPI_ISL_437512': {
+            'date': '26/03/2020',
+            'location': 'Iran'
+        },
+        'MT276598.1': {
+            'date': '02/04/2020',
+            'location': 'Israel'
+        },
+        'MT276597.1': {
+            'date': '02/04/2020',
+            'location': 'Israel'
+        },
+        'EPI_ISL_447469': {
+            'date': '14/04/2020',
+            'patient_age': 47,
+            'location': 'Israel',
+            'source': 'Naso-pharyngeal'
+        },
+        'MT262993.1': {
+            'date': '25/03/2020',
+            'location': 'Pakistan'
+        },
+        'MT240479.1': {
+            'date': '25/03/2020',
+            'location': 'Pakistan'
+        },
+        'EPI_ISL_417444': {
+            'date': '25/03/2020',
+            'location': 'Pakistan'
+        },
+        'MT327745.1': {
+            'date': '13/04/2020',
+            'location': 'Turkey'
+        },
+        'EPI_ISL_437334': {
+            'date': '24/04/2020',
+            'location': 'Turkey'
+        },
+        'EPI_ISL_437317': {
+            'date': '27/04/2020',
+            'location': 'Turkey'
+        }
+    }
 
     # Algorithm on slide
     root = Node('root', edges={})
@@ -26,43 +79,63 @@ def build_tree(df, reference_id):
         for j in range(len(row)):
             # If alteration is present in the current sequence
             if row.iloc[j]:
+                key = j
                 # If current_node is already linked to the j-th variation
-                if j in current_node.edges:
+                if key in current_node.edges:
                     # Update the current node
-                    current_node = current_node.edges[j]
+                    current_node = current_node.edges[key]
                 else:
                     # Create a new node u and link it with the last node of this sequence
-                    u = Node('U-{}'.format(row.index[j]), edges={})
-                    u.parent = current_node
-                    current_node.edges[j] = u
+                    u = Node('U-{}'.format(row.index[j]), edges={}, parent=current_node)
+                    current_node.edges[key] = u
                     current_node = u
-
         # We looped all the variations, insert the sequence node at the end of the chain
-        current_node.name = i
-        current_node.sequence = i
+        Node(i, parent=current_node)
 
-    print(RenderTree(root, style=AsciiStyle()).by_attr())
+    # Render tree with characters (for debug only)
+    # print(RenderTree(root, style=AsciiStyle()).by_attr())
 
-    with_intermediate_alteration_nodes = False
-    if with_intermediate_alteration_nodes:
-        newick_tree = to_newick_tree(root, intermediates=True)
-    else:
-        newick_tree = '({},{})'.format(root.sequence, to_newick_tree(root, intermediates=False))
-
+    # Bulid Newick tree for visualization
+    newick_tree = to_newick_tree(root, intermediates=False)
     newick_tree = Phylo.read(io.StringIO(newick_tree), 'newick')
+
+    # Display tree in ascii mode
     newick_tree.ladderize()
     Phylo.draw_ascii(newick_tree)
-    # Phylo.draw(newick_tree)
+
+    # Figure aesthetics
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(1, 1, 1)
+
+    # Assign sequences data to the leaf
+    root = newick_tree.clade
+    merge_sequences_data(root, sequences_data)
+    # Render with plt
+    Phylo.draw(newick_tree, do_show=False, axes=ax)
+
+    ax.set_xlabel('Number of alterations')
+    ax.set_ylabel('Sequences')
+    plt.tight_layout()
+    plt.show()
 
 
 def to_newick_tree(node, intermediates=False):
     if node.is_leaf:
-        return node.sequence
+        return node.name
 
     if intermediates:
         return '({}, {})'.format(node.name, ','.join([to_newick_tree(child, intermediates) for child in node.children]))
 
     return '({})'.format(','.join([to_newick_tree(child, intermediates) for child in node.children]))
+
+
+def merge_sequences_data(node, sequences_data):
+    if node.is_terminal():
+        data = sequences_data[node.name]
+        node.name = '{}\n {} in {}'.format(node.name, data['date'], data['location'])
+        return
+
+    [ merge_sequences_data(child, sequences_data) for child in node.clades ]
 
 
 def is_forbidden_matrix(df):
