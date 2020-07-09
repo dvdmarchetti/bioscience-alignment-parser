@@ -39,6 +39,8 @@ def main():
     trait_matrix = phylogeny.reorder_columns(trait_matrix, axis=0)
     trait_matrix.to_csv(os.path.join('..', 'output', 'table.csv'))
 
+    # if phylogeny.is_forbidden_matrix(trait_matrix):
+    #     raise Exception('Invalid perfect phylogeny matrix')
     print(phylogeny.is_forbidden_matrix(trait_matrix))
 
     phylogeny.build_tree(trait_matrix, reference_id)

@@ -72,21 +72,27 @@ def build_tree(df, reference_id):
 
     print(RenderTree(root, style=AsciiStyle()).by_attr())
 
-    newick_tree = Phylo.read(io.StringIO(to_newick_tree(root)), 'newick')
+    with_intermediate_alteration_nodes = False
+    if with_intermediate_alteration_nodes:
+        newick_tree = to_newick_tree(root, intermediates=True)
+    else:
+        newick_tree = '({},{})'.format(root.sequence, to_newick_tree(root, intermediates=False))
+
+    newick_tree = Phylo.read(io.StringIO(newick_tree), 'newick')
     newick_tree.ladderize()
     Phylo.draw_ascii(newick_tree)
-    Phylo.draw(newick_tree)
+    # Phylo.draw(newick_tree)
 
 
-with_intermediate_alteration_nodes = True
-def to_newick_tree(node):
+
+def to_newick_tree(node, intermediates=False):
     if node.is_leaf:
         return node.sequence
 
-    if with_intermediate_alteration_nodes:
-        return '({}, {})'.format(node.name, ','.join([to_newick_tree(child) for child in node.children]))
+    if intermediates:
+        return '({}, {})'.format(node.name, ','.join([to_newick_tree(child, intermediates) for child in node.children]))
 
-    return '({})'.format(','.join([to_newick_tree(child) for child in node.children]))
+    return '({})'.format(','.join([to_newick_tree(child, intermediates) for child in node.children]))
 
 
 def is_forbidden_matrix(df):
@@ -102,15 +108,15 @@ def is_forbidden_matrix(df):
                 L[i,j] = k
                 k = j + 1
 
-    # Ensure it's not forbidden matrix
+    # Check if we have a forbidden matrix
     for j in range(columns):
         for i in range(rows):
             if L[i,j] != 0:
                 for l in range(rows):
                     if L[l,j] != 0 and L[i,j] != L[l,j]:
-                        return False
+                        return True
 
-    return True
+    return False
 
 
 def reorder_columns(df, axis=0):
@@ -138,7 +144,7 @@ def test_forbidden_matrix():
         index=['S1', 'S2', 'S3', 'S4', 'S5'],
         columns=['C1', 'C2', 'C3', 'C4', 'C5']
     )
-    assert is_forbidden_matrix(test_case_1) == False
+    assert is_forbidden_matrix(test_case_1) == True
 
     test_case_2 = pd.DataFrame(
         data=[
@@ -149,7 +155,7 @@ def test_forbidden_matrix():
         index=['S1', 'S2', 'S3'],
         columns=['C1', 'C2']
     )
-    assert is_forbidden_matrix(test_case_2) == False
+    assert is_forbidden_matrix(test_case_2) == True
 
     test_case_3 = pd.DataFrame(
         data=[
@@ -162,4 +168,4 @@ def test_forbidden_matrix():
         index=['S1', 'S2', 'S3', 'S4', 'S5'],
         columns=['C1', 'C2', 'C3', 'C4', 'C5']
     )
-    assert is_forbidden_matrix(test_case_3) == True
+    assert is_forbidden_matrix(test_case_3) == False
