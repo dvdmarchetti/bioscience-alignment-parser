@@ -55,6 +55,10 @@
 
 \section{Abstract}
 
+Date le variazioni sulle sequenze Rilevate e catalogate nelle parti precedenti, costruiremo una matrice binaria di caratteri.\newline
+Infine costruire la filogenesi perfetta delle sequenze e confrontare l’albero ottenuto con quello ottenibile con i tools di allineamento. \newline
+Descriveremo poi i risultati ottenuti.
+
 \newpage
 \section{Algoritmo}
 \subsection{Matrice delle variazioni}
@@ -224,5 +228,15 @@ plt.show()
 \newpage
 \section{Conclusioni}
 
+Come è possibile notare i 2 alberi ottenuti hanno delle differenze:
+\begin{itemize}
+	\item nell'albero dei tools, in caso di 3 alberi con gli stessi disallineamenti, riesce a controllare i 2 più vicini, non badando alla filogenesi perfetta ma sfruttando ogni allineamento.
+	\item il nodo MT276597 israeliano ha molti disallineamenti scartati nel nostro codice ed in entrambi gli alberi è distante dalle altre 2 sequenze israeiane (possibilmente proveniente da un altra zona geografica? ondata di ritorno?)
+\end{itemize}
+La quasi totalità dei nodi mostra come nella stessa area geografica i genomi siano simili tra loro, come appartenenti ad un singolo nuovo ceppo per nazione. \newline
+%%check line up here
+I ceppi iraniani e turchi presentano quasi le stesse mutazioni, e ne condividono 1 con i ceppi Pakistani, al contrario il ceppo di virus rilevato in Israele sembra provenire da un percorso diverso (richiesti nuovi studi in questo ambito).\newline 
+%cosa scrivo dei 2 ceppi spanati {MT276597 e 262993}?
+In conclusione, i 2 alberi sono abbastanza simili ad indicare che non vi siano errori nel codice, solo diverse scelte algoritmico-implementative.
 
 \end{document}
