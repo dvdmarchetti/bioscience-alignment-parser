@@ -54,10 +54,9 @@
 \maketitle
 
 \section{Abstract}
+Date le variazioni sulle sequenze rilevate e catalogate nelle parti precedenti, costruiremo una matrice binaria di caratteri, costruita appositamente per evitare la generazione della "matrice proibita", per realizzare la filogenesi perfetta delle sequenze.
 
-Date le variazioni sulle sequenze Rilevate e catalogate nelle parti precedenti, costruiremo una matrice binaria di caratteri.\newline
-In seguito costruire la filogenesi perfetta delle sequenze, rimuovendo le colonne che genererebbero la matrice proibita, e successivamente confrontare l’albero ottenuto con quello ottenibile con i tools di allineamento. \newline
-Descriveremo infine i risultati ottenuti.
+Successivamente effettueremo un confronto dell’albero ottenuto rispetto a quello prodotto con i tool di allineamento.
 
 \newpage
 \section{Algoritmo}
@@ -213,30 +212,36 @@ plt.savefig(os.path.join('..', 'output', 'phylogenetic-tree.png'))
 plt.show()
 \end{lstlisting}
 
-\section{Confronto alberi}
-\begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=1.3\linewidth]{../output/phylogenetic-tree.png}}
-  \caption{Albero di output dello script}
-  \label{fig:jalview-end}
-\end{figure}
-\begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=1.3\linewidth]{ncbi_tree.png}}
-  \caption{Albero di output del sito delle sequenze}
-  \label{fig:jalview-end}
-\end{figure}
-
 \newpage
 \section{Conclusioni}
+L'albero generato con ClustalW in \cref{fig:tool-tree}, rispetto all'albero da noi prodotto (\cref{fig:script-tree}), riesce a ottenere un livello di dettaglio maggiore arrivando a scindere i rami terminanti con tre foglie da noi identificati.
 
-Come è possibile notare i 2 alberi ottenuti hanno delle differenze:
-\begin{itemize}
-	\item nell'albero dei tools, in caso di 3 alberi con gli stessi disallineamenti, riesce a controllare i 2 più vicini, non badando alla filogenesi perfetta ma sfruttando ogni allineamento.
-	\item il nodo MT276597 israeliano ha molti disallineamenti scartati nel nostro codice ed in entrambi gli alberi è distante dalle altre 2 sequenze israeiane (possibilmente proveniente da un altra zona geografica? ondata di ritorno?)
-\end{itemize}
-La quasi totalità dei nodi mostra come nella stessa area geografica i genomi siano simili tra loro, come appartenenti ad un singolo nuovo ceppo per nazione. \newline
-%%check line up here
-I ceppi iraniani e turchi presentano quasi le stesse mutazioni, e ne condividono 1 con i ceppi Pakistani, al contrario il ceppo di virus rilevato in Israele sembra provenire da un percorso diverso (richiesti nuovi studi in questo ambito).\newline 
-%cosa scrivo dei 2 ceppi spanati {MT276597 e 262993}?
-In conclusione, i 2 alberi sono abbastanza simili ad indicare che non vi siano errori nel codice, solo diverse scelte algoritmico-implementative.
+Il nodo israeliano etichettato con \lstinline{MT276597.1} in entrambi gli alberi risulta distante dalle altre due sequenze israeliane. Questo potrebbe far presupporre che derivi da un ceppo diverso del virus o da un'area geografica differente.
+
+Il nodo \lstinline{MT262993.1} presenta alterazioni differenti rispetto alle altre sequenze rilevate in Pakistan. Come già descritto in precedenza nella seconda parte del progetto, alcune di queste alterazioni risultano essere cancellazioni di porzioni di basi per noi riconducibili ad un errore in fase di sequenziamento.
+
+I rami restanti dell'albero in \cref{fig:script-tree} mostrano come nella stessa area geografica i genomi siano simili tra loro il che ci porta a ipotizzare che la diffusione all'interno del paese si sia sviluppata a partire da un singolo paziente per nazione e non da pazienti contagiati da mutazioni diverse del virus.
+
+Analizzando l'albero, i ceppi \textit{iraniani} e \textit{turchi} presentano mutazioni comuni. Inoltre, le sequenze di entrambi i paesi condividono una variazione con il ceppo \textit{pakistano}.
+Il ceppo di virus rilevato in \textit{Israele} sembra avere un'origine differente e non condivide mutazioni simili con le sequenze degli altri paesi analizzati.
+
+\vspace{2mm}
+\noindent
+In conclusione, gli alberi ottenuti in \cref{fig:script-tree,fig:tool-tree} risultano abbastanza simili, tuttavia presentano alcune differenze.
+
+Ipotizziamo che queste derivino principalmente dal fatto che l'albero in \cref{fig:script-tree} è costruito basandosi sul numero di alterazioni rispetto alla sequenza reference.
+Al contrario, l'albero in \cref{fig:tool-tree} è generato in base alla distanza tra le \textit{intere} sequenze a partire da un allineamento.
+
+\newpage
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1.1\linewidth]{perfect-phylogeny.png}}
+  \caption{Albero di output del nostro script}
+  \label{fig:script-tree}
+\end{figure}
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1\linewidth]{ncbi_tree.png}}
+  \caption{Albero di output derivato dall'allineamento con ClustalW}
+  \label{fig:tool-tree}
+\end{figure}
 
 \end{document}
