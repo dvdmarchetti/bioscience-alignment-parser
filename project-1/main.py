@@ -151,25 +151,30 @@ def analysis(filename):
             'nas': sequence.count('N')
         })
 
+    colors = ['mediumvioletred', 'darkorange', 'dodgerblue', 'green', 'coral', 'mediumpurple', 'gold', 'm', 'olivedrab', 'salmon','yellowgreen', 'c', 'lightgray']
+
     # Count NAs
-    df_nas = pd.DataFrame(nas, columns=['id', 'nas']).set_index('id')
-    ax = df_nas.sort_values(by='nas').plot.barh(legend=False)
+    df_nas = pd.DataFrame(nas, columns=['id', 'nas']).set_index('id').sort_values(by='nas')
+    ax = df_nas.plot.barh(legend=False)
     ax.set_title('Not Available Bases')
-    ax.set_ylabel('Sequence ID')
     ax.set_xlabel('Count')
+    ax.set_xlim((0, 1450))
+    ax.set_ylabel('Sequence ID')
+    for i, (k, v) in enumerate(df_nas.iterrows()):
+        v = v['nas']
+        ax.text(v + 10, i - .15, str(v), color='black')
     plt.tight_layout()
     plt.savefig(os.path.join('relazione', 'images', 'plot-not-availables'))
 
     # Char Count per Variation Type
     chars_per_var = df_chars.groupby(['type']).count().sort_values(by='alteration')
-    ax = chars_per_var.plot.pie(y='alteration', autopct='%.2f%%', labels=['Insertion', 'Replacement', 'Deletion'], legend=False)
+    ax = chars_per_var.plot.pie(y='alteration', autopct='%.2f%%', labels=['Insertion', 'Replacement', 'Deletion'], colors=colors, legend=False)
     ax.set_title('Variation types')
     ax.set_ylabel('')
     plt.tight_layout()
     plt.savefig(os.path.join('relazione', 'images', 'plot-variations-per-type'))
 
     # Deletions per sequence
-    colors = ['steelblue', 'darkorange', 'green', 'c', 'coral', 'mediumpurple', 'darkturquoise', 'sandybrown', 'olivedrab', 'yellowgreen', 'gold', 'mediumvioletred', 'dimgray']
     chars_per_var = df_chars[df_chars['type']=='DEL'].groupby(['id']).count()
     ax = chars_per_var.plot.pie(y='alteration', autopct='%.2f%%', legend=False, colors=colors, explode=len(sequences.keys()) * [0.05])
     ax.set_title('Deletions per sequence')
@@ -190,7 +195,11 @@ def analysis(filename):
     ax = chars_per_var.plot.barh(y='type', legend=False)
     ax.set_title('Alterations')
     ax.set_xlabel('Count')
+    ax.set_xlim((0, 470))
     ax.set_ylabel('Alteration')
+    for i, (k, v) in enumerate(chars_per_var.iterrows()):
+        v = v['type']
+        ax.text(v + 4, i - .15, str(v), color='black')
     plt.tight_layout()
     plt.savefig(os.path.join('relazione', 'images', 'plot-alterations'))
 
@@ -199,7 +208,11 @@ def analysis(filename):
     ax = seq_per_var.plot.barh(y='alteration', legend=False)
     ax.set_title('Mismatches')
     ax.set_xlabel('Count')
+    ax.set_xlim((0, 130))
     ax.set_ylabel('Sequence ID')
+    for i, (k, v) in enumerate(seq_per_var.iterrows()):
+        v = v['alteration']
+        ax.text(v + 2, i - .15, str(v), color='black')
     plt.tight_layout()
     plt.savefig(os.path.join('relazione', 'images', 'plot-mismatches'))
 
