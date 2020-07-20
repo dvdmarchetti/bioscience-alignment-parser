@@ -202,14 +202,67 @@ Come riportato nel listato \ref{code:json-output}, la struttura dell'output di a
   }
 }
 \end{lstlisting}
+\newpage
+
+\section{Analisi dei risultati}
+	In questa sezione veguiranno dei grafici dei risultati ottenuti e una loro breve spiegazione.
+
+\subsection{Variazioni}
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1.4\linewidth]{plot-variations-per-type.png}}
+  \caption{Tipologia di variazioni}
+  \label{fig:jalview-inner}
+\end{figure}
+
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1.2\linewidth]{plot-alterations.png}}
+  \caption{Tipologia di variazioni specifiche}
+  \label{fig:jalview-inner}
+\end{figure}
+
+La causa principale di mismatch pare essere una cancellaizone (89,97\% dei casi), principalmente molte \textbf{adenine} risultano mancanti rispetto alla reference, probabilmente compongono la maggior parte delle basi negli estremi non codificanti.
+
+\subsection{elementi mancanti}
+
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1.2\linewidth]{plot-not-availables.png}}
+  \caption{??} %scrivi cosa mostra
+  \label{fig:jalview-inner}
+\end{figure}
+
+Questo grafo mostra come ??? %cosa è
+porta a supporre che 2 delle sequenze esaminate siano contengano molti errori di sequenziamento (\lstinline{MT281530.2} iraniano) è un particolare problema, l'errore possibile in EPI\_ISL\_437334 è trascurabile.
+
+\subsection{Mismatch}
+
+	I prossimi 3 grafi mostrano la tipologia di mismatch, una ogni grafo, distribuita nelle varie sequenze.
+
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1.4\linewidth]{plot-deletions-per-sequence.png}}
+  \caption{Cancellazioni}
+  \label{fig:jalview-inner}
+\end{figure}
+
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1.4\linewidth]{plot-replacements-per-sequence.png}}
+  \caption{sostituzioni}
+  \label{fig:jalview-inner}
+\end{figure}
+
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1.3\linewidth]{plot-mismatches.png}}
+  \caption{mismatches}
+  \label{fig:jalview-inner}
+\end{figure}
+
 
 \section{Conclusioni}
 Dall'analisi preliminare si nota che le sequenze non hanno tutte lo stesso numero di basi, ma la maggior parte dei mismatch si manifesta agli estremi delle sequenze.
 
 Attraverso il confronto degli allineamenti effettuati con Clustal Omega e MUSCLE, la sequenza \lstinline{MT262993.1} è quella che presenta evidenti cancellazioni di più basi contigue che non siano posizionate ai capi della sequenza stessa.
-In particolare, sono state rilevate due cancellazioni considerevoli rilevate da entrambi i tool: da \lstinline{9724} a \lstinline{9739}; da \lstinline{19519} a \lstinline{19540}.
+In particolare, sono state rilevate due cancellazioni considerevoli rilevate da entrambi i tool: da \lstinline{9724} a \lstinline{9739}; da \lstinline{19519} a \lstinline{19540}. La sequenza \lstinline{EPI\_ISL\_437334} pare essere sia quella con più sostituzioni rispetto al reference; mentre \lstinline{EPI\_ISL\_437512} è la sequenza con un maggior numero di mismatch complessivi.
 
-Tuttavia, non possiamo determinare se l'incongruenza di questa sequenza rispetto alla reference sia determinata da un'effettiva mutazione piuttosto che da un errore in fase di sequenziamento della stessa.
+Tuttavia, non possiamo determinare se l'incongruenza delle sequenze \lstinline{MT281530.2} e \lstinline{EPI\_ISL\_437334} rispetto alla reference sia determinata da un'effettiva mutazione piuttosto che da un errore in fase di sequenziamento della stessa.
 Le restanti variazioni sporadiche tra le sequenze risultano coinvolgere solamente singole basi.
 
 \subsection{Divisone del lavoro}
@@ -217,6 +270,6 @@ Durante la realizzazione del progetto entrambi i componenti del gruppo hanno par
 \begin{itemize}
   \item \textbf{Edoardo Silva} si è occupato principalmente di recuperare le sequenze identificate su NCBI e GISAID e della generazione dei file di output.
   \item \textbf{Davide Marchetti} si è occupato principalmente di scrivere i parser per i tool di allineamento e dell'elaborazione dei gruppi di mismatch per generare il confronto tra i due tool.
-  \item entrambi hanno lavorato all'identificazione dei mismatch tra sequenze sui singoli tool e collaborato alla stesura di questo documento.
+  \item Entrambi hanno lavorato all'identificazione dei mismatch tra sequenze sui singoli tool e collaborato alla stesura di questo documento.
 \end{itemize}
 \end{document}
