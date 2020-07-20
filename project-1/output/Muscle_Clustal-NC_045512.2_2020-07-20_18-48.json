@@ -1,5 +1,5 @@
 {
- "timestamp": "2020/05/30 16:51:56 UTC+0200",
+ "timestamp": "2020/07/20 18:48:45 UTC+0200",
  "reference": "NC_045512.2",
  "analyzed_sequences": [
   "MT281530.2",
@@ -728,32 +728,6 @@
     "Muscle"
    ]
   },
-  "3698760871381783606": {
-   "from": 29876,
-   "to": 29907,
-   "reference": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-   "alt": "-------------------------------",
-   "sequences": [
-    "MT240479.1",
-    "EPI_ISL_417444",
-    "MT262993.1"
-   ],
-   "tools": [
-    "Clustal"
-   ]
-  },
-  "3698791146527332506": {
-   "from": 29840,
-   "to": 29907,
-   "reference": "CCATGTGATTTTAATAGCTTCTTAGGAGAATGACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-   "alt": "-------------------------------------------------------------------",
-   "sequences": [
-    "MT327745.1"
-   ],
-   "tools": [
-    "Clustal"
-   ]
-  },
   "3698771687930447656": {
    "from": 29870,
    "to": 29907,
@@ -769,25 +743,15 @@
     "Clustal"
    ]
   },
-  "3698746778247532081": {
-   "from": 29895,
+  "3698760871381783606": {
+   "from": 29876,
    "to": 29907,
-   "reference": "AAAAAAAAAAAA",
-   "alt": "------------",
+   "reference": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+   "alt": "-------------------------------",
    "sequences": [
-    "EPI_ISL_447469"
-   ],
-   "tools": [
-    "Clustal"
-   ]
-  },
-  "3698731640860951931": {
-   "from": 29897,
-   "to": 29907,
-   "reference": "AAAAAAAAAA",
-   "alt": "----------",
-   "sequences": [
-    "EPI_ISL_437334"
+    "MT240479.1",
+    "EPI_ISL_417444",
+    "MT262993.1"
    ],
    "tools": [
     "Clustal"
@@ -805,6 +769,18 @@
     "Clustal"
    ]
   },
+  "3698731640860951931": {
+   "from": 29897,
+   "to": 29907,
+   "reference": "AAAAAAAAAA",
+   "alt": "----------",
+   "sequences": [
+    "EPI_ISL_437334"
+   ],
+   "tools": [
+    "Clustal"
+   ]
+  },
   "3698758712660224756": {
    "from": 29874,
    "to": 29907,
@@ -812,6 +788,30 @@
    "alt": "C--------------------------------",
    "sequences": [
     "MT276597.1"
+   ],
+   "tools": [
+    "Clustal"
+   ]
+  },
+  "3698791146527332506": {
+   "from": 29840,
+   "to": 29907,
+   "reference": "CCATGTGATTTTAATAGCTTCTTAGGAGAATGACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+   "alt": "-------------------------------------------------------------------",
+   "sequences": [
+    "MT327745.1"
+   ],
+   "tools": [
+    "Clustal"
+   ]
+  },
+  "3698746778247532081": {
+   "from": 29895,
+   "to": 29907,
+   "reference": "AAAAAAAAAAAA",
+   "alt": "------------",
+   "sequences": [
+    "EPI_ISL_447469"
    ],
    "tools": [
     "Clustal"
