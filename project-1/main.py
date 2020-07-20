@@ -2,6 +2,7 @@ import utils
 from parsers import ClustalParser, MuscleParser
 from matcher import AligmentDifferenceFinder
 import os #to remove file in folder
+import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -156,7 +157,7 @@ def analysis(filename):
     # Count NAs
     df_nas = pd.DataFrame(nas, columns=['id', 'nas']).set_index('id').sort_values(by='nas')
     ax = df_nas.plot.barh(legend=False)
-    ax.set_title('Not Available Bases')
+    # ax.set_title('Not Available Bases')
     ax.set_xlabel('Count')
     ax.set_xlim((0, 1450))
     ax.set_ylabel('Sequence ID')
@@ -169,7 +170,7 @@ def analysis(filename):
     # Char Count per Variation Type
     chars_per_var = df_chars.groupby(['type']).count().sort_values(by='alteration')
     ax = chars_per_var.plot.pie(y='alteration', autopct='%.2f%%', labels=['Insertion', 'Replacement', 'Deletion'], colors=colors, legend=False)
-    ax.set_title('Variation types')
+    # ax.set_title('Variation types')
     ax.set_ylabel('')
     plt.tight_layout()
     plt.savefig(os.path.join('relazione', 'images', 'plot-variations-per-type'))
@@ -177,7 +178,7 @@ def analysis(filename):
     # Deletions per sequence
     chars_per_var = df_chars[df_chars['type']=='DEL'].groupby(['id']).count()
     ax = chars_per_var.plot.pie(y='alteration', autopct='%.2f%%', legend=False, colors=colors, explode=len(sequences.keys()) * [0.05])
-    ax.set_title('Deletions per sequence')
+    # ax.set_title('Deletions per sequence')
     ax.set_ylabel('')
     plt.tight_layout()
     plt.savefig(os.path.join('relazione', 'images', 'plot-deletions-per-sequence'))
@@ -185,7 +186,7 @@ def analysis(filename):
     # Replacements per sequence
     chars_per_var = df_chars[df_chars['type']=='REPL'].groupby(['id']).count()
     ax = chars_per_var.plot.pie(y='alteration', autopct='%.2f%%', legend=False, colors=colors, explode=(len(sequences.keys()) - 1) * [0.05])
-    ax.set_title('Replacements per sequence')
+    # ax.set_title('Replacements per sequence')
     ax.set_ylabel('')
     plt.tight_layout()
     plt.savefig(os.path.join('relazione', 'images', 'plot-replacements-per-sequence'))
@@ -193,7 +194,7 @@ def analysis(filename):
     # Alterations
     chars_per_var = df_chars.groupby(['change']).count().sort_values(by='type')
     ax = chars_per_var.plot.barh(y='type', legend=False)
-    ax.set_title('Alterations')
+    # ax.set_title('Alterations')
     ax.set_xlabel('Count')
     ax.set_xlim((0, 470))
     ax.set_ylabel('Alteration')
@@ -203,10 +204,20 @@ def analysis(filename):
     plt.tight_layout()
     plt.savefig(os.path.join('relazione', 'images', 'plot-alterations'))
 
+    NA = mpatches.Patch(color='#D95B43', label='Iran')
+    SA = mpatches.Patch(color='#ECD078', label='Pakistan')
+    EU = mpatches.Patch(color='#C06F42', label='Israel')
+    AP = mpatches.Patch(color='#53777A', label='Turkey')
+
     # Mismatches
     seq_per_var = df_chars.groupby(['id']).count().sort_values(by='alteration')
-    ax = seq_per_var.plot.barh(y='alteration', legend=False)
-    ax.set_title('Mismatches')
+    ax = seq_per_var.plot.barh(y='alteration', color=
+        ['#D95B43', '#D95B43', '#D95B43', '#D95B43',
+         '#53777A', '#ECD078', '#ECD078', '#ECD078',
+         '#C06F42', '#C06F42', '#53777A', '#53777A', '#C06F42'][::-1]
+    )
+    plt.legend(handles=[NA,EU,AP,SA], loc='lower right')
+    # ax.set_title('Mismatches')
     ax.set_xlabel('Count')
     ax.set_xlim((0, 130))
     ax.set_ylabel('Sequence ID')

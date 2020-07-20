@@ -95,6 +95,7 @@ L'analisi è stata effettuata utilizzando \lstinline{Clustal Omega} e \lstinline
 
 % \newpage
 \section{Analisi preliminare}
+\label{section:pre-analysis}
 Una prima analisi delle sequenze è stata effettuata con l'ausilio di Jalview\footnote{\url{https://www.jalview.org/}}, un software open source che offre la possibilità di generare una visualizzazione grafica degli gli allineamenti effettuati dai tool.
 
 \begin{figure}[H]
@@ -207,52 +208,59 @@ Come riportato nel listato \ref{code:json-output}, la struttura dell'output di a
 \section{Analisi dei risultati}
 Sulla base degli allineamenti prodotti ed analizzati in questa prima parte, sono stati prodotti alcuni grafici riassuntivi per fornire un idea generale delle sequenze prese in esame ed iniziare ad ipotizzare peculiarità che si potrebbero incontrare nelle fasi successive dell'analisi.
 
-\subsection{Variazioni}
+\subsubsection*{Basi mancanti/Numero di mismatch}
+Durante l'analisi, due delle sequenze esaminate presentano delle basi \lstinline{N}, queste sono basi che non è stato possibile identificate durante il sequenziamento. Il conteggio di queste è riportato per ciascuna sequenza in \cref{fig:plot-missing}.
+
+Ai fini dell'analisi, queste basi sono state considerate come valide e sostituite con le corrispondenti basi presenti nalla sequenza reference.
+
 \begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=1.4\linewidth]{plot-variations-per-type.png}}
+  \makebox[\textwidth][c]{\includegraphics[width=0.9\linewidth]{plot-not-availables.png}}
+  \caption{Basi mancanti per sequenza} %scrivi cosa mostra
+  \label{fig:plot-missing}
+\end{figure}
+
+\noindent
+La \cref{fig:plot-mismatch} presenta, invece, una panoramica sul numero di mismatch per ciascuna sequenza rispetto alla reference di Wuhan. Si nota come le sequenze appartenenti agli stessi paesi risultino avere un numero di variazioni simili ad eccezione della sequenza turca \lstinline{MT327745.1} che presenta un numero più elevato di mismatch e di quella israeliana \lstinline{EPI_ISL_447469}.
+
+Quest'ultima potrebbe discostarsi così tanto dalle altre due sequenze di Israele perché alcune delle variazioni potrebbero risultare nelle porzioni di basi \lstinline{N} identificate precedentemente.
+
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=0.8\linewidth]{plot-mismatches.png}}
+  \caption{Mismatch rispetto alla sequenza reference}
+  \label{fig:plot-mismatch}
+\end{figure}
+
+\subsubsection*{Variazioni}
+Successivamente sono stati considerati i tipi di variazioni rilevati. È possibile notare in \cref{fig:plot-variations-per-type} come quasi 9 variazioni su 10 siano delle cancellazioni di basi rispetto alla reference.
+
+Questo risultato era abbastanza atteso in quanto già dall'analisi preliminare con JalView della sezione \ref{section:pre-analysis}, erano emerse diverse cancellazioni e coinvolgono principalmente l'\textbf{adenina}(\cref{fig:plot-alterations}), questo perché la maggior parte delle eliminazioni avvengono agli estremi delle sequenze, dove la reference termina con una serie di \lstinline{34 adenine}.
+
+L'unico inserimento rilevato risulta nella sequenza \lstinline{MT276598.1} israeliana. Tuttavia, come giá mostrato in figura \cref{fig:jalview-start}, questa variazione è prodotta dall'allineamento dei tool e posta prima dell'effettivo inizio rispetto alla sequenza di reference.
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=0.85\linewidth]{plot-variations-per-type.png}}
   \caption{Tipologia di variazioni}
-  \label{fig:jalview-inner}
+  \label{fig:plot-variations-per-type}
 \end{figure}
 
 \begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=1.2\linewidth]{plot-alterations.png}}
+  \makebox[\textwidth][c]{\includegraphics[width=0.85\linewidth]{plot-alterations.png}}
   \caption{Tipologia di variazioni specifiche}
-  \label{fig:jalview-inner}
+  \label{fig:plot-alterations}
 \end{figure}
 
-La causa principale di mismatch pare essere una cancellaizone (89,97\% dei casi), principalmente molte \textbf{adenine} risultano mancanti rispetto alla reference, probabilmente compongono la maggior parte delle basi negli estremi non codificanti.
-
-\subsection{elementi mancanti}
-
-\begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=1.2\linewidth]{plot-not-availables.png}}
-  \caption{Basi non disponibili} %scrivi cosa mostra
-  \label{fig:jalview-inner}
-\end{figure}
-
-Questo grafo mostra come ??? %cosa è
-porta a supporre che 2 delle sequenze esaminate siano contengano molti errori di sequenziamento (\lstinline{MT281530.2} iraniano) è un particolare problema, l'errore possibile in EPI\_ISL\_437334 è trascurabile.
-
-\subsection{Mismatch}
-
-	I prossimi 3 grafi mostrano la tipologia di mismatch, una ogni grafo, distribuita nelle varie sequenze.
+\noindent
+Analizzando ancora più in dettaglio la tipologia di variazioni rispetto alle medesime sequenze (\cref{fig:plot-deletions,fig:plot-replacements}) si nota come cancellazioni e sostituzioni siano distribuite equamente ad eccezione per le sequenze \lstinline{EPI_ISL_437334}(Turchia), \lstinline{EPI_ISL_437317}(Turchia) e \lstinline{EPI_ISL_447469}(Israele) che presentano un numero molto più elevato di sostituzioni. In particolare, la sequenza turca \lstinline{MT327745.1} che abbiamo visto discorstarsi per numero di variazioni presenta esclusivamente eliminazioni.
 
 \begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=1.4\linewidth]{plot-deletions-per-sequence.png}}
-  \caption{Cancellazioni}
-  \label{fig:jalview-inner}
+  \makebox[\textwidth][c]{\includegraphics[width=0.65\linewidth]{plot-deletions-per-sequence.png}}
+  \caption{Cancellazioni per sequenza}
+  \label{fig:plot-deletions}
 \end{figure}
 
 \begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=1.4\linewidth]{plot-replacements-per-sequence.png}}
-  \caption{sostituzioni}
-  \label{fig:jalview-inner}
-\end{figure}
-
-\begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=1.3\linewidth]{plot-mismatches.png}}
-  \caption{mismatches}
-  \label{fig:jalview-inner}
+  \makebox[\textwidth][c]{\includegraphics[width=0.65\linewidth]{plot-replacements-per-sequence.png}}
+  \caption{Sostituzioni per sequenza}
+  \label{fig:plot-replacements}
 \end{figure}
 
 
@@ -260,9 +268,9 @@ porta a supporre che 2 delle sequenze esaminate siano contengano molti errori di
 Dall'analisi preliminare si nota che le sequenze non hanno tutte lo stesso numero di basi, ma la maggior parte dei mismatch si manifesta agli estremi delle sequenze.
 
 Attraverso il confronto degli allineamenti effettuati con Clustal Omega e MUSCLE, la sequenza \lstinline{MT262993.1} è quella che presenta evidenti cancellazioni di più basi contigue che non siano posizionate ai capi della sequenza stessa.
-In particolare, sono state rilevate due cancellazioni considerevoli rilevate da entrambi i tool: da \lstinline{9724} a \lstinline{9739}; da \lstinline{19519} a \lstinline{19540}. La sequenza \lstinline{EPI\_ISL\_437334} pare essere sia quella con più sostituzioni rispetto al reference; mentre \lstinline{EPI\_ISL\_437512} è la sequenza con un maggior numero di mismatch complessivi.
+In particolare, sono state rilevate due cancellazioni considerevoli rilevate da entrambi i tool: da \lstinline{9724} a \lstinline{9739}; da \lstinline{19519} a \lstinline{19540}. La sequenza \lstinline{EPI_ISL_437334} pare essere quella con più sostituzioni rispetto al reference; mentre \lstinline{EPI_ISL_437512} è la sequenza con un maggior numero di mismatch complessivi.
 
-Tuttavia, non possiamo determinare se l'incongruenza delle sequenze \lstinline{MT281530.2} e \lstinline{EPI\_ISL\_437334} rispetto alla reference sia determinata da un'effettiva mutazione piuttosto che da un errore in fase di sequenziamento della stessa.
+Tuttavia, non possiamo determinare se l'incongruenza delle sequenze \lstinline{MT281530.2} e \lstinline{EPI_ISL_437334} rispetto alla reference sia determinata da un'effettiva mutazione piuttosto che da un errore in fase di sequenziamento della stessa.
 Le restanti variazioni sporadiche tra le sequenze risultano coinvolgere solamente singole basi.
 
 \subsection{Divisone del lavoro}
@@ -270,6 +278,6 @@ Durante la realizzazione del progetto entrambi i componenti del gruppo hanno par
 \begin{itemize}
   \item \textbf{Edoardo Silva} si è occupato principalmente di recuperare le sequenze identificate su NCBI e GISAID e della generazione dei file di output.
   \item \textbf{Davide Marchetti} si è occupato principalmente di scrivere i parser per i tool di allineamento e dell'elaborazione dei gruppi di mismatch per generare il confronto tra i due tool.
-  \item Entrambi hanno lavorato all'identificazione dei mismatch tra sequenze sui singoli tool e collaborato alla stesura di questo documento.
+  \item Entrambi hanno lavorato all'identificazione dei mismatch tra sequenze sui singoli tool, all'analisi ed elaborazione dei risultati e collaborato alla stesura di questo documento.
 \end{itemize}
 \end{document}

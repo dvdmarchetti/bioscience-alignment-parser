@@ -1,5 +1,5 @@
 {
- "timestamp": "2020/07/20 19:39:23 UTC+0200",
+ "timestamp": "2020/07/20 22:00:21 UTC+0200",
  "reference": "NC_045512.2",
  "analyzed_sequences": [
   "MT281530.2",
@@ -742,13 +742,13 @@
     "Clustal"
    ]
   },
-  "3698746778247532081": {
-   "from": 29895,
+  "3698731640860951931": {
+   "from": 29897,
    "to": 29907,
-   "reference": "AAAAAAAAAAAA",
-   "alt": "------------",
+   "reference": "AAAAAAAAAA",
+   "alt": "----------",
    "sequences": [
-    "EPI_ISL_447469"
+    "EPI_ISL_437334"
    ],
    "tools": [
     "Clustal"
@@ -766,16 +766,13 @@
     "Clustal"
    ]
   },
-  "3698771687930447656": {
-   "from": 29870,
+  "3698746778247532081": {
+   "from": 29895,
    "to": 29907,
-   "reference": "TGACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-   "alt": "-------------------------------------",
+   "reference": "AAAAAAAAAAAA",
+   "alt": "------------",
    "sequences": [
-    "MT281530.2",
-    "MT276598.1",
-    "MT320891.2",
-    "EPI_ISL_442523"
+    "EPI_ISL_447469"
    ],
    "tools": [
     "Clustal"
@@ -793,13 +790,16 @@
     "Clustal"
    ]
   },
-  "3698731640860951931": {
-   "from": 29897,
+  "3698771687930447656": {
+   "from": 29870,
    "to": 29907,
-   "reference": "AAAAAAAAAA",
-   "alt": "----------",
+   "reference": "TGACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+   "alt": "-------------------------------------",
    "sequences": [
-    "EPI_ISL_437334"
+    "MT281530.2",
+    "MT276598.1",
+    "MT320891.2",
+    "EPI_ISL_442523"
    ],
    "tools": [
     "Clustal"
