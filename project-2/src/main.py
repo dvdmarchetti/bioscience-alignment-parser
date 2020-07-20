@@ -1,6 +1,7 @@
 import os
 import json
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def main():
@@ -16,7 +17,7 @@ def main():
         reference = ''.join(seqlist[0:])
 
     # Read input files (Json + Excel)
-    clustal_output = load_output('Clustal-NC_045512.2_2020-07-20_18-48.json')
+    clustal_output = load_output('Clustal-NC_045512.2_2020-07-20_19-39.json')
     variations = clustal_output['unmatches'].items()
 
     [df_ref_genes, df_ref_cds] = [x for x in load_excel(os.path.join('..', 'Genes-CDS.xlsx'), ['Geni', 'CDS'])]
@@ -34,6 +35,7 @@ def main():
     for key, value in variations:
         value['from'] -= 4
         value['to'] -= 4
+        value['alt'] = value['alt'].replace('T', 'U')
         affected_cdses = df_ref_cds.loc[(value['from'] > df_ref_cds['from']) & (value['to'] < df_ref_cds['to'])]
 
         for index, cds in affected_cdses.iterrows():
@@ -42,8 +44,9 @@ def main():
                 join_at = int(cds['join_at'])
                 cds_sequence = reference[cds['from']:join_at + 1] + reference[join_at:cds['to'] + 1]
 
+            cds_sequence = cds_sequence.replace('T', 'U')
             gene = df_ref_genes.loc[cds['GeneID']]
-            gene_id = cds['GeneID']
+            gene_id = cds['gene']
             gene_start = gene['Start']
             gene_end = gene['End']
             cds_start = cds['from']
@@ -94,9 +97,18 @@ def main():
 
     # Convert the list to dataframe
     columns = ['gene_id', 'gene_start', 'gene_end', 'cds_start', 'cds_end', 'relative_start', 'relative_end', 'alteration', 'original_codone', 'original_aminoacid', 'altered_codone', 'encoded_aminoacid']
-    df_variations_to_genes = pd.DataFrame(variations_to_genes, columns=columns)
+    df_variations_to_genes = pd.DataFrame(variations_to_genes, columns=columns).set_index('gene_id')
     df_variations_to_genes.to_csv(os.path.join('..', 'output', 'alteration-table.csv'))
-    # print(df_variations_to_genes)
+
+    colors = ['mediumvioletred', 'darkorange', 'dodgerblue', 'green', 'coral', 'mediumpurple', 'gold', 'm', 'olivedrab', 'salmon','yellowgreen', 'c', 'lightgray']
+    chars_per_var = df_variations_to_genes.groupby(['gene_id']).count().sort_values(by='alteration')
+    ax = chars_per_var.plot.pie(y='alteration', autopct='%.2f%%', colors=colors, legend=False)
+    ax.set_title('Variations per gene')
+    ax.set_ylabel('')
+    plt.tight_layout()
+    # plt.show()
+    plt.savefig(os.path.join('..', 'relazione', 'images', 'plot-variations-per-gene'))
+    plt.close()
 
 
 def load_output(filename):
@@ -123,28 +135,28 @@ def load_excel(path, sheets=None):
 
 # Dict RNA Translation Table
 aminoacids_lookup_table = {
-    'F': ['TTT', 'TTC'],
-    'L': ['TTA', 'TTG', 'CTT', 'CTA', 'CTC', 'CTG'],
-    'I': ['ATT', 'ATC', 'ATA'],
-    'M': ['ATG'],
-    'V': ['GTT', 'GTA', 'GTC', 'GTG'],
-    'S': ['TCT', 'TCA', 'TCC', 'TCG', 'AGT', 'AGC'],
-    'P': ['CCT', 'CCA', 'CCC', 'CCG'],
-    'T': ['ACT', 'ACA', 'ACC', 'ACG'],
-    'A': ['GCT', 'GCA', 'GCC', 'GCG'],
-    'Y': ['TAT', 'TAC'],
-    'H': ['CAT', 'CAC'],
+    'F': ['UUU', 'UUC'],
+    'L': ['UUA', 'UUG', 'CUU', 'CUA', 'CUC', 'CUG'],
+    'I': ['AUU', 'AUC', 'AUA'],
+    'M': ['AUG'],
+    'V': ['GUU', 'GUA', 'GUC', 'GUG'],
+    'S': ['UCU', 'UCA', 'UCC', 'UCG', 'AGU', 'AGC'],
+    'P': ['CCU', 'CCA', 'CCC', 'CCG'],
+    'T': ['ACU', 'ACA', 'ACC', 'ACG'],
+    'A': ['GCU', 'GCA', 'GCC', 'GCG'],
+    'Y': ['UAU', 'UAC'],
+    'H': ['CAU', 'CAC'],
     'Q': ['CAA', 'CAG'],
-    'N': ['AAT', 'AAC'],
+    'N': ['AAU', 'AAC'],
     'K': ['AAA', 'AAG'],
-    'D': ['GAT', 'GAC'],
+    'D': ['GAU', 'GAC'],
     'E': ['GAA', 'GAG'],
-    'C': ['TGT', 'TGC'],
-    'W': ['TGG'],
-    'R': ['CGT', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
-    'G': ['GGT', 'GGA', 'GGC', 'GGG'],
-    'START': ['ATG'],
-    'STOP': ['TAA', 'TAG', 'TGA']
+    'C': ['UGU', 'UGC'],
+    'W': ['UGG'],
+    'R': ['CGU', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
+    'G': ['GGU', 'GGA', 'GGC', 'GGG'],
+    'START': ['AUG'],
+    'STOP': ['UAA', 'UAG', 'TGA']
 }
 
 
