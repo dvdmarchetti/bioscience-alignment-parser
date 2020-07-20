@@ -62,23 +62,24 @@ La seconda parte del progetto prevede di elaborare i file prodotti in precedenza
   \item il codone (o i codoni) alterato della reference, con posizione di inizio rispetto alla CDS, sequenza del codone e amminoacido codifcato
   \item il nuovo codone generato dalla variazione (o i nuovi codoni generati) specifcando la sequenza del codone e il nuovo amminoacido codifcato
 \end{itemize}
+Attraverso le informazioni raccolte in questa fase saremo in grado di identificare in quali geni si concentrano le variazioni rilevate, all'interno di essi, dove queste avvengono e come alterino i codoni causando la produzione di una proteina diversa.
 
 \newpage
 \section{Algoritmo}
 L'algoritmo inizia caricando tutti i file necessari per l'elaborazione, in particolare quelli prodotti in output nella parte precedente del progetto:
 \begin{enumerate}
-  \item Caricamento della sequenza reference dal file corrispondente memorizzato in \lstinline{/project-1/input/reference.fasta}.
+  \item Caricamento della sequenza reference dal fasta corrispondente memorizzato in \lstinline{/project-1/input/reference.fasta}.
   \item Caricamento di uno dei file di output prodotti nella prima parte di progetto. Nel nostro caso è stato utilizzata l'analisi dell'allineamento di \lstinline{ClustalW}.
-  \item Lettura del file \lstinline{Genes-CDS.xlsx} contenente le informazioni sui geni e le CDS della sequenza di reference. In particolare, per le CDS che derivano dalla join di due sequenze è possibile specificare il punto di unione della sequenza.
+  \item Lettura del file \lstinline{Genes-CDS.xlsx} contenente le informazioni sui geni e le CDS della sequenza di reference. In particolare, una delle CDS analizzate derivava dall'unione (join) di due sequenze. In tal caso è possibile specificare il punto di unione della sequenza.
 \end{enumerate}
 
 \noindent
 Dopo la lettura del materiale rilevante a questa fase di elaborazione, l'algoritmo itera le variazioni rilevate nell'allineamento e per ciascuna di esse esegue i seguenti step:
 \begin{enumerate}
-  \item Trova le CDS nelle quali avviene l'alterazione rispetto alla reference.
+  \item Identifica le CDS nelle quali avviene l'alterazione rispetto alla reference.
   \item Recupera le informazioni del gene associato alle CDS rilevate calcolando le posizioni globali e relative alla CDS dell'alterazione.
   \item Identifica i codoni alterati e ne effettua la ritraduzione in amminoacidi grazie ad una look-up table (listato \ref{code:aminoacids_table}). Vengono ignorate le alterazioni che presentano sequenze di soli \lstinline{-}, derivate probabilmente da un sequenziamento errato o un'alterazione posta ai capi dell'allineamento.
-  \item Memorizza tutte le informazioni ricavate in una struttura dati tramite cui derivare la tabella per l'output finale associando i valori a chiavi prestabilite (listato \ref{code:variation_loop}).
+  \item Memorizza tutte le informazioni ricavate in una struttura dati apposita tramite cui derivare la tabella per l'output finale associando i valori a chiavi prestabilite.
 \end{enumerate}
 
 \noindent
@@ -104,6 +105,12 @@ Ad ogni variazione analizzata corrisponde un entrata nella struttura dati a list
     \item \textbf{encoded\_aminoacid}: amminoacido codificato da \textbf{altered\_codone}
 \end{itemize}
 
+\begin{sidewaysfigure}
+  \makebox[\textwidth][c]{\includegraphics[width=1\linewidth]{alteration-table.png}}
+  \caption{Tabella di output delle alterazioni}
+  \label{fig:alteration_table}
+\end{sidewaysfigure}
+
 \newpage
 \section{Output}
 Come riportato in \cref{fig:alteration_table} la maggior parte delle alterazioni coinvolgono un singolo codone e quelli ottenuti rimangono traducibili.
@@ -113,11 +120,24 @@ In alcuni casi, l'amminoacido risultante dalla traduzione dell'alterazione non v
 Le ultime righe della tabella riportano delle alterazioni che determinano la cacellazione di alcune basi rispetto alla sequenza reference.
 Queste sono relative solo alla sequenza \lstinline{MT262993.1} e si pensa possano derivare da un errore in fase di sequenziamento.
 
-\begin{sidewaysfigure}
-  \makebox[\textwidth][c]{\includegraphics[width=1\linewidth]{alteration-table.png}}
-  \caption{Tabella di output delle alterazioni}
-  \label{fig:alteration_table}
-\end{sidewaysfigure}
+\newpage
+\section{Analisi dei risultati e conclusioni}
+Le alterazioni appartenenti a geni si concentrano per quasi i tre quarti del totale sul gene \lstinline{ORF1ab}. Variazioni minori  seguito dai geni \lstinline{gene_name=S} e \lstinline{gene_name=N} (12\% ciascuno) e che gli altri siano quasi invariati.
+Un'analisi finale si trova nella terza e ultima parte del progetto.
+
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1\linewidth]{plot-variations-per-gene.png}}
+  \caption{Tipologia di variazioni}
+  \label{fig:jalview-inner}
+\end{figure}
+
+\subsection{Divisone del lavoro}
+Durante la realizzazione del progetto entrambi i componenti del gruppo hanno partecipato attivamente alla sua realizzazione. In particolare:
+\begin{itemize}
+  \item \textbf{Edoardo Silva} si è occupato principalmente di recuperare e gestire l'output JSON del progetto1 e delle funzioni di supporto.
+  \item \textbf{Davide Marchetti} si è occupato principalmente di generare i file di output e correggere le porzioni di codice relative alle letture delle reference.
+  \item Entrambi hanno lavorato alla creazione ed elaborazione dei dati, alla matrice delle mutazioni e le traduzioni di quest'ultime.
+\end{itemize}
 
 \newpage
 \section{Listati di codice}
@@ -168,27 +188,5 @@ aminoacids_lookup_table = {
         'encoded_aminoacid': encoded_aminoacid
       })
 \end{lstlisting}
-
-\section{Analisi dei risultati e conclusioni}
-Sulla base degli allineamenti prodotti ed analizzati in questa prima parte, è stato prodotto uni grafico riassuntivo per fornire un idea generale delle sequenze prese in esame.
-
-\subsection{Geni coinvolti}
-\begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=1.4\linewidth]{plot-variations-per-gene.png}}
-  \caption{Tipologia di variazioni}
-  \label{fig:jalview-inner}
-\end{figure}
-
-Si può notare che quasi tutte le modifiche (70\%) si concentrano sul primo gene della CDR: \lstinline{gene\_name= ORF1ab}; seguito dai geni \lstinline{gene\_name= S} e \lstinline{gene\_name= N} (12\% ciascuno) e che gli altri siano quasi invariati.
-Un'analisi finale si trova nella terza e ultima parte del progetto.
-
-\newpage
-\section{Divisone del lavoro}
-Durante la realizzazione del progetto entrambi i componenti del gruppo hanno partecipato attivamente alla sua realizzazione. In particolare:
-\begin{itemize}
-  \item \textbf{Edoardo Silva} si è occupato principalmente di recuperare e gestire l'output JSON del progetto1 e delle funzioni di supporto.
-  \item \textbf{Davide Marchetti} si è occupato principalmente di generare i file di output e correggere le porzioni di codice relative alle letture delle reference.
-  \item Entrambi hanno lavorato alla creazione ed elaborazione dei dati, alla matrice delle mutazioni e le traduzioni di quest'ultime.
-\end{itemize}
 
 \end{document}

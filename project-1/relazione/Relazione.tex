@@ -206,16 +206,16 @@ Come riportato nel listato \ref{code:json-output}, la struttura dell'output di a
 \newpage
 
 \section{Analisi dei risultati}
-Sulla base degli allineamenti prodotti ed analizzati in questa prima parte, sono stati prodotti alcuni grafici riassuntivi per fornire un idea generale delle sequenze prese in esame ed iniziare ad ipotizzare peculiarità che si potrebbero incontrare nelle fasi successive dell'analisi.
+Sulla base degli allineamenti prodotti ed analizzati in questa prima parte, sono stati prodotti alcuni grafici riassuntivi per fornire una panoramica delle sequenze prese in esame per permetterci di identificare peculiarità che si potrebbero incontrare nelle fasi successive.
 
 \subsubsection*{Basi mancanti/Numero di mismatch}
-Durante l'analisi, due delle sequenze esaminate presentano delle basi \lstinline{N}, queste sono basi che non è stato possibile identificate durante il sequenziamento. Il conteggio di queste è riportato per ciascuna sequenza in \cref{fig:plot-missing}.
+Durante l'analisi, due delle sequenze esaminate presentavano delle basi \lstinline{N}. Queste sono basi che non è stato possibile identificate durante il sequenziamento. Per capire l'entità del numero di basi non sequenziate correttamente per ogni sequenza abbiamo riportato il conteggio per ciascuna in \cref{fig:plot-missing}.
 
-Ai fini dell'analisi, queste basi sono state considerate come valide e sostituite con le corrispondenti basi presenti nalla sequenza reference.
+Ai fini dell'analisi, queste basi sono state considerate come valide e sostituite con le corrispondenti basi presenti nalla sequenza reference alla medesima posizione.
 
 \begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=0.9\linewidth]{plot-not-availables.png}}
-  \caption{Basi mancanti per sequenza} %scrivi cosa mostra
+  \caption{Basi mancanti per sequenza}
   \label{fig:plot-missing}
 \end{figure}
 
@@ -230,26 +230,25 @@ Quest'ultima potrebbe discostarsi così tanto dalle altre due sequenze di Israel
   \label{fig:plot-mismatch}
 \end{figure}
 
-\subsubsection*{Variazioni}
-Successivamente sono stati considerati i tipi di variazioni rilevati. È possibile notare in \cref{fig:plot-variations-per-type} come quasi 9 variazioni su 10 siano delle cancellazioni di basi rispetto alla reference.
+\subsubsection*{Tipologia di variazioni}
+Successivamente sono stati considerati i tipi di variazioni rilevati a seconda che questi fossero: cancellazioni, sostituzioni o inserimenti. È possibile notare in \cref{fig:plot-variations-per-type} come quasi 9 variazioni su 10 siano delle cancellazioni di basi rispetto alla reference.
 
-Questo risultato era abbastanza atteso in quanto già dall'analisi preliminare con JalView della sezione \ref{section:pre-analysis}, erano emerse diverse cancellazioni e coinvolgono principalmente l'\textbf{adenina}(\cref{fig:plot-alterations}), questo perché la maggior parte delle eliminazioni avvengono agli estremi delle sequenze, dove la reference termina con una serie di \lstinline{34 adenine}.
-
-L'unico inserimento rilevato risulta nella sequenza \lstinline{MT276598.1} israeliana. Tuttavia, come giá mostrato in figura \cref{fig:jalview-start}, questa variazione è prodotta dall'allineamento dei tool e posta prima dell'effettivo inizio rispetto alla sequenza di reference.
+Questo risultato era abbastanza atteso in quanto già dall'analisi preliminare con JalView della sezione \ref{section:pre-analysis}, erano emerse diverse cancellazioni che coinvolgono principalmente l'\textbf{adenina}(\cref{fig:plot-alterations}), infatti la maggior parte delle eliminazioni avvengono agli estremi delle sequenze, dove la reference termina con una serie di 34 adenine.
+L'unico inserimento è stato rilevato nella sequenza \lstinline{MT276598.1}(Israele). Tuttavia, come giá mostrato in figura \cref{fig:jalview-start}, questa variazione è prodotta dall'allineamento dei tool e posta prima dell'effettivo inizio rispetto alla sequenza di reference.
 \begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=0.85\linewidth]{plot-variations-per-type.png}}
-  \caption{Tipologia di variazioni}
+  \caption{Variazioni per tipologia}
   \label{fig:plot-variations-per-type}
 \end{figure}
 
 \begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=0.85\linewidth]{plot-alterations.png}}
-  \caption{Tipologia di variazioni specifiche}
+  \caption{Variazioni per tipologia rispetto alle basi coinvolte}
   \label{fig:plot-alterations}
 \end{figure}
 
 \noindent
-Analizzando ancora più in dettaglio la tipologia di variazioni rispetto alle medesime sequenze (\cref{fig:plot-deletions,fig:plot-replacements}) si nota come cancellazioni e sostituzioni siano distribuite equamente ad eccezione per le sequenze \lstinline{EPI_ISL_437334}(Turchia), \lstinline{EPI_ISL_437317}(Turchia) e \lstinline{EPI_ISL_447469}(Israele) che presentano un numero molto più elevato di sostituzioni. In particolare, la sequenza turca \lstinline{MT327745.1} che abbiamo visto discorstarsi per numero di variazioni presenta esclusivamente eliminazioni.
+Analizzando ancora più in dettaglio la tipologia di variazioni rispetto alle medesime sequenze (\cref{fig:plot-deletions,fig:plot-replacements}) si nota come cancellazioni e sostituzioni siano distribuite equamente ad eccezione per le sequenze \lstinline{EPI_ISL_437334}(Turchia), \lstinline{EPI_ISL_437317}(Turchia) e \lstinline{EPI_ISL_447469}(Israele) che presentano un numero molto più elevato di sostituzioni. In particolare, la sequenza turca \lstinline{MT327745.1} che abbiamo visto discostarsi per numero di variazioni presenta esclusivamente eliminazioni.
 
 \begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=0.65\linewidth]{plot-deletions-per-sequence.png}}
