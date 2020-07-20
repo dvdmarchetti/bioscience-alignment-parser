@@ -123,8 +123,6 @@ def load_excel(path, sheets=None):
 
 # Dict RNA Translation Table
 aminoacids_lookup_table = {
-    'START': ['ATG'],
-    'STOP': ['TAA', 'TAG', 'TGA'],
     'F': ['TTT', 'TTC'],
     'L': ['TTA', 'TTG', 'CTT', 'CTA', 'CTC', 'CTG'],
     'I': ['ATT', 'ATC', 'ATA'],
@@ -144,7 +142,9 @@ aminoacids_lookup_table = {
     'C': ['TGT', 'TGC'],
     'W': ['TGG'],
     'R': ['CGT', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
-    'G': ['GGT', 'GGA', 'GGC', 'GGG']
+    'G': ['GGT', 'GGA', 'GGC', 'GGG'],
+    'START': ['ATG'],
+    'STOP': ['TAA', 'TAG', 'TGA']
 }
 
 

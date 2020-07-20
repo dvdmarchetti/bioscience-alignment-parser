@@ -116,6 +116,12 @@ def get_perfect_phylogeny_character_matrix(df):
   return candidate_matrix
 \end{lstlisting}
 
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1.1\linewidth]{character_table.png}}
+  \caption{Albero di output del nostro script}
+  \label{fig:script-tree}
+\end{figure}
+
 \subsection{Generazione dell'albero}
 A questo punto è possibile procedere con la ricostruzione dell'albero filogenetico a partire dalla \lstinline{candidate_matrix} e utilizzando funzioni definite nel file \lstinline{phylogeny.py} per costruire e visualizzare in output l'albero della filogenesi.
 
@@ -161,6 +167,12 @@ for i, row in df.iterrows():
 
   Node(i, parent=current_node)
   \end{lstlisting}
+
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1.1\linewidth]{perfect_phylogeny_table.png}}
+  \caption{Albero di output del nostro script}
+  \label{fig:script-tree}
+\end{figure}
 
 \begin{enumerate}
   \setcounter{enumi}{2}
