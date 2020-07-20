@@ -2,6 +2,10 @@ import utils
 from parsers import ClustalParser, MuscleParser
 from matcher import AligmentDifferenceFinder
 import os #to remove file in folder
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+import json
 
 def runClustal(inputFile, reference_id, nseq = 3):
     """Call functions to parse a ClustalW alignment and produce a custom output structure"""
@@ -92,6 +96,135 @@ def main():
     print('[DONE] Comparing alignments')
     # utils.saveCompareFile("differences.txt","Global ", diff)
 
+    analysis(ClustalJ)
+
+
+def analysis(filename):
+    with open(os.path.join('output', filename)) as f:
+        variations = json.load(f)['unmatches'].items()
+
+    ref_id, sequence = load_fasta(os.path.join('input', 'reference.fasta'))
+    sequences = read_sequences(paths=[
+        os.path.join('input', 'GISAID'),
+        os.path.join('input', 'ncbi'),
+    ])
+    # sequences[ref_id] = sequence
+
+    single_char_vars = []
+    variation_rows = []
+    for key, mismatch in variations:
+        for sequence_id in mismatch['sequences']:
+            variation_rows.append({
+                'id': sequence_id,
+                'alteration': mismatch['alt'],
+            })
+
+            for i, char in enumerate(mismatch['alt']):
+                if mismatch['reference'][i] != '-':
+                    alt_type = 'REPL' if char in ['A', 'C', 'G', 'T'] else 'DEL'
+                else:
+                    alt_type = 'INS'
+
+                if char == '-':
+                    change = '{} DEL'.format(mismatch['reference'][i])
+                else:
+                    change = '{} to {}'.format(mismatch['reference'][i], char)
+
+                single_char_vars.append({
+                    'id': sequence_id,
+                    'alteration': char,
+                    'change': change,
+                    'type': alt_type,
+                })
+
+    # Convert the list to dataframe
+    columns = ['id', 'alteration']
+    df = pd.DataFrame(variation_rows, columns=columns)
+
+    columns = ['id', 'alteration', 'change', 'type']
+    df_chars = pd.DataFrame(single_char_vars, columns=columns)
+
+    nas = []
+    for seq_id, sequence in sequences.items():
+        nas.append({
+            'id': seq_id,
+            'nas': sequence.count('N')
+        })
+
+    # Count NAs
+    df_nas = pd.DataFrame(nas, columns=['id', 'nas']).set_index('id')
+    ax = df_nas.sort_values(by='nas').plot.barh(legend=False)
+    ax.set_title('Not Available Bases')
+    ax.set_ylabel('Sequence ID')
+    ax.set_xlabel('Count')
+    plt.tight_layout()
+    plt.savefig(os.path.join('relazione', 'images', 'plot-not-availables'))
+
+    # Char Count per Variation Type
+    chars_per_var = df_chars.groupby(['type']).count().sort_values(by='alteration')
+    ax = chars_per_var.plot.pie(y='alteration', autopct='%.2f%%', labels=['Insertion', 'Replacement', 'Deletion'], legend=False)
+    ax.set_title('Variation types')
+    ax.set_ylabel('')
+    plt.tight_layout()
+    plt.savefig(os.path.join('relazione', 'images', 'plot-variations-per-type'))
+
+    # Deletions per sequence
+    colors = ['steelblue', 'darkorange', 'green', 'c', 'coral', 'mediumpurple', 'darkturquoise', 'sandybrown', 'olivedrab', 'yellowgreen', 'gold', 'mediumvioletred', 'dimgray']
+    chars_per_var = df_chars[df_chars['type']=='DEL'].groupby(['id']).count()
+    ax = chars_per_var.plot.pie(y='alteration', autopct='%.2f%%', legend=False, colors=colors, explode=len(sequences.keys()) * [0.05])
+    ax.set_title('Deletions per sequence')
+    ax.set_ylabel('')
+    plt.tight_layout()
+    plt.savefig(os.path.join('relazione', 'images', 'plot-deletions-per-sequence'))
+
+    # Replacements per sequence
+    chars_per_var = df_chars[df_chars['type']=='REPL'].groupby(['id']).count()
+    ax = chars_per_var.plot.pie(y='alteration', autopct='%.2f%%', legend=False, colors=colors, explode=(len(sequences.keys()) - 1) * [0.05])
+    ax.set_title('Replacements per sequence')
+    ax.set_ylabel('')
+    plt.tight_layout()
+    plt.savefig(os.path.join('relazione', 'images', 'plot-replacements-per-sequence'))
+
+    # Alterations
+    chars_per_var = df_chars.groupby(['change']).count().sort_values(by='type')
+    ax = chars_per_var.plot.barh(y='type', legend=False)
+    ax.set_title('Alterations')
+    ax.set_xlabel('Count')
+    ax.set_ylabel('Alteration')
+    plt.tight_layout()
+    plt.savefig(os.path.join('relazione', 'images', 'plot-alterations'))
+
+    # Mismatches
+    seq_per_var = df_chars.groupby(['id']).count().sort_values(by='alteration')
+    ax = seq_per_var.plot.barh(y='alteration', legend=False)
+    ax.set_title('Mismatches')
+    ax.set_xlabel('Count')
+    ax.set_ylabel('Sequence ID')
+    plt.tight_layout()
+    plt.savefig(os.path.join('relazione', 'images', 'plot-mismatches'))
+
+    # plt.show()
+    plt.close()
+
+
+def read_sequences(paths=[]):
+    sequences = {}
+
+    for path in paths:
+        for f in os.listdir(path):
+            if f.endswith('.fasta'):
+                seq_id, sequence = load_fasta(os.path.join(path, f))
+                sequences[seq_id] = sequence
+
+    return sequences
+
+
+def load_fasta(path):
+    with open(path, 'r') as f:
+        lines = f.readlines()
+        seq_id = lines[0].split('|')[1] if '|' in lines[0] else lines[0].split(' ')[0][1:]
+        sequence = ''.join([line.rstrip() for line in lines[1:]])
+        return seq_id, sequence
 
 if __name__ == "__main__":
     main()

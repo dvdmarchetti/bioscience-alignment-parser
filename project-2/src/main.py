@@ -16,14 +16,14 @@ def main():
         reference = ''.join(seqlist[0:])
 
     # Read input files (Json + Excel)
-    clustal_output = load_output('Clustal-NC_045512.2_2020-05-30_16-51.json')
+    clustal_output = load_output('Clustal-NC_045512.2_2020-07-20_15-45.json')
     variations = clustal_output['unmatches'].items()
 
     [df_ref_genes, df_ref_cds] = [x for x in load_excel(os.path.join('..', 'Genes-CDS.xlsx'), ['Geni', 'CDS'])]
     df_ref_genes.set_index('Gene ID', inplace=True)
-    df_ref_genes['Start'] -= 1
+    # df_ref_genes['Start'] -= 1
     # df_ref_genes['End'] -= 1
-    df_ref_cds['from'] -= 1
+    # df_ref_cds['from'] -= 1
     # df_ref_cds['to'] -= 1
 
     # For each variation:
