@@ -62,47 +62,37 @@ La seconda parte del progetto prevede di elaborare i file prodotti in precedenza
   \item il codone (o i codoni) alterato della reference, con posizione di inizio rispetto alla CDS, sequenza del codone e amminoacido codifcato
   \item il nuovo codone generato dalla variazione (o i nuovi codoni generati) specifcando la sequenza del codone e il nuovo amminoacido codifcato
 \end{itemize}
-Attraverso le informazioni raccolte in questa fase saremo in grado di identificare in quali geni si concentrano le variazioni rilevate, all'interno di essi, dove queste avvengono e come alterino i codoni causando la produzione di una proteina diversa.
 
 \newpage
-\section{Algoritmo}
-L'algoritmo inizia caricando tutti i file necessari per l'elaborazione, in particolare quelli prodotti in output nella parte precedente del progetto:
+\section{Espressione genica}
+I passi fondamentali per capire come un gene esprime una particolare proteina prevedono:
 \begin{enumerate}
-  \item Caricamento della sequenza reference dal fasta corrispondente memorizzato in \lstinline{/project-1/input/reference.fasta}.
-  \item Caricamento di uno dei file di output prodotti nella prima parte di progetto. Nel nostro caso è stato utilizzata l'analisi dell'allineamento di \lstinline{ClustalW}.
-  \item Lettura del file \lstinline{Genes-CDS.xlsx} contenente le informazioni sui geni e le CDS della sequenza di reference. In particolare, una delle CDS analizzate derivava dall'unione (join) di due sequenze. In tal caso è possibile specificare il punto di unione della sequenza.
+  \item Trascizione: sostituzione della Timina (T) con Uracile (U), ottenendo pre-mRNA
+  \item Splicing: eliminazione delle sequenze introniche e concatenazione degli estroni per ottenere mRNA (oppure trascritto)
+  \item Traduzione: traduzione in proteine dei \textbf{codoni} (triplette di basi) della CDS (sottostringa dell’mRNA)
 \end{enumerate}
 
 \noindent
-Dopo la lettura del materiale rilevante a questa fase di elaborazione, l'algoritmo itera le variazioni rilevate nell'allineamento e per ciascuna di esse esegue i seguenti step:
-\begin{enumerate}
-  \item Identifica le CDS nelle quali avviene l'alterazione rispetto alla sequenza reference.
-  \item Recupera le informazioni del gene associato alle CDS rilevate calcolando le posizioni globali e relative alla CDS dell'alterazione.
-  \item Identifica i codoni alterati e ne effettua la ritraduzione in amminoacidi grazie ad una look-up table (listato \ref{code:aminoacids_table}). Vengono ignorate le alterazioni che presentano sequenze di soli \lstinline{-}, derivate probabilmente da un sequenziamento errato o un'alterazione posta ai capi dell'allineamento.
-  \item Memorizza tutte le informazioni ricavate in una struttura dati apposita tramite cui derivare la tabella per l'output finale associando i valori a chiavi prestabilite.
-\end{enumerate}
+Risulta triviale come un'alterazione della sequenza di DNA iniziale possa protrarsi fino alla fase di traduzione, andando ad alterare la produzione delle proteine di un particolare gene.
 
-\noindent
-Al termine dell'elaborazione di tutte le alterazioni, viene costruito un oggetto di tipo \lstinline{DataFrame} fornito dalla libreria \lstinline{pandas}.
+\vspace{1mm}
+Attraverso le informazioni raccolte in questa fase saremo in grado di identificare in quali geni si concentrano le variazioni rilevate, dove queste avvengano e in che modo alterino i codoni e le rispettive proteine codificate.
 
-Le chiavi utilizzate nella costuzione della struttura dati a lista diventeranno le colonne del \lstinline{DataFrame}. Questo sarà esportato in CSV per permettere una visualizzazione più semplice tramite programmi terzi (come riportato in \cref{fig:alteration_table})
-
-\newpage
-\section{Informazioni memorizzate}
+\section{Formato di output}
 Ad ogni variazione analizzata corrisponde un entrata nella struttura dati a lista contenente le seguenti informazioni:
 \begin{itemize}
-    \item \textbf{gene\_id}: id del gene in cui cade la variazione
-    \item \textbf{gene\_start}: inizio del gene in cui cade la variazione (1-based)
-    \item \textbf{gene\_end}: fine del gene in cui cade la variazione (1-based)
-    \item \textbf{cds\_start}: inizio della \lstinline{Coding DNA Sequence} della porzione del gene in cui cade la variazione (1-based)
-    \item \textbf{cds\_end}: fine della \lstinline{Coding DNA Sequence} della porzione del gene in cui cade la variazione (1-based)
-    \item \textbf{relative\_start}: inizio della variazione in rispetto all'inizio della cds (1-based)
-    \item \textbf{relative\_end}: fine della variazione in rispetto all'inizio della cds (1-based)
-    \item \textbf{alteration}: sequenza della variazione
-    \item \textbf{original\_codone}: codone della reference prima della modifica
-    \item \textbf{original\_aminoacid}: amminoacido codificato da \textbf{original\_codone}
-    \item \textbf{altered\_codone}: codone della reference modificati dalla variazione
-    \item \textbf{encoded\_aminoacid}: amminoacido codificato da \textbf{altered\_codone}
+    \item \lstinline{gene_id}: id del gene in cui cade la variazione
+    \item \lstinline{gene_start}: inizio del gene in cui cade la variazione (1-based)
+    \item \lstinline{gene_end}: fine del gene in cui cade la variazione (1-based)
+    \item \lstinline{cds_start}: inizio della \lstinline{Coding DNA Sequence} della porzione del gene in cui cade la variazione (1-based)
+    \item \lstinline{cds_end}: fine della \lstinline{Coding DNA Sequence} della porzione del gene in cui cade la variazione (1-based)
+    \item \lstinline{relative_start}: inizio della variazione in rispetto all'inizio della cds (1-based)
+    \item \lstinline{relative_end}: fine della variazione in rispetto all'inizio della cds (1-based)
+    \item \lstinline{alteration}: sequenza della variazione
+    \item \lstinline{original_codone}: codone della reference prima della modifica
+    \item \lstinline{original_aminoacid}: amminoacido codificato da \lstinline{original_codone}
+    \item \lstinline{altered_codone}: codone della reference modificati dalla variazione
+    \item \lstinline{encoded_aminoacid}: amminoacido codificato da \lstinline{altered_codone}
 \end{itemize}
 
 \begin{sidewaysfigure}
@@ -112,23 +102,47 @@ Ad ogni variazione analizzata corrisponde un entrata nella struttura dati a list
 \end{sidewaysfigure}
 
 \newpage
+\section{Algoritmo}
+L'algoritmo inizia caricando tutti i file necessari per l'elaborazione, in particolare quelli prodotti in output nella parte precedente del progetto:
+\begin{enumerate}
+  \item Caricamento della sequenza reference dal fasta della sequenza di Wuhan \lstinline{NC_045512.2}.
+  \item Caricamento di uno dei file di output prodotti nella prima parte di progetto. Nel nostro caso è stato utilizzata l'analisi dell'allineamento di \lstinline{ClustalW}.
+  \item Lettura del file contenente le informazioni sui geni e le CDS della sequenza di riferimento. In particolare, una delle CDS analizzate derivava dall'unione (join) di due sequenze. In tal caso è possibile specificare il punto di unione della sequenza.
+\end{enumerate}
+
+\noindent
+Dopo la lettura del materiale rilevante a questa fase di elaborazione, l'algoritmo itera le variazioni rilevate nell'allineamento e per ciascuna di esse esegue i seguenti step:
+\begin{enumerate}
+  \item Identifica le CDS nelle quali avviene l'alterazione rispetto alla sequenza reference.
+  \item Effettua una sostituzione della \lstinline{Timina} (\lstinline{T}) con l'\lstinline{Uracile} (\lstinline{U}) nelle sezioni coinvolte delle sequenze.
+  \item Recupera le informazioni del gene associato alle CDS rilevate calcolando le posizioni globali e relative alla CDS dell'alterazione.
+  \item Identifica i codoni alterati e ne effettua la ritraduzione in amminoacidi grazie ad una look-up table (listato \ref{code:aminoacids_table}). Vengono ignorate le alterazioni che presentano sequenze di soli \lstinline{-}, derivate probabilmente da un sequenziamento errato o un'alterazione posta ai capi dell'allineamento.
+  \item Memorizza tutte le informazioni ricavate in una struttura dati apposita tramite cui derivare la tabella per l'output finale associando i valori a chiavi prestabilite.
+\end{enumerate}
+
+\noindent
+La struttura dati così ottenuta sarà esportata in formato CSV per permettere una visualizzazione agevolata attraverso programmi terzi (come riportato in \cref{fig:alteration_table}).
+
+\newpage
 \section{Analisi dei risultati e conclusioni}
 Come riportato in \cref{fig:alteration_table} la maggior parte delle alterazioni coinvolgono un singolo codone e quelli ottenuti rimangono traducibili. In alcuni casi, l'amminoacido risultante dalla traduzione dell'alterazione non viene modificato.
 
 Le ultime righe della tabella riportano delle alterazioni che determinano la cacellazione di alcune basi rispetto alla sequenza reference.
 Queste sono relative esclusivamente alla sola sequenza \lstinline{MT262993.1} e si pensa possano derivare da un errore in fase di sequenziamento.
 
+\subsection{Distribuzione delle variazioni all'interno delle CDS}
+Rispetto alle variazioni identificate ed analizzate, più del 65\% risultano appartenenti ad almeno una CDS e riportate in tabella.
 \begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=0.6\linewidth]{plot-alteration-in-cds.png}}
   \caption{Percentuale di variazioni interne ed esterne alle CDS}
   \label{fig:plot-alterations-in-cds}
 \end{figure}
 
-Rispetto alle variazioni identificate ed analizzate, più del 65\% risultano appartenenti ad almeno una CDS e riportate in tabella.
-
 Analizzando la distribuzione delle alterazioni che coinvolgono geni riportata in \cref{fig:plot-alterations-per-gene}, quasi i tre quarti del numero totale di variazioni si concentrano nel gene \lstinline{ORF1ab}. Questo era un risultato atteso, essendo un gene composto da più di 21.000 basi.
 
-Infine, dal grafico delle alterazioni appartenenti ad una CDS divise per sequenza (\cref{fig:plot-per-sequence}) notiamo una distribuzione piuttosto omogenea, eccetto per le sequenze \lstinline{MT262993.1} e \lstinline{MT276597.1} dove abbiamo un basso numero di alterazioni. Al contrario, la sequenza nella quale si manifestano più alterazioni nelle CDS risulta essere \lstinline{EPI_ISL_437334}, che anche nelle analisi precedenti risultava avere il maggior numero di sostituzioni rispetto alle altre sequenze.
+\vspace{1mm}
+Infine, dal grafico delle alterazioni appartenenti ad una CDS divise per sequenza (\cref{fig:plot-per-sequence}) notiamo una distribuzione piuttosto omogenea, eccetto per le sequenze \lstinline{MT262993.1} e \lstinline{MT276597.1} dove abbiamo un basso numero di alterazioni.
+Al contrario, la sequenza nella quale si manifestano più alterazioni nelle CDS risulta essere \lstinline{EPI_ISL_437334}, che anche nelle analisi precedenti risultava avere il maggior numero di sostituzioni rispetto alle altre sequenze.
 \begin{figure}[]
   \makebox[\textwidth][c]{\includegraphics[width=0.8\linewidth]{plot-variations-per-gene.png}}
   \caption{Percentuale di variazioni per gene}
@@ -153,28 +167,27 @@ Durante la realizzazione del progetto entrambi i componenti del gruppo hanno par
 \section{Listati di codice}
 \begin{lstlisting}[language=Python,caption=Tabella per la traduzione in amminoacidi,label=code:aminoacids_table]
 aminoacids_lookup_table = {
-  'F': ['TTT', 'TTC'],
-  'L': ['TTA', 'TTG', 'CTT', 'CTA', 'CTC', 'CTG'],
-  'I': ['ATT', 'ATC', 'ATA'],
-  'M': ['ATG'],
-  'V': ['GTT', 'GTA', 'GTC', 'GTG'],
-  'S': ['TCT', 'TCA', 'TCC', 'TCG', 'AGT', 'AGC'],
-  'P': ['CCT', 'CCA', 'CCC', 'CCG'],
-  'T': ['ACT', 'ACA', 'ACC', 'ACG'],
-  'A': ['GCT', 'GCA', 'GCC', 'GCG'],
-  'Y': ['TAT', 'TAC'],
-  'H': ['CAT', 'CAC'],
+  'F': ['UUU', 'UUC'],
+  'L': ['UUA', 'UUG', 'CUU', 'CUA', 'CUC', 'CUG'],
+  'I': ['AUU', 'AUC', 'AUA'],
+  'M': ['AUG'],
+  'V': ['GUU', 'GUA', 'GUC', 'GUG'],
+  'S': ['UCU', 'UCA', 'UCC', 'UCG', 'AGU', 'AGC'],
+  'P': ['CCU', 'CCA', 'CCC', 'CCG'],
+  'T': ['ACU', 'ACA', 'ACC', 'ACG'],
+  'A': ['GCU', 'GCA', 'GCC', 'GCG'],
+  'Y': ['UAU', 'UAC'],
+  'H': ['CAU', 'CAC'],
   'Q': ['CAA', 'CAG'],
-  'N': ['AAT', 'AAC'],
+  'N': ['AAU', 'AAC'],
   'K': ['AAA', 'AAG'],
-  'D': ['GAT', 'GAC'],
+  'D': ['GAU', 'GAC'],
   'E': ['GAA', 'GAG'],
-  'C': ['TGT', 'TGC'],
-  'W': ['TGG'],
-  'R': ['CGT', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
-  'G': ['GGT', 'GGA', 'GGC', 'GGG'],
-  'START': ['ATG'],
-  'STOP': ['TAA', 'TAG', 'TGA']
+  'C': ['UGU', 'UGC'],
+  'W': ['UGG'],
+  'R': ['CGU', 'CGA', 'CGC', 'CGG', 'AGA', 'AGG'],
+  'G': ['GGU', 'GGA', 'GGC', 'GGG'],
+  'STOP': ['UAA', 'UAG', 'TGA']
 }
 \end{lstlisting}
 
