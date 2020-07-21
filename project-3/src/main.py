@@ -17,7 +17,7 @@ def main():
     assert len(sequence_ids) == 14
 
     # 2. Read variations (project 1 output)
-    clustal_output = load_output('Clustal-NC_045512.2_2020-07-20_22-00.json')
+    clustal_output = load_output('Clustal-NC_045512.2_2020-07-21_15-14.json')
     variations = clustal_output['unmatches'].items()
 
     # 3. Build trait matrix
