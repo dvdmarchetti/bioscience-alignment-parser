@@ -56,8 +56,7 @@
 \section{Abstract}
 Date le variazioni sulle sequenze rilevate e catalogate nelle parti precedenti, costruiremo appositamente una matrice binaria di caratteri, evitando la generazione della "matrice proibita", da utilizzare per la realizzazione della filogenesi perfetta delle sequenze.
 
-Successivamente realizzeremo l'albero filogenetico con l'ausilio delle librerie \textbf{Bio} e \textbf{anytree}, confronteremo dell'albero ottenuto rispetto a quello prodotto con i tool di allineamento e scriveremo i risultati ottenuti. \newline
-I risultati ci diranno la qualità implementativa del lavoro svolto e cercherà di ottenere risultati per come il virus si sia introdotto nelle aree analizzate. 
+Successivamente realizzeremo l'albero filogenetico con l'ausilio delle librerie \textbf{Bio} e \textbf{anytree}, confronteremo dell'albero ottenuto rispetto a quello prodotto con i tool di allineamento e analizzeremo i risultati ottenuti in relazione alle ipotesi avanzate dal report preliminare della prima parte di progetto per capire come il virus si sia introdotto nelle aree geografiche esaminate.
 
 \newpage
 
@@ -88,12 +87,12 @@ Da questa affermazione ne deriva che un albero rappresentante una filogenesi per
 \end{enumerate}
 
 \subsection{Matrice di caratteri}
-Per la costruzione dell'albero abbiamo scelto di utilizzare ciascuna alterazione come identificativa di un singolo carattere, associandovi un codice univoco. La matrice così ottenuta pone sulle righe l'identificativo di ciascuna sequenza analizzata e sulle colonne i singoli caratteri (variaizoni).
+Per la costruzione dell'albero abbiamo scelto di utilizzare ciascuna alterazione come identificativa di un singolo carattere, associandovi un codice univoco. La matrice così ottenuta pone sulle righe l'identificativo di ciascuna sequenza analizzata e sulle colonne i singoli caratteri (variazioni).
 
 Ciascuna cella della matrice viene popolata con il valore \lstinline{1} qualora il $j$-esimo carattere (variazione) si manifesti nell'$i$-esima sequenza, altrimenti viene inserito il valore zero. Procedendo in questo modo si ottiene la matrice di caratteri riportata in \cref{fig:matrix-characters}.
 
 \begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=1.6\linewidth]{character_table.png}}
+  \makebox[\textwidth][c]{\includegraphics[width=1.5\linewidth]{character_table.png}}
   \caption{Matrice di caratteri iniziale}
   \label{fig:matrix-characters}
 \end{figure}
@@ -102,10 +101,12 @@ Tuttavia per una filogenesi perfetta è necessario che la matrice utilizzata non
 
 La matrice in \cref{fig:matrix-perfect-phylo} è ottenuta applicando l'algoritmo descritto nel listato \ref{code:get_perfect_phylogeny_function} alla matrice di caratteri di partenza. Durante il procedimento vengono eliminate solamente cinque colonne, corrispondenti ad altrettante variazioni distinte.
 \begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=1.6\linewidth]{perfect_phylogeny_table.png}}
+  \makebox[\textwidth][c]{\includegraphics[width=1.5\linewidth]{perfect_phylogeny_table.png}}
   \caption{Matrice di caratteri per filogenesi perfetta}
   \label{fig:matrix-perfect-phylo}
 \end{figure}
+
+Ottenuta la matrice di caratteri adatta alla costruzione di una filogenesi perfetta, è stato creato l'albero
 
 \newpage
 \section{Algoritmo}
@@ -262,8 +263,37 @@ plt.show()
 \end{lstlisting}
 
 \newpage
-\section{Conclusioni}
+\section{Analisi dei risultati e conclusioni}
+Oltre alla generazione dell'albero tramite il nostro script, sono stati generati due diversi alberi filogenetici a partire dagli allineamenti prodotti: in \cref{fig:tool-tree} é illustrato l'albero generato con i parametri di default, mentre in \cref{fig:tool-tree-skip} quello ottenuto abilitando il parametro \lstinline{Exclude Gaps=On}.
+
+È necessario sottolineare che si è scelto di riportare esclusivamente gli alberi generati dall'allineamento effettuato con ClustalW poiché identici a quelli prodotti da MUSCLE.
+
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1\linewidth]{ncbi_tree_with_legend.png}}
+  \caption{Albero generato con parametri di default}
+  \label{fig:tool-tree}
+\end{figure}
+
+La differenza così evidente di posizionamento della reference avviene in quanto il parametro \lstinline{Exclude Gaps} ignora le colonne per le quali qualsiasi delle sequenze presenta un gap vengono ignorate, forzando l'utilizzo delle posizioni dove si ha informazione su tutte le sequenze.
+
+Fin dalla prima fase del progetto abbiamo osservato come le cancellazioni, seppur il principale tipo di alterazione manifestata, avvengano agli estremi delle sequenze e raramente coinvolgono geni. Per la generazione del nostro albero invece sono state utilizzate proprio le alterazioni che si posizionavano all'interno di geni e, nella quasi totalità dei casi, risultavano essere sostituzioni.
+
+\noindent
+Considerando gli alberi generati dall'allineamento con ClustalW (\cref{fig:tool-tree,fig:tool-tree-skip}) e quello generato dal nostro script (\cref{fig:script-tree}), si riesce ad identificare un gruppo di sequenze in comune comprese tra \lstinline{MT281530.2} e \lstinline{EPI_ISL_437512}.
+
+
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1\linewidth]{ncbi_tree_skip_gaps_with_legend.png}}
+  \caption{Albero generato con \lstinline{Exclude Gaps=On}}
+  \label{fig:tool-tree-skip}
+\end{figure}
 L'albero generato con ClustalW in \cref{fig:tool-tree}, rispetto all'albero da noi prodotto (\cref{fig:script-tree}), riesce a ottenere un livello di dettaglio maggiore arrivando a scindere i rami terminanti con tre foglie da noi identificati.
+
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=1.1\linewidth]{perfect-phylogeny_with_legend.png}}
+  \caption{Albero di output del nostro script}
+  \label{fig:script-tree}
+\end{figure}
 
 Il nodo israeliano etichettato con \lstinline{MT276597.1} in entrambi gli alberi risulta distante dalle altre due sequenze israeliane. Questo potrebbe far presupporre che derivi da un ceppo diverso del virus o da un'area geografica differente.
 
@@ -280,18 +310,6 @@ In conclusione, gli alberi ottenuti in \cref{fig:script-tree,fig:tool-tree} risu
 
 Ipotizziamo che queste derivino principalmente dal fatto che l'albero in \cref{fig:script-tree} è costruito basandosi sul numero di alterazioni rispetto alla sequenza reference.
 Al contrario, l'albero in \cref{fig:tool-tree} è generato in base alla distanza tra le \textit{intere} sequenze a partire da un allineamento.
-
-\newpage
-\begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=1.1\linewidth]{perfect-phylogeny.png}}
-  \caption{Albero di output del nostro script}
-  \label{fig:script-tree}
-\end{figure}
-\begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=1\linewidth]{ncbi_tree.png}}
-  \caption{Albero di output derivato dall'allineamento con ClustalW}
-  \label{fig:tool-tree}
-\end{figure}
 
 \newpage
 \subsection{Divisone del lavoro}
