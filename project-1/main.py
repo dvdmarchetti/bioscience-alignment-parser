@@ -176,6 +176,7 @@ def analysis(filename):
     plt.savefig(os.path.join('relazione', 'images', 'plot-variations-per-type'))
 
     # Deletions per sequence
+    colors = ['mediumvioletred', 'darkorange', 'dodgerblue', 'green', 'coral', 'mediumpurple', 'gold', 'm', 'olivedrab', 'salmon','yellowgreen', 'c', 'lightgray']
     chars_per_var = df_chars[df_chars['type']=='DEL'].groupby(['id']).count()
     ax = chars_per_var.plot.pie(y='alteration', autopct='%.2f%%', legend=False, colors=colors, explode=len(sequences.keys()) * [0.05])
     # ax.set_title('Deletions per sequence')
@@ -184,6 +185,7 @@ def analysis(filename):
     plt.savefig(os.path.join('relazione', 'images', 'plot-deletions-per-sequence'))
 
     # Replacements per sequence
+    colors = ['mediumvioletred', 'darkorange', 'dodgerblue', 'green', 'coral', 'mediumpurple', 'gold', 'olivedrab', 'salmon','yellowgreen', 'c', 'lightgray']
     chars_per_var = df_chars[df_chars['type']=='REPL'].groupby(['id']).count()
     ax = chars_per_var.plot.pie(y='alteration', autopct='%.2f%%', legend=False, colors=colors, explode=(len(sequences.keys()) - 1) * [0.05])
     # ax.set_title('Replacements per sequence')
