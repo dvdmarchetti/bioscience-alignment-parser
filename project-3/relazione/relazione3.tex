@@ -56,8 +56,10 @@
 \section{Abstract}
 Date le variazioni sulle sequenze rilevate e catalogate nelle parti precedenti, costruiremo appositamente una matrice binaria di caratteri, evitando la generazione della "matrice proibita", da utilizzare per la realizzazione della filogenesi perfetta delle sequenze.
 
+\vspace{1mm}
 A partire dai file di output della prima parte del progetto, l'algoritmo genera una matrice binaria utilizzando come indici di riga gli identificativi delle sequenze e come colonne un identificativo univoco assegnato ad ogni variazione per poi estrarne la più grande matrice adatta alla generazione di un albero di una filogenesi perfetta.
 
+\vspace{1mm}
 Successivamente realizzeremo l'albero filogenetico con l'ausilio delle librerie \textbf{Bio} e \textbf{anytree}, confronteremo dell'albero ottenuto rispetto a quello prodotto con i tool di allineamento e analizzeremo i risultati ottenuti in relazione alle ipotesi avanzate dal report preliminare della prima parte di progetto per capire come il virus si sia introdotto nelle aree geografiche esaminate.
 
 \newpage
@@ -91,7 +93,8 @@ Da questa affermazione ne deriva che un albero rappresentante una filogenesi per
 \newpage
 \section{Algoritmo}
 \subsection{Matrice delle variazioni}
-Per la costruzione dell'albero abbiamo scelto di utilizzare ciascuna alterazione come identificativa di un singolo carattere, associandovi un codice univoco. La matrice così ottenuta pone sulle righe l'identificativo di ciascuna sequenza analizzata (indice $i$) e sulle colonne, denominate caratteri, le singole variazioni (indice $j$).
+Per la costruzione dell'albero abbiamo scelto di utilizzare ciascuna alterazione come identificativa di un singolo carattere, associandovi un codice univoco.
+La matrice così ottenuta pone sulle righe l'identificativo di ciascuna sequenza analizzata (indice $i$) e sulle colonne, denominate caratteri, le singole variazioni (indice $j$).
 
 Ciascuna cella della matrice viene popolata con il valore \lstinline{1} qualora il $j$-esimo carattere (variazione) si manifesti nell'$i$-esima sequenza, altrimenti viene inserito il valore zero.
 
@@ -147,7 +150,6 @@ Oltre alla generazione dell'albero tramite il nostro script, sono stati prodotti
 \noindent
 La differenza così evidente di posizionamento della reference tra l'albero in \cref{fig:tool-tree} e quelli in \cref{fig:tool-tree-skip} avviene in quanto il parametro \lstinline{Exclude Gaps} ignora le colonne per le quali in almeno una delle sequenze si verifica una cancellazione (gap), forzando l'utilizzo esclusivamente delle colonne dove si ha una base in tutte le sequenze.
 
-Per la generazione del nostro albero invece sono state utilizzate proprio le alterazioni che si posizionavano all'interno di geni.
 Fin dalla prima fase del progetto abbiamo osservato come le cancellazioni avvengano agli estremi delle sequenze. Successivamente nella seconda parte del progetto abbiamo avuto conferma di quanto ipotizzato: nella quasi totalità dei casi le variazioni che coinvolgono geni sono sostituzioni.
 
 Questo fornisce una possibile spiegazione sul perchè l'esclusione dei gap determini uno spostamento così marcato di alcune sequenze.
@@ -158,6 +160,7 @@ Questo fornisce una possibile spiegazione sul perchè l'esclusione dei gap deter
   \label{fig:tool-tree-skip}
 \end{figure}
 
+\vspace{3mm}
 \noindent
 Confrontando ora gli alberi generati dall'allineamento con ClustalW (\cref{fig:tool-tree,fig:tool-tree-skip}) e quello generato dal nostro script (\cref{fig:script-tree}), si riesce ad identificare un gruppo di sequenze in comune che copre le sequenze tra \lstinline{MT281530.2} e \lstinline{EPI_ISL_437512}.
 
@@ -184,7 +187,7 @@ In conclusione, gli alberi nelle \cref{fig:script-tree,fig:tool-tree-skip,fig:to
 
 Ipotizziamo che queste derivino principalmente dal fatto che l'albero in \cref{fig:script-tree} è costruito basandosi sul numero di alterazioni, mentre gli alberi in \cref{fig:tool-tree,fig:tool-tree-skip} vengono generati rispetto alle intere sequenze.
 
-\newpage 
+\newpage
 \subsection{Divisone del lavoro}
 Durante la realizzazione del progetto entrambi i componenti del gruppo hanno partecipato attivamente alla sua realizzazione. In particolare:
 \begin{itemize}
