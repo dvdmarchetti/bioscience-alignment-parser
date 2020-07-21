@@ -50,11 +50,11 @@ Il virus è stato sequenziato genomicamente dopo un test di acido nucleico effet
 
 L'obiettivo del progetto consiste nell'analizzare, allineare ed identificare le differenze con la sequenza di riferimento prelevata su un campione di Wuhan, progettando un formato di output nel quale memorizzare i risultati ottenuti.
 
-Usando i sequenziamente genomici del virus denominato Covid-19, reperibili tramite NCBI\footnote{\url{https://www.ncbi.nlm.nih.gov/genbank/sars-cov-2-seqs/}} e GISAID\footnote{\url{https://www.gisaid.org/}} e sfruttando gli strumenti messi a disposizione dall'European Bioinformatics Institute\footnote{\url{https://www.ebi.ac.uk/Tools/msa/}} abbiamo effettuato l'allineamento di un insieme di sequenze relative a paesi del medioriente.
+Attraverso i sequenziamenti genomici del virus denominato Covid-19, reperibili tramite NCBI\footnote{\url{https://www.ncbi.nlm.nih.gov/genbank/sars-cov-2-seqs/}} e GISAID\footnote{\url{https://www.gisaid.org/}} e sfruttando gli strumenti messi a disposizione dall'European Bioinformatics Institute\footnote{\url{https://www.ebi.ac.uk/Tools/msa/}} abbiamo effettuato l'allineamento di un insieme di sequenze relative a paesi del medioriente.
 
 \newpage
 \section{Sequenze Analizzate}
-In aggiunta alla sequenza di riferimento di Wuhan, ne sono state selezionate alcune relative a paesi dell'area mediorientale.
+In aggiunta alla sequenza di riferimento di Wuhan, abbiamo deciso di analizzare sequenze relative all'area mediorientale per cercare di capire come potrebbe essersi sviluppato il contagio in queste zone.
 
 \subsubsection*{Reference di Wuhan}
 \begin{description}
@@ -137,27 +137,6 @@ Lo script è composto da diversi file, ciascuno con la propria funzione specific
   \lstitem{utils.py:} contiene utility generiche e di supporto per l'input/output.
 \end{description}
 
-% \begin{enumerate}
-%   \item Per ogni allineamento specificato avviene il parsing a seconda del tool utilizzato
-%   \item
-%   \begin{enumerate}
-%     \item salva il nome del file json in ooutput seguendo l'analisi.
-%     \item ne compara le differenze per verificare se esistono differenze tra i 2 tools.
-%   \end{enumerate}
-% \end{enumerate}
-
-% \item \lstinline{runClustal(inputFile, reference_id, nseq=3)}: funzione che esegue il parsing del file di allineamento clustal (inputFile), esegue il parsing degli allineamenti e li salva nel file di output. \newline nseq serve al parser in quanto la classe \lstinline{ClustalParser} richiede il numero di sequenze da elaborare nelle sue funzioni.
-
-% \item \lstinline{runMuscle(inputFile, reference_id, nseq=3)}: funzione che esegue il parsing del file di allineamento muscle (inputFile), esegue il parsing degli allineamenti e li salva nel file di output.
-
-% \item \lstinline{parse(self, filename, reference=None, list=[]}:  legge il file in ingresso e restituisce il file in input suddiviso in: reference, sequenze, lunghezza sequenze. svolge la sua funzione sfruttando il metodo: \lstinline{parseLines(self, lines)}
-
-% \item \lstinline{save(alignment, analyzer, reference_id=None, tool=None, path=None)}: crea file json di output chiamato reference\_id\_hash-sha1 del tempo di inzio esecuzione concatenato con sequences\_ids delle sequenze.
-
-% \item \lstinline{jsonComp(file1, file2)}: funzione cre prende i 2 file json generati dall'elaborazione clustal e muscle e ritorna le differenze tra i 2 oggetti al fine di compararli.
-
-% \item \lstinline{saveCompareFile(filename="differences.txt", country="", diff=[], path='output')}: file che divide per paese prende la lista di differenze tra gli allineamenti clustal e muscle e li aggiunge al file di output "differences.txt" per mostrarli.
-
 \section{Formato di Output}
 L'output dell'analisi prevede un file json per ogni allineamento elaborato ed un file json di confronto dei due tool di allineamento raggruppando gli allineamenti identici.
 
@@ -206,12 +185,13 @@ Come riportato nel listato \ref{code:json-output}, la struttura dell'output di a
 \newpage
 
 \section{Analisi dei risultati}
-Sulla base degli allineamenti prodotti ed analizzati in questa prima parte, sono stati prodotti alcuni grafici riassuntivi per fornire una panoramica delle sequenze prese in esame per permetterci di identificare peculiarità che si potrebbero incontrare nelle fasi successive.
+Sulla base degli allineamenti analizzati in questa prima parte, sono stati prodotti alcuni grafici riassuntivi per fornire una panoramica delle sequenze prese in esame e permetterci di identificare peculiarità che si potrebbero incontrare nelle fasi successive.
 
 \subsubsection*{Basi mancanti/Numero di mismatch}
-Durante l'analisi, due delle sequenze esaminate presentavano delle basi \lstinline{N}. Queste sono basi che non è stato possibile identificate durante il sequenziamento. Per capire l'entità del numero di basi non sequenziate correttamente per ogni sequenza abbiamo riportato il conteggio per ciascuna in \cref{fig:plot-missing}.
+Durante l'analisi, due delle sequenze esaminate presentavano delle basi \lstinline{N}. Queste rappresentano basi che non è stato possibile identificare durante il sequenziamento.
 
-Ai fini dell'analisi, queste basi sono state considerate come valide e sostituite con le corrispondenti basi presenti nalla sequenza reference alla medesima posizione.
+Per capire l'entità del numero di basi non sequenziate correttamente per ogni sequenza abbiamo riportato il conteggio per ciascuna in \cref{fig:plot-missing}.
+Tuttavia, nel proseguire l'analisi, queste basi sono state poi considerate come valide e non registrate come variazioni rispetto alla sequenza reference.
 
 \begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=0.9\linewidth]{plot-not-availables.png}}
