@@ -96,6 +96,9 @@ Ad ogni variazione analizzata corrisponde un entrata nella struttura dati a list
     \item \lstinline{encoded_aminoacid}: amminoacido codificato da \lstinline{altered_codone}
 \end{itemize}
 
+\noindent
+La struttura dati così ottenuta è esportata in formato CSV per permettere una visualizzazione agevolata attraverso programmi terzi (come riportato in \cref{fig:alteration_table}).
+
 \begin{sidewaysfigure}
   \makebox[\textwidth][c]{\includegraphics[width=1\linewidth]{alteration-table.png}}
   \caption{Tabella di output delle alterazioni}
@@ -121,12 +124,9 @@ Dopo la lettura del materiale rilevante a questa fase di elaborazione, l'algorit
   \item Memorizza tutte le informazioni ricavate in una struttura dati apposita tramite cui derivare la tabella per l'output finale associando i valori a chiavi prestabilite.
 \end{enumerate}
 
-\noindent
-La struttura dati così ottenuta sarà esportata in formato CSV per permettere una visualizzazione agevolata attraverso programmi terzi (come riportato in \cref{fig:alteration_table}).
-
 \newpage
 \section{Analisi dei risultati e conclusioni}
-Come riportato in \cref{fig:alteration_table} la maggior parte delle alterazioni coinvolgono un singolo codone e, anche nel caso di cancellazioni, la CDS risultante rimane traducibile (rimane multipla di tre). In alcuni casi, l'amminoacido risultante dalla traduzione dell'alterazione non viene modificato.
+Come riportato nella tabella in \cref{fig:alteration_table} la maggior parte delle alterazioni coinvolgono un singolo codone e, anche in caso di cancellazioni, la CDS alterata rimane traducibile (multipla di tre). In alcuni casi, l'amminoacido risultante dalla traduzione dell'alterazione non è modificato.
 
 Le ultime righe della tabella riportano delle alterazioni che determinano la cacellazione di alcune basi rispetto alla sequenza reference.
 Queste sono relative esclusivamente alla sola sequenza \lstinline{MT262993.1} e si pensa possano derivare da un errore in fase di sequenziamento.
@@ -134,24 +134,25 @@ Queste sono relative esclusivamente alla sola sequenza \lstinline{MT262993.1} e 
 \subsection{Distribuzione delle variazioni all'interno delle CDS}
 Rispetto alle variazioni identificate ed analizzate, più del 65\% risultano appartenenti ad almeno una CDS e riportate in tabella.
 \begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=0.6\linewidth]{plot-alteration-in-cds.png}}
+  \makebox[\textwidth][c]{\includegraphics[width=0.7\linewidth]{plot-alteration-in-cds.png}}
   \caption{Percentuale di variazioni interne ed esterne alle CDS}
   \label{fig:plot-alterations-in-cds}
 \end{figure}
 
+\noindent
 Analizzando la distribuzione delle alterazioni che coinvolgono geni riportata in \cref{fig:plot-alterations-per-gene}, quasi i tre quarti del numero totale di variazioni si concentrano nel gene \lstinline{ORF1ab}. Questo era un risultato atteso, essendo un gene composto da più di 21.000 basi.
 
-\vspace{1mm}
 Infine, dal grafico delle alterazioni appartenenti ad una CDS divise per sequenza (\cref{fig:plot-per-sequence}) notiamo una distribuzione piuttosto omogenea, eccetto per le sequenze \lstinline{MT262993.1} e \lstinline{MT276597.1} dove abbiamo un basso numero di alterazioni.
+
 Al contrario, la sequenza nella quale si manifestano più alterazioni nelle CDS risulta essere \lstinline{EPI_ISL_437334}, che anche nelle analisi precedenti risultava avere il maggior numero di sostituzioni rispetto alle altre sequenze.
-\begin{figure}[]
-  \makebox[\textwidth][c]{\includegraphics[width=0.8\linewidth]{plot-variations-per-gene.png}}
+\begin{figure}[H]
+  \makebox[\textwidth][c]{\includegraphics[width=0.7\linewidth]{plot-variations-per-gene.png}}
   \caption{Percentuale di variazioni per gene}
   \label{fig:plot-alterations-per-gene}
 \end{figure}
 
 \begin{figure}[H]
-  \makebox[\textwidth][c]{\includegraphics[width=0.8\linewidth]{plot-alteration-in-gene-per-sequence.png}}
+  \makebox[\textwidth][c]{\includegraphics[width=0.7\linewidth]{plot-alteration-in-gene-per-sequence.png}}
   \caption{Tipologia di variazioni}
   \label{fig:plot-per-sequence}
 \end{figure}
