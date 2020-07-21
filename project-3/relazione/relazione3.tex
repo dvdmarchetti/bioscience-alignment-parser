@@ -62,6 +62,18 @@ Successivamente effettueremo un confronto dell'albero ottenuto rispetto a quello
 
 \section{Filogenesi Perfetta}
 % TODO: spiegare lato teorico in breve per far capire in cosa consiste e perche è perfetta
+La filogenesi perfetta si basa su 2 postulati:
+\begin{enumerate} 
+	\item I caratteri possono essere acquisiti (cambiamenti di righe da 0 a 1) una sola volta, ma persi più volte.
+	\item un carattere non ancora acquisito può essere acquisito successivamente e indipendente in multipli sottoalberi, ma in tal caso non può essere perso.
+\end{enumerate} 
+Un albero rappresentante la filogenesi perfetta ha quindi 3 caratteristiche:
+\begin{enumerate} 
+	\item L'albero ha il numero di foglie equivalente al numero di campioni analizzati, con ogni campione come foglia.
+	\item Ognuno dei caratteri identifica esattamente una ramificazione.
+	\item Per ogni sequenza, seguendo il percorso fino alla radice, si percorrono i suoi caratteri.
+\end{enumerate} 
+Per verificare che una matrice possa supportare la filogenesi perfetta, si controlla la non presenza in essa della matrice proibita come sottomatrice.
 
 \subsection{Matrice di caratteri}
 La matrice di caratteri così ottenuta pone sulle righe l'identificativo di ciascuna sequenza analizzata e sulle colonne sono posti i caratteri. Per la costruzione dell'albero si è scelto di utilizzare ciascuna alterazione come identificativa di un singolo carattere associandovi un codice univoco.
