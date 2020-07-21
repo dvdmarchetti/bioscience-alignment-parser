@@ -60,35 +60,46 @@ Successivamente effettueremo un confronto dell'albero ottenuto rispetto a quello
 
 \newpage
 
-\section{Filogenesi Perfetta}
-% TODO: spiegare lato teorico in breve per far capire in cosa consiste e perche è perfetta
-La filogenesi perfetta si basa su 2 postulati:
-\begin{enumerate} 
-	\item I caratteri possono essere acquisiti (cambiamenti di righe da 0 a 1) una sola volta, ma persi più volte.
-	\item un carattere non ancora acquisito può essere acquisito successivamente e indipendente in multipli sottoalberi, ma in tal caso non può essere perso.
-\end{enumerate} 
-Un albero rappresentante la filogenesi perfetta ha quindi 3 caratteristiche:
-\begin{enumerate} 
+\section{Albero filogenetico}
+Un albero filogenetico è un albero che descrive la sequenze di eventi di speciazione che hanno portato alle specie attuali, dove con il termine speciazione si intende la differenziazione in due gruppi dove la differenza genica è predominante.
+
+Il \lstinline{Parsimony principle} sancisce come ogni specie sia specificata da un insieme di caratteri o attributi.
+A livello genomico, un carattere o attributo può assumere diversi significati:
+\begin{itemize}
+  \item ordine o composizione dei geni in un genoma
+  \item composizione delle proteine
+  \item cambiamenti genomici rari (RGC)
+  \item acquisizione o perdita di introni
+\end{itemize}
+
+\noindent
+La filogenesi perfetta deriva dall'unione di due principi:
+\begin{itemize}
+	\item \lstinline{Dollo parsimony}: un carattere può essere acquisito una sola volta ($0 \to 1$), ma può venire perso più volte ($1 \to 0$).
+	\item \lstinline{Camin-Sokal parsimony}: un carattere può essere acquisito molteplici volte ($0 \to 1$), ma non può essere perso.
+\end{itemize}
+In una filogenesi perfetta risulta possibile quindi acquisire e perdere un carattere esclusivamente una volta.
+Da questa affermazione ne deriva che un albero rappresentante una filogenesi perfetta avrà alcune caratteristiche:
+\begin{enumerate}
+	\item Ogni carattere identifica esattamente una ramificazione.
 	\item L'albero ha il numero di foglie equivalente al numero di campioni analizzati, con ogni campione come foglia.
-	\item Ognuno dei caratteri identifica esattamente una ramificazione.
-	\item Per ogni sequenza, seguendo il percorso fino alla radice, si percorrono i suoi caratteri.
-\end{enumerate} 
-Per verificare che una matrice possa supportare la filogenesi perfetta, si controlla la non presenza in essa della matrice proibita come sottomatrice.
+	\item Seguendo il percorso da una foglia fino alla radice si identificano i caratteri presenti nella sequenza posta sulla foglia di partenza.
+\end{enumerate}
 
 \subsection{Matrice di caratteri}
-La matrice di caratteri così ottenuta pone sulle righe l'identificativo di ciascuna sequenza analizzata e sulle colonne sono posti i caratteri. Per la costruzione dell'albero si è scelto di utilizzare ciascuna alterazione come identificativa di un singolo carattere associandovi un codice univoco.
+Per la costruzione dell'albero abbiamo scelto di utilizzare ciascuna alterazione come identificativa di un singolo carattere, associandovi un codice univoco. La matrice così ottenuta pone sulle righe l'identificativo di ciascuna sequenza analizzata e sulle colonne i singoli caratteri (variaizoni).
 
-La matrice viene popolata con il valore \lstinline{1} qualora il $j$-esimo carattere (variazione) si manifesti nell'$i$-esima sequenza, altrimenti viene inserito il valore zero. Procedendo in questo modo si ottiene la matrice di caratteri riportata in \cref{fig:matrix-characters}.
+Ciascuna cella della matrice viene popolata con il valore \lstinline{1} qualora il $j$-esimo carattere (variazione) si manifesti nell'$i$-esima sequenza, altrimenti viene inserito il valore zero. Procedendo in questo modo si ottiene la matrice di caratteri riportata in \cref{fig:matrix-characters}.
 
 \begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=1.6\linewidth]{character_table.png}}
-  \caption{Albero di output del nostro script}
-  \label{fig:script-tree}
+  \caption{Matrice di caratteri iniziale}
+  \label{fig:matrix-characters}
 \end{figure}
 \noindent
-Tuttavia per una filogenesi perfetta è necessario che la matrice utilizzata non sia una \lstinline{"matrice proibita"}, cioè che sia... % TODO: compleare.
+Tuttavia per una filogenesi perfetta è necessario che la matrice utilizzata non contenga come sottomatrice la \lstinline{"matrice proibita"}.
 
-La matrice in \cref{fig:matrix-perfect-phylo} è ottenuta applicando l'algoritmo descritto nel listato \ref{code:get_perfect_phylogeny_function} alla matrice di caratteri costruita in precedenza. Durante il procedimento vengono eliminate solamente 5 colonne, corrispondenti a cinque variazioni distinte.
+La matrice in \cref{fig:matrix-perfect-phylo} è ottenuta applicando l'algoritmo descritto nel listato \ref{code:get_perfect_phylogeny_function} alla matrice di caratteri di partenza. Durante il procedimento vengono eliminate solamente cinque colonne, corrispondenti ad altrettante variazioni distinte.
 \begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=1.6\linewidth]{perfect_phylogeny_table.png}}
   \caption{Matrice di caratteri per filogenesi perfetta}
@@ -282,7 +293,7 @@ Al contrario, l'albero in \cref{fig:tool-tree} è generato in base alla distanza
 \end{figure}
 
 \newpage
-\section{Divisone del lavoro}
+\subsection{Divisone del lavoro}
 Durante la realizzazione del progetto entrambi i componenti del gruppo hanno partecipato attivamente alla sua realizzazione. In particolare:
 \begin{itemize}
   \item \textbf{Edoardo Silva} si è occupato principalmente di recuperare i file esterni da elaborare e confrontare.
